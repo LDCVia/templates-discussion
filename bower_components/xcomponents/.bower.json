@@ -1,0 +1,44 @@
+{
+  "name": "xcomponents",
+  "authors": [
+    "Mark Leusink <m.leusink@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "client/bower_components/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.8",
+    "bootcards": ">=1",
+    "angular-animate": "~1.3.8",
+    "angular-resource": "~1.3.8",
+    "angular-sanitize": "~1.3.8",
+    "morris.js": "~0.5.1",
+    "blueimp-canvas-to-blob": "~2.1.1",
+    "blueimp-load-image": "~1.13.0",
+    "angular-bootstrap": "~0.12.0",
+    "angular-pouchdb": "~1.0.2",
+    "webcomponentsjs": "~0.5.2",
+    "angular-touch": "~1.3.14",
+    "lowladb": "~0.1.0"
+  },
+  "resolutions": {
+    "angular": "~1.3.8"
+  },
+  "homepage": "https://github.com/bootcards/xcomponents",
+  "_release": "08a73c74b4",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "08a73c74b4c827e491e2913810845141552d2ead"
+  },
+  "_source": "git://github.com/bootcards/xcomponents.git",
+  "_target": "master",
+  "_originalSource": "xcomponents",
+  "_direct": true
+}

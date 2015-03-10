@@ -1,0 +1,27 @@
+{
+  "name": "lowladb",
+  "description": "The LowlaDB client library for modern browsers.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/lowladb.js",
+  "ignore": [
+    "src",
+    "tests",
+    ".gitignore",
+    ".travis.yml",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json"
+  ],
+  "homepage": "https://github.com/lowla/lowladb",
+  "_release": "0.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.0",
+    "commit": "b82785aceed349100550abb9dc87968ec4dc955f"
+  },
+  "_source": "git://github.com/lowla/lowladb.git",
+  "_target": "~0.1.0",
+  "_originalSource": "lowladb",
+  "_direct": true
+}

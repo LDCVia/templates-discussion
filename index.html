@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>LDC Via Discussion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!--set the hidden class here, so everything is immediately hidden-->
+  <style type="text/css">
+    .hidden {
+      display:none;
+    }
+  </style>
+
+  <!-- polyfill for html imports & xcomponents resources -->
+  <script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"></script>
+  <link rel="import" href="/bower_components/xcomponents/dist/includes/includes.html">
+
+  <!-- xcomponents app config -->
+  <script src="/discussion.js"></script>
+
+</head>
+
+<body ng-controller="xcController" class="hidden">
+
+  <xc-header title="All Documents"></xc-header>
+
+  <xc-list
+    title="All Documents"
+    list-width="5"
+    allow-add="true"
+    order-by="make"
+    order-reversed="false"
+    url="https://local.ldcvia.com:3001/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic"
+    summary-field="Subject"
+    details-field="From"
+    image-placeholder-icon="document"
+    autoload-first="true"
+    type="flat"
+    group-by="Categories"
+    infinite-scroll="true">
+
+    <xc-form
+      url="https://local.ldcvia.com:3001/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
+      default-text="Select a topic from the list"
+      ></xc-form>
+
+  </xc-list>
+
+  <xc-footer></xc-footer>
+
+</body></html>
