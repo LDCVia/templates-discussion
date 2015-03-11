@@ -29,24 +29,23 @@
     title="All Documents"
     list-width="5"
     allow-add="true"
-    order-by="make"
-    order-reversed="false"
-    url="https://local.ldcvia.com:3001/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic"
+    order-by="__created"
+    order-reversed="true"
     summary-field="Subject"
     details-field="From"
+    details-field-type="notesname"
     image-placeholder-icon="document"
     autoload-first="true"
     type="flat"
     group-by="Categories"
     infinite-scroll="true">
-
     <xc-form
-      url="https://local.ldcvia.com:3001/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
-      default-text="Select a topic from the list"
-      ></xc-form>
-
+      default-text="Select a topic from the list">
+    </xc-form>
   </xc-list>
 
+
   <xc-footer></xc-footer>
+
 
 </body></html>

@@ -1,6 +1,6 @@
 /* xcomponents 0.1.0 2015-03-09 2:39 */
 
-var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
+var app = angular.module("xc.factories", ['ngResource', 'pouchdb', 'textAngular']);
 
 app.service('configService', [ function() {
 
@@ -18,7 +18,7 @@ app.service('configService', [ function() {
 
 } ] );
 
-app.factory('RESTFactory', ['$http', 'configService', function($http, configService) {
+app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', function($http, configService, xcUtils) {
 
 	return {
 
@@ -38,39 +38,62 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		all : function() {
 
-			var url = configService.endpoint.replace(":id", "");
+      var url = xcUtils.getConfig("listurl");
 
 			console.log('querying REST service at ' + url);
-
-			return $http.get(url).then( function(res) {
-				console.log('returning '  + res.data.length + ' items');
-				return res.data;
+			return $http.get(url, headers).then( function(res) {
+        if (res.data.data){
+  				console.log('returning '  + res.data.data.length + ' items');
+  				return res.data.data;
+        }else{
+          return [];
+        }
 			});
 
 		},
 
 		saveNew : function(item) {
+      var date = new Date();
+      var time = date.getTime();
+      item.__created = new Date();
+      item.__modified = new Date();
+      item.__form = "MainTopic";
+      item.From = "fred@ldcvia.com";
+      item.Body = {
+        "type": "multipart",
+        "content": [{
+          "contentType": "text/html; charset=UTF-8",
+          "data": item.Body__parsed
+        }]
+      };
 
-			var url = configService.endpoint.replace(":id", "");
+      var url = xcUtils.getConfig("docurl").replace(":id", time);
 
-			return $http.post(url, item).then( function(res) {
+			return $http.put(url, item, headers).then( function(res) {
 				return res.data;
 			});
 
 		},
 
 		update : function(item) {
+      item.__modified = new Date();
+      item.Body = {
+        "type": "multipart",
+        "content": [{
+          "contentType": "text/html; charset=UTF-8",
+          "data": item.Body__parsed
+        }]
+      };
+      var url = xcUtils.getConfig("docurl").replace(":id", item.__unid);
 
-			var url = configService.endpoint.replace(":id", "");
-
-			return $http.put(url, item).then( function(res) {
+			return $http.post(url, item, headers).then( function(res) {
 				return res.data;
 			});
 
 		},
 
 		delete : function(item) {
-			var url = configService.endpoint.replace(":id", item.id);
+      var url = xcUtils.getConfig("docurl").replace(":id", item.__unid);
 			return $http.delete(url);
 		},
 
@@ -80,11 +103,14 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		getById : function(id) {
+		getById : function(id, endpoint) {
+      //var url = configService.endpoint.replace(":id", id);
+      var url = xcUtils.getConfig("docurl").replace(":id", id);
+      if (endpoint){
+        url = endpoint.replace(":id", id);
+      }
 
-			var url = configService.endpoint.replace(":id", id);
-
-			return $http.get(url).then( function(res) {
+			return $http.get(url, headers).then( function(res) {
 				return res.data;
 			});
 
@@ -92,7 +118,7 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		exists : function(id) {
 
-			var url = configService.endpoint.replace(":id", id) + '/exists';
+			var url = xcUtils.getConfig("docurl").replace(":id", id) + '/exists';
 
 			return $http.get(url).then( function(res) {
 				return res.data;
@@ -513,7 +539,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 
 });
 
-app.run( function() {
+app.run( function($rootScope, $location) {
 	FastClick.attach(document.body);
 });
 
@@ -1206,28 +1232,49 @@ app.directive('xcForm',
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.modelName = xcUtils.getConfig('modelName');
 			$scope.isNew = true;
+      $scope.host = xcUtils.getConfig('host');
+      $scope.db = xcUtils.getConfig('db');
+      $scope.apikey = xcUtils.getConfig('apikey');
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				$scope.selectedItem = item;
-				$scope.isNew = false;
+        var f = null;
+        switch( $scope.datastoreType) {
+          case 'pouch':
+            f=PouchFactory; break;
+          case 'lowla':
+            f=LowlaFactory; break;
+          default:
+            f=RESTFactory; break;
+        }
 
-				if (item == null) {
+        f.getById( item.__unid, $scope.url )
+        .then( function(res) {
 
-					$scope.thumbnailSrc==null;
+          $scope.selectedItem = res;
+  				$scope.isNew = false;
 
-				} else {
+  				if (item == null) {
 
-					if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-						$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
-					}
+  					$scope.thumbnailSrc==null;
 
-					angular.forEach($scope.fieldsEdit, function(fld) {
-						//convert date fields (stored as strings) to JS date objects
-						if (fld.type == 'date') {
-							$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
-						}
-					});
-				}
+  				} else {
+
+  					if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
+  						$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
+  					}
+
+  					angular.forEach($scope.fieldsEdit, function(fld) {
+  						//convert date fields (stored as strings) to JS date objects
+  						if (fld.type == 'date') {
+  							$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+  						}
+  					});
+  				}
+
+        })
+        .catch( function(err) {
+          console.error(err);
+        });
 
 			});
 
@@ -1784,6 +1831,8 @@ app.directive('xcList',
 
 		    	if ($scope.detailsFieldType == 'date') {
 		    		return $filter('date')(item[$scope.detailsField]);
+          }else if ($scope.detailsFieldType == 'notesname') {
+		    		return $filter('notesname')(item[$scope.detailsField]);
 		    	} else {
 		    		return item[$scope.detailsField];
 
@@ -1822,7 +1871,42 @@ app.filter('searchFilter', function() {
 
     return filtered;
   };
-});
+}).filter('notesname', function() {
+  return function(input) {
+    if (!input){
+      return "";
+    }
+  	try{
+      input = JSON.parse(input);
+    }catch(e){
+      input = [input];
+    }
+    var out = [];
+    for (var i=0; i<input.length; i++){
+      var name = input[i];
+      if (name.indexOf("CN=") > -1){
+        name = name.replace("CN=", "");
+        name = name.replace("OU=", "");
+        name = name.replace("O=", "");
+      }
+      out.push(name);
+    }
+    return out.join(",");
+  }
+})
+.filter('implodelist', function() {
+  return function(input) {
+    if (Array.isArray(input)){
+      return input.join(", ");
+    }else{
+      return input;
+    }
+  }
+}).filter('gethtml', ['$sce', function($sce){
+  return function(input){
+    return $sce.trustAsHtml(input);
+  }
+}]);
 
 
 var app = angular.module('xcontrols');
@@ -2287,14 +2371,17 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<textarea class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"></textarea>\n" +
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\"ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
+    "			<div class=\"col-xs-9\" ng-if=\"field.type=='html'\">\n" +
+    "				<div text-angular ng-model=\"selectedItem[field.field]\" ta-toolbar=\"[[&quot;h1&quot;,&quot;h2&quot;,&quot;h3&quot;],[&quot;bold&quot;,&quot;italics&quot;,&quot;underline&quot;,&quot;justifyLeft&quot;,&quot;justifyCenter&quot;,&quot;justifyRight&quot;,&quot;ul&quot;,&quot;ol&quot;],[&quot;p&quot;,&quot;pre&quot;,&quot;quote&quot;,&quot;insertLink&quot;]]\"></div>\n" +
+    "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select'\">\n" +
     "				<select class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\">\n" +
-    "					<option ng-repeat=\"o in field.options\" value=\"{{o}}\">{{o}}</option>\n" +
+    "					<option ng-repeat=\"o in field.options\" ng-selected=\"{{selectedItem[field.field].indexOf(o) > -1}}\" value=\"{{o}}\">{{o}}</option>\n" +
     "				</select>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select-multiple'\">\n" +
     "				<select class=\"form-control\" multiple name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\" >\n" +
-    "					<option ng-repeat=\"o in field.options\" value=\"{{o}}\">{{o}}</option>\n" +
+    "					<option ng-repeat=\"o in field.options\" ng-selected=\"{{selectedItem[field.field].indexOf(o) > -1}}\" value=\"{{o}}\">{{o}}</option>\n" +
     "				</select>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='toggle'\">	\n" +
@@ -2375,6 +2462,24 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
     "				</div>\n" +
+    "				<div class=\"list-group-item\" ng-if=\"field.type=='notesname'\">\n" +
+    "					<label>{{field.label}}</label>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | notesname\"></h4>\n" +
+    "				</div>\n" +
+    "				<div class=\"list-group-item\" ng-if=\"field.type=='implodelist'\">\n" +
+    "					<label>{{field.label}}</label>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | implodelist\"></h4>\n" +
+    "				</div>\n" +
+    "				<div class=\"list-group-item\" ng-if=\"field.type=='html'\">\n" +
+    "					<label>{{field.label}}</label>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | gethtml\"></h4>\n" +
+    "				</div>\n" +
+    "       <div ng-if=\"field.type=='files'\">" +
+    "				  <div class=\"list-group-item\" ng-repeat=\"file in selectedItem[field.field]\">\n" +
+    "					  <label>{{field.label}}</label>\n" +
+    "					  <h4><a href=\"{{host + '/attachment/' + db + '/' + selectedItem['__form'] + '/' + selectedItem['__unid'] + '/' + file + '?apikey=' + apikey}}\" target=\"newwin\">{{file}}</a></h4>\n" +
+    "				  </div>\n" +
+    "       </div>\n" +
     "				<a href=\"mailto:{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
     "					ng-if=\"field.type=='email'\">\n" +
     "					<label>{{field.label}}</label>\n" +
@@ -2803,7 +2908,7 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "\n" +
     "			<div class=\"list-group\">\n" +
     "				\n" +
-    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\"  ng-click=\"select(item)\"\n" +
+    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\"  ng-click=\"select(item)\"\n" +
     "					ng-class=\"{'active' : selected == item}\">\n" +
     "\n" +
     "					<!--(placeholder) icon-->\n" +
