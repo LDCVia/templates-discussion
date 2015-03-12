@@ -98,7 +98,7 @@ app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', '$rootScope', f
 
 		delete : function(item) {
       var url = xcUtils.getConfig("docurl").replace(":id", item.__unid);
-			return $http.delete(url);
+			return $http.delete(url, headers);
 		},
 
 		deleteAll : function() {
