@@ -62,7 +62,7 @@ app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', '$rootScope', f
       item.__created = new Date();
       item.__modified = new Date();
       item.__form = "MainTopic";
-      item.From = $rootScope.user;
+      item.From = $rootScope.username;
       item.Body = {
         "type": "multipart",
         "content": [{
@@ -457,7 +457,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 
   if ($cookieStore.get('apikey')){
     $rootScope.apikey = $cookieStore.get('apikey');
-    $rootScope.user = $cookieStore.get('user');
+    $rootScope.username = $cookieStore.get('username');
     headers.headers.apikey = $cookieStore.get('apikey');
   }
   if ($rootScope.apikey == null) {
@@ -1145,7 +1145,7 @@ app.controller('UpdateItemInstanceCtrl',
 			f.saveNew( $scope.selectedItem )
 			.then( function(res) {
 
-				if (scope.type == 'categorised' || scope.type=='accordion'){
+				if (scope.type == 'categorised' || scope.type=='accordion' || scope.type == 'flat'){
 
 					$rootScope.$emit('refreshList', '');
 
