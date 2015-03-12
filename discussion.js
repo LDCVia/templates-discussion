@@ -35,7 +35,8 @@ var xcontrols = {
    { label : 'Date Created' , field: '__created', type: 'date', edit: false },
    { label : 'Body' , field: 'Body__parsed', type: 'html', read: true, edit: false},
    { label : 'Body' , field: 'Body__parsed', type: 'html', read: false, edit: true},
-   { label : 'Files', field: '_files', type: 'files', read: true, edit: false}
+   { label : 'Files', field: '_files', type: 'files', read: true, edit: false},
+   { label : '', field: 'file', type: 'files', read: false, edit: true}
  ]
 
 }

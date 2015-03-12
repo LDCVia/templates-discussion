@@ -59,24 +59,10 @@ app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', '$rootScope', f
 		saveNew : function(item) {
       var date = new Date();
       var time = date.getTime();
-      item.__created = new Date();
-      item.__modified = new Date();
-      item.__form = "MainTopic";
-      item.From = $rootScope.username;
-      item.Body = {
-        "type": "multipart",
-        "content": [{
-          "contentType": "text/html; charset=UTF-8",
-          "data": item.Body__parsed
-        }]
-      };
-
       var url = xcUtils.getConfig("docurl").replace(":id", time);
-
-			return $http.put(url, item, headers).then( function(res) {
-				return res.data;
-			});
-
+      return $http.put(url, item, headers).then( function(res) {
+        return res.data;
+      });
 		},
 
 		update : function(item) {
@@ -1142,31 +1128,82 @@ app.controller('UpdateItemInstanceCtrl',
 			var orderReversed = $scope.$eval(scope.orderReversed);		//for booleans
 			var sortFunction = xcUtils.getSortByFunction( scope.orderBy, orderReversed );
 
-			f.saveNew( $scope.selectedItem )
-			.then( function(res) {
+      $scope.selectedItem.__created = new Date();
+      $scope.selectedItem.__modified = new Date();
+      $scope.selectedItem.__form = "MainTopic";
+      $scope.selectedItem.From = $rootScope.username;
+      $scope.selectedItem.Body = {
+        "type": "multipart",
+        "content": [{
+          "contentType": "text/html; charset=UTF-8",
+          "data": $scope.selectedItem.Body__parsed
+        }]
+      };
+      var fileInput = document.getElementById('file');
+      var file = fileInput.files[0];
+      var reader = new FileReader();
+      if (file) {
+        reader.onload = function(e) {
+          $scope.selectedItem.Body.content.push({
+            "contentType": file.type + "; name=\"" + file.name + "\"",
+            "contentDisposition": "attachment; filename=\"" + file.name + "\"",
+            "contentTransferEncoding": "base64",
+            "data": reader.result.match(/,(.*)$/)[1]
+          });
+          f.saveNew( $scope.selectedItem )
+    			.then( function(res) {
 
-				if (scope.type == 'categorised' || scope.type=='accordion' || scope.type == 'flat'){
+    				if (scope.type == 'categorised' || scope.type=='accordion' || scope.type == 'flat'){
 
-					$rootScope.$emit('refreshList', '');
+    					$rootScope.$emit('refreshList', '');
 
-				} else {
+    				} else {
 
-					scope.items.push(res);
+    					scope.items.push(res);
 
-			        //resort
-			        var ress = scope.items;
-			        ress.sort( sortFunction );
+    			        //resort
+    			        var ress = scope.items;
+    			        ress.sort( sortFunction );
 
-			        scope.items = ress;
+    			        scope.items = ress;
 
-				}
+    				}
 
-				$modalInstance.close();
+    				$modalInstance.close();
 
-			})
-			.catch( function(err) {
-				alert("The item could not be saved/ updated: " + err.statusText);
-			});
+    			})
+    			.catch( function(err) {
+    				alert("The item could not be saved/ updated: " + err.statusText);
+    			});
+        }
+        reader.readAsDataURL(file);
+      } else {
+        f.saveNew( $scope.selectedItem )
+  			.then( function(res) {
+
+  				if (scope.type == 'categorised' || scope.type=='accordion' || scope.type == 'flat'){
+
+  					$rootScope.$emit('refreshList', '');
+
+  				} else {
+
+  					scope.items.push(res);
+
+  			        //resort
+  			        var ress = scope.items;
+  			        ress.sort( sortFunction );
+
+  			        scope.items = ress;
+
+  				}
+
+  				$modalInstance.close();
+
+  			})
+  			.catch( function(err) {
+  				alert("The item could not be saved/ updated: " + err.statusText);
+  			});
+      }
 
 
 		} else {
@@ -1261,7 +1298,7 @@ app.directive('xcForm',
 			$scope.isNew = true;
       $scope.host = xcUtils.getConfig('host');
       $scope.db = xcUtils.getConfig('db');
-      $scope.apikey = xcUtils.getConfig('apikey');
+      $scope.apikey = $rootScope.apikey;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
         var f = null;
@@ -2423,6 +2460,9 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='toggle'\">	\n" +
     "				<xc-toggle ng-model=\"selectedItem[field.field]\"></xc-toggle>\n" +
+    "			</div>\n" +
+    "			<div class=\"col-xs-9\" ng-if=\"field.type=='files'\">	\n" +
+    "				<input type=\"file\" id=\"file\" name=\"file\" />\n" +
     "			</div>\n" +
     "			\n" +
     "		</div> \n" +
