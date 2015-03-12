@@ -1,6 +1,6 @@
 /* xcomponents 0.1.0 2015-03-09 2:39 */
 
-var app = angular.module("xc.factories", ['ngResource', 'pouchdb', 'textAngular']);
+var app = angular.module("xc.factories", ['ngResource', 'pouchdb', 'textAngular', 'ngCookies', 'ngRoute']);
 
 app.service('configService', [ function() {
 
@@ -18,9 +18,13 @@ app.service('configService', [ function() {
 
 } ] );
 
-app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', function($http, configService, xcUtils) {
+app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', '$rootScope', function($http, configService, xcUtils, $rootScope) {
 
 	return {
+
+    login : function(data, callback){
+      return $http.post(xcUtils.getConfig('loginurl'), JSON.stringify(data)).success(callback);
+    },
 
 		info : function() {
 
@@ -58,7 +62,7 @@ app.factory('RESTFactory', ['$http', 'configService', 'xcUtils', function($http,
       item.__created = new Date();
       item.__modified = new Date();
       item.__form = "MainTopic";
-      item.From = "fred@ldcvia.com";
+      item.From = $rootScope.user;
       item.Body = {
         "type": "multipart",
         "content": [{
@@ -420,8 +424,21 @@ var app = angular.module('xcontrols', [
 	'ngResource',
 	'ngAnimate',
 	'ngSanitize',
-	'ui.bootstrap'
+	'ui.bootstrap',
+  'ngCookies',
+  'ldcvia.login'
 ]);
+
+app.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/', {
+    templateUrl: 'home.html',
+    controller: 'xcController'
+  });
+  $routeProvider.
+    otherwise({
+      redirectTo: '/'
+    });
+}])
 
 //bootstrapping code
 var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
@@ -436,7 +453,17 @@ if (hasNativeHTMLImportsSupport) {
 	});
 }
 
-app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils) {
+app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils, $cookieStore, $location) {
+
+  if ($cookieStore.get('apikey')){
+    $rootScope.apikey = $cookieStore.get('apikey');
+    $rootScope.user = $cookieStore.get('user');
+    headers.headers.apikey = $cookieStore.get('apikey');
+  }
+  if ($rootScope.apikey == null) {
+    console.log('We need to log in');
+    $location.path("/login");
+  }
 
 	$scope.menuOptions = [];
 
@@ -1413,7 +1440,7 @@ app.directive('xcHeader', function() {
 		templateUrl : 'xc-header.html',
 		transclude : true,
 
-		controller : function($rootScope, $scope, $document, xcUtils, $timeout) {
+		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore) {
 
 			$scope.showBackButton = false;
 
@@ -1471,6 +1498,16 @@ app.directive('xcHeader', function() {
 				}
 
 			};
+
+      $scope.logout = function(){
+        $cookieStore.remove('apikey');
+        $rootScope.apikey = null;
+        window.location.reload();
+      };
+
+      $scope.isLoggedIn = function() {
+        return $rootScope.apikey != null;
+      }
 
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){
@@ -2546,7 +2583,11 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "        {{o.callback}}\n" +
     "          <!--basic option-->\n" +
-    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o)\">\n" +
+    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o) && !o.logout\">\n" +
+    "            <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
+    "            {{o.label}}\n" +
+    "          </a>\n" +
+    "          <a ng-click=\"logout()\" ng-if=\"!hasSubmenu(o) && o.logout && isLoggedIn()\">\n" +
     "            <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
     "            {{o.label}}\n" +
     "          </a>\n" +
@@ -2586,7 +2627,11 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "            <ul class=\"dropdown-menu\">\n" +
     "              <li ng-repeat=\"so in ::o.menuOptions\"  ng-class=\"{'active' : isActive(so)}\">\n" +
-    "                <a href=\"{{::so.url}}\">\n" +
+    "                <a ng-if=\"so.logout\" ng-click=\"logout()\">\n" +
+    "                  <i class=\"fa fa-fw\" ng-class=\"so.icon ? so.icon : null\"></i>\n" +
+    "                  {{::so.label}}\n" +
+    "                </a>\n" +
+    "                <a ng-if=\"!so.logout\" href=\"{{::so.url}}\">\n" +
     "                  <i class=\"fa fa-fw\" ng-class=\"so.icon ? so.icon : null\"></i>\n" +
     "                  {{::so.label}}\n" +
     "                </a>\n" +
@@ -2970,7 +3015,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "\n" +
     "			<div class=\"col-xs-4\" ng-if=\"allowAdd\">\n" +
     "\n" +
-    "				<a class=\"btn btn-primary btn-block\" href=\"#\" ng-click=\"addNewItem()\">\n" +
+    "				<a class=\"btn btn-primary btn-block\" ng-click=\"addNewItem()\">\n" +
     "					<i class=\"fa fa-plus\"></i> \n" +
     "					<span>Add</span>\n" +
     "				</a>\n" +
@@ -3012,9 +3057,9 @@ angular.module("xc-reading.html", []).run(["$templateCache", function($templateC
     "    <h3 class=\"panel-title pull-left\">{{::title}}</h3>\n" +
     "      \n" +
     "    <div class=\"btn-group pull-right\">\n" +
-    "      <a class=\"btn btn-primary icon-only\" href=\"#\" ng-click=\"increaseFontSize()\">\n" +
+    "      <a class=\"btn btn-primary icon-only\" ng-click=\"increaseFontSize()\">\n" +
     "        <i class=\"fa fa-lg fa-search-plus\"></i></a>\n" +
-    "        <a class=\"btn btn-primary icon-only\" href=\"#\" ng-click=\"decreaseFontSize()\">\n" +
+    "        <a class=\"btn btn-primary icon-only\" ng-click=\"decreaseFontSize()\">\n" +
     "        <i class=\"fa fa-lg fa-search-minus\"></i></a>\n" +
     "    </div>\n" +
     "  </div>\n" +

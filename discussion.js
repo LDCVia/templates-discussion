@@ -1,7 +1,6 @@
-var apikey = 'f87180cfae6a286130c6e3de098a3e88';
 var headers = {'headers':
    {
-     'apikey': apikey
+     'apikey': null
    }
 };
 
@@ -9,12 +8,11 @@ var xcontrols = {
 
  host: 'https://beta.ldcvia.com/1.0',
  db: 'dev-londc-com-demos-discussion-nsf',
- apikey: apikey,
 
  appVersion : '0.1',
 
  menuOptions : [
-
+   { label : 'Logout', isSecondary : true, icon : 'fa-sign-out', logout: true},
    { label : 'All Documents', url : 'index.html', icon : 'fa-dashboard' }
 
  ],
@@ -25,6 +23,7 @@ var xcontrols = {
 
  modelName : 'Topic',
 
+ loginurl : "https://beta.ldcvia.com/1.0/login",
  listurl : "https://beta.ldcvia.com/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic",
  docurl : "https://beta.ldcvia.com/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id",
 

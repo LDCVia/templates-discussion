@@ -1,0 +1,20 @@
+<div ng-controller="xcController">
+<xc-list
+  title="All Documents"
+  list-width="5"
+  allow-add="true"
+  order-by="__created"
+  order-reversed="true"
+  summary-field="Subject"
+  details-field="From"
+  details-field-type="notesname"
+  image-placeholder-icon="document"
+  autoload-first="true"
+  type="flat"
+  group-by="Categories"
+  infinite-scroll="true">
+  <xc-form
+    default-text="Select a topic from the list">
+  </xc-form>
+</xc-list>
+</div>
