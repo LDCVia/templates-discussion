@@ -75,6 +75,15 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			
 			var _blankTest = _taBlankTest(_defaultTest);
 			
+			var _ensureContentWrapped = function(value){
+				if(_blankTest(value)) return value;
+				var domTest = angular.element("<div>" + value + "</div>");
+				if(domTest.children().length === 0){
+					value = "<" + attrs.taDefaultWrap + ">" + value + "</" + attrs.taDefaultWrap + ">";
+				}
+				return value;
+			};
+			
 			if(attrs.taPaste) _pasteHandler = $parse(attrs.taPaste);
 			
 			element.addClass('ta-bind');
@@ -235,7 +244,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 						_html += '\n' + _repeat('\t', tablevel-1) + listNode.outerHTML.substring(listNode.outerHTML.lastIndexOf('<'));
 						return _html;
 					};
-					
+					ngModel.$formatters.unshift(_ensureContentWrapped);
 					ngModel.$formatters.unshift(function(htmlValue){
 						// tabulate the HTML so it looks nicer
 						var _children = angular.element('<div>' + htmlValue + '</div>')[0].childNodes;
@@ -409,7 +418,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 						element.addClass('processing-paste');
 						var pastedContent;
 						var clipboardData = (e.originalEvent || e).clipboardData;
-						if (clipboardData && clipboardData.getData) {// Webkit - get data from clipboard, put into editdiv, cleanup, then cancel event
+						if (clipboardData && clipboardData.getData && clipboardData.types.length > 0) {// Webkit - get data from clipboard, put into editdiv, cleanup, then cancel event
 							var _types = "";
 							for(var _t = 0; _t < clipboardData.types.length; _t++){
 								_types += " " + clipboardData.types[_t];
@@ -434,8 +443,8 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 								// restore selection
 								$window.rangy.restoreSelection(_savedSelection);
 								processpaste(_tempDiv[0].innerHTML);
-								_tempDiv.remove();
 								element[0].focus();
+								_tempDiv.remove();
 							}, 0);
 						}
 					});
@@ -464,6 +473,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 								}
 							/* istanbul ignore next: difficult to test as can't seem to select */
 							}else if(event.keyCode === 13 && !event.shiftKey){
+								var $selection;
 								var selection = taSelection.getSelectionElement();
 								if(!selection.tagName.match(VALIDELEMENTS)) return;
 								var _new = angular.element(_defaultVal);
@@ -490,6 +500,12 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 					element.on('keyup', scope.events.keyup = function(event, eventData){
 						/* istanbul ignore else: this is for catching the jqLite testing*/
 						if(eventData) angular.extend(event, eventData);
+						/* istanbul ignore next: FF specific bug fix */
+						if (event.keyCode === 9) {
+							var _selection = taSelection.getSelection();
+							if(_selection.start.element === element[0] && element.children().length) taSelection.setSelectionToElementStart(element.children()[0]);
+							return;
+						}
 						if(_undoKeyupTimeout) $timeout.cancel(_undoKeyupTimeout);
 						if(!_isReadonly && !BLOCKED_KEYS.test(event.keyCode)){
 							// if enter - insert new taDefaultWrap, if shift+enter insert <br/>
@@ -538,12 +554,12 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 
 					// Placeholders not supported on ie 8 and below
 					if(attrs.placeholder && (_browserDetect.ie > 8 || _browserDetect.ie === undefined)){
-						var ruleIndex;
-						if(attrs.id) ruleIndex = addCSSRule('#' + attrs.id + '.placeholder-text:before', 'content: "' + attrs.placeholder + '"');
+						var rule;
+						if(attrs.id) rule = addCSSRule('#' + attrs.id + '.placeholder-text:before', 'content: "' + attrs.placeholder + '"');
 						else throw('textAngular Error: An unique ID is required for placeholders to work');
 
 						scope.$on('$destroy', function(){
-							removeCSSRule(ruleIndex);
+							removeCSSRule(rule);
 						});
 					}
 
@@ -582,14 +598,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			ngModel.$parsers.unshift(_validity);
 			// because textAngular is bi-directional (which is awesome) we need to also sanitize values going in from the server
 			ngModel.$formatters.push(_sanitize);
-			ngModel.$formatters.unshift(function(value){
-				if(_blankTest(value)) return value;
-				var domTest = angular.element("<div>" + value + "</div>");
-				if(domTest.children().length === 0){
-					value = "<" + attrs.taDefaultWrap + ">" + value + "</" + attrs.taDefaultWrap + ">";
-				}
-				return value;
-			});
+			ngModel.$formatters.unshift(_ensureContentWrapped);
 			ngModel.$formatters.unshift(_validity);
 			ngModel.$formatters.unshift(function(value){
 				return ngModel.$undoManager.push(value || '');

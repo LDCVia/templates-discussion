@@ -1,10 +1,42 @@
+<a name="1.3.11"></a>
+### 1.3.11 (2015-03-16)
+
+
+<a name="1.3.10"></a>
+### 1.3.10 (2015-03-16)
+
+
+#### Bug Fixes
+
+* **placeholder:** multiple textAngular will cause CSSRule index error ([943f08d5](http://github.com/fraywing/textAngular/commit/943f08d5b1ccc1c358071e67f5968267a0664299))
+
+
+<a name="1.3.9"></a>
+### 1.3.9 (2015-03-13)
+
+
+#### Bug Fixes
+
+* **taBind.$formatters:** Fix an issue where unwrapped tags broke the textarea display ([d39c7b63](http://github.com/fraywing/textAngular/commit/d39c7b63732b345b826068de4f9655d082d74262), closes [#566](http://github.com/fraywing/textAngular/issues/566))
+
+
+<a name="1.3.8"></a>
+### 1.3.8 (2015-03-13)
+
+
+#### Bug Fixes
+
+* **taBind:** Fix tab focus issue. ([8693e1d6](http://github.com/fraywing/textAngular/commit/8693e1d69daf44bb4ca6a94863bd2e43b598f571), closes [#483](http://github.com/fraywing/textAngular/issues/483), [#379](http://github.com/fraywing/textAngular/issues/379))
+* **textAngular.popover:** Add scroll top offset. ([f12eb86d](http://github.com/fraywing/textAngular/commit/f12eb86d7dd473244f09982dc1b13b0e0949ca5c))
+
+
 <a name="1.3.7"></a>
 ### 1.3.7 (2015-02-13)
 
 
 #### Bug Fixes
 
-* **taSanitize:** Close XSS vector ([f5f27c26](http://github.com/fraywing/textAngular/commit/f5f27c26bc99dc6f8bb226d7beb99ce8bcada01a))
+* **taSanitize:** Close XSS vector, See http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0167, http://xforce.iss.net/xforce/xfdb/100929 and https://exchange.xforce.ibmcloud.com/#/vulnerabilities/100929 for details. ([f5f27c26](http://github.com/fraywing/textAngular/commit/f5f27c26bc99dc6f8bb226d7beb99ce8bcada01a))
 
 
 <a name="1.3.6"></a>

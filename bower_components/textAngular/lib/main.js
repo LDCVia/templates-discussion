@@ -93,7 +93,7 @@ textAngular.directive("textAngular", [
 				var _keydown, _keyup, _keypress, _mouseup, _focusin, _focusout,
 					_originalContents, _toolbars,
 					_serial = (attrs.serial) ? attrs.serial : Math.floor(Math.random() * 10000000000000000),
-					_taExecCommand, _resizeMouseDown;
+					_taExecCommand, _resizeMouseDown, _updateSelectedStylesTimeout;
 				
 				scope._name = (attrs.name) ? attrs.name : 'textAngularEditor' + _serial;
 
@@ -193,10 +193,10 @@ textAngular.directive("textAngular", [
 				scope.reflowPopover = function(_el){
 					/* istanbul ignore if: catches only if near bottom of editor */
 					if(scope.displayElements.text[0].offsetHeight - 51 > _el[0].offsetTop){
-						scope.displayElements.popover.css('top', _el[0].offsetTop + _el[0].offsetHeight + 'px');
+						scope.displayElements.popover.css('top', _el[0].offsetTop + _el[0].offsetHeight + scope.displayElements.scrollWindow[0].scrollTop + 'px');
 						scope.displayElements.popover.removeClass('top').addClass('bottom');
 					}else{
-						scope.displayElements.popover.css('top', _el[0].offsetTop - 54 + 'px');
+						scope.displayElements.popover.css('top', _el[0].offsetTop - 54 + scope.displayElements.scrollWindow[0].scrollTop + 'px');
 						scope.displayElements.popover.removeClass('bottom').addClass('top');
 					}
 					var _maxLeft = scope.displayElements.text[0].offsetWidth - scope.displayElements.popover[0].offsetWidth;
@@ -558,13 +558,15 @@ textAngular.directive("textAngular", [
 				// loop through all the tools polling their activeState function if it exists
 				scope.updateSelectedStyles = function(){
 					var _selection;
+					/* istanbul ignore next: This check is to ensure multiple timeouts don't exist */
+					if(_updateSelectedStylesTimeout) $timeout.cancel(_updateSelectedStylesTimeout);
 					// test if the common element ISN'T the root ta-text node
 					if((_selection = taSelection.getSelectionElement()) !== undefined && _selection.parentNode !== scope.displayElements.text[0]){
 						_toolbars.updateSelectedStyles(angular.element(_selection));
 					}else _toolbars.updateSelectedStyles();
 					// used to update the active state when a key is held down, ie the left arrow
 					/* istanbul ignore else: browser only check */
-					if(scope._bUpdateSelectedStyles) $timeout(scope.updateSelectedStyles, 200);
+					if(scope._bUpdateSelectedStyles) _updateSelectedStylesTimeout = $timeout(scope.updateSelectedStyles, 200);
 				};
 				// start updating on keydown
 				_keydown = function(){

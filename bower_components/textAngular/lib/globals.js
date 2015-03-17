@@ -88,7 +88,7 @@ function validElementString(string){
 	Custom stylesheet for the placeholders rules.
 	Credit to: http://davidwalsh.name/add-rules-stylesheets
 */
-var sheet, addCSSRule, removeCSSRule, _addCSSRule, _removeCSSRule;
+var sheet, addCSSRule, removeCSSRule, _addCSSRule, _removeCSSRule, _getRuleIndex;
 /* istanbul ignore else: IE <8 test*/
 if(_browserDetect.ie > 8 || _browserDetect.ie === undefined){
 	var _sheets = document.styleSheets;
@@ -125,9 +125,9 @@ if(_browserDetect.ie > 8 || _browserDetect.ie === undefined){
 	};
 	_addCSSRule = function(_sheet, selector, rules){
 		var insertIndex;
-		
+		var insertedRule;
 		// This order is important as IE 11 has both cssRules and rules but they have different lengths - cssRules is correct, rules gives an error in IE 11
-		/* istanbul ignore else: firefox catch */
+		/* istanbul ignore next: browser catches */
 		if(_sheet.cssRules) insertIndex = Math.max(_sheet.cssRules.length - 1, 0);
 		else if(_sheet.rules) insertIndex = Math.max(_sheet.rules.length - 1, 0);
 		
@@ -138,19 +138,35 @@ if(_browserDetect.ie > 8 || _browserDetect.ie === undefined){
 		else {
 			_sheet.addRule(selector, rules, insertIndex);
 		}
-		// return the index of the stylesheet rule
-		return insertIndex;
+		/* istanbul ignore next: browser catches */
+		if(sheet.rules) insertedRule = sheet.rules[insertIndex];
+		else if(sheet.cssRules) insertedRule = sheet.cssRules[insertIndex];
+		// return the inserted stylesheet rule
+		return insertedRule;
 	};
 
-	removeCSSRule = function(index){
-		_removeCSSRule(sheet, index);
+	_getRuleIndex = function(rule, rules) {
+		var i, ruleIndex;
+		for (i=0; i < rules.length; i++) {
+			/* istanbul ignore else: check for correct rule */
+			if (rules[i].cssText === rule.cssText) {
+				ruleIndex = i;
+				break;
+			}
+		}
+		return ruleIndex;
 	};
-	_removeCSSRule = function(sheet, index){
-		/* istanbul ignore else: untestable IE option */
+
+	removeCSSRule = function(rule){
+		_removeCSSRule(sheet, rule);
+	};
+	/* istanbul ignore next: tests are browser specific */
+	_removeCSSRule = function(sheet, rule){
+		var ruleIndex = _getRuleIndex(rule, sheet.cssRules || sheet.rules);
 		if(sheet.removeRule){
-			sheet.removeRule(index);
+			sheet.removeRule(ruleIndex);
 		}else{
-			sheet.deleteRule(index);
+			sheet.deleteRule(ruleIndex);
 		}
 	};
 }

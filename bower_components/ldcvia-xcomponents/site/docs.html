@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title>XComponents documentation</title>
+
+  <link rel="apple-touch-icon" sizes="57x57" href="site/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="site/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="site/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="site/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="site/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="site/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="site/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="site/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="site/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="site/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="site/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="site/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="site/images/favicon-16x16.png">
+<link rel="manifest" href="site/images/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="site/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+  <link href="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.1.0/css/bootcards-desktop.min.css" rel="stylesheet" />
+  <link href="./css/docs.css" rel="stylesheet" />
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+
+	 <!--morris charts-->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/github.min.css">
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+ </head>
+
+<body>
+	  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" title="Bootcards" href="/">XComponents</a>    
+      </div>
+           
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+			<li>
+				<a href="../index.html"><span class="fa fa-home"></span> Home</a>
+			</li>
+        <li class="active">
+          <a href="docs.html"><span class="fa fa-book"></span> Documentation</a>
+        </li>
+         <li>
+            <a href="about.html"><span class="fa fa-info-circle"></span> About</a>
+          </li>
+			
+			</ul>
+      </div>          
+    </div>
+  </div> 
+
+  	<script type="text/javascript">
+$(document).ready( function() {
+		$('body').scrollspy({ target: '.docs-menu', offset : 60})
+
+
+		});
+</script>
+
+	<div class="container">  
+	<div class="row">
+
+		<div class="col-sm-3 hidden-xs">
+<div class="docs-menu affix">
+<ul class="nav nav-pills nav-stacked">	
+
+        <li><a href="#doc-general">General/ layout</a></li>
+        <li class="sub"><a href="#doc-header">Header</a></li>
+        <li class="sub"><a href="#doc-layout">Layout</a></li>
+        <li class="sub"><a href="#doc-footer">Footer</a></li>
+
+        <li><a href="#doc-lists">Lists</a></li>
+        <li class="sub"><a href="#doc-flatlist">Flat</a></li>
+        <li class="sub"><a href="#doc-detailedlist">Detailed</a></li>
+        <li class="sub"><a href="#doc-categorizedlist">Categorized</a></li>
+        <li class="sub"><a href="#doc-accordionlist">Accordion</a></li>
+
+        <li><a href="#doc-cards">Cards</a></li>
+        <li class="sub"><a href="#doc-base">Base</a></li>
+        <li class="sub"><a href="#doc-formcard">Form</a></li>
+        <li class="sub"><a href="#doc-reading">Reading</a></li>
+        <li class="sub"><a href="#doc-summary">Summary</a></li>
+        <li class="sub"><a href="#doc-mediacard">Media</a></li>
+        <li class="sub"><a href="#doc-filecard">File</a></li>
+        <li class="sub"><a href="#doc-chartcard">Chart</a></li>
+        <li class="sub"><a href="#doc-upload">Upload</a></li>
+
+        <li><a href="#doc-other">Other</a></li>
+        <li class="sub"><a href="#doc-carousel">Carousel</a></li>
+			
+</ul>
+			</div>
+		</div>
+
+		<div class="col-sm-9 bootcards-cards bootcards-documentation-cards">
+
+			<div class="panel panel-default bootcards-richtext">
+				<div class="panel-body">
+
+          <div id="doc-general" class="bs-docs-section">
+            <h2>General/ layout</h2>
+
+            <p>Every page should have a minimal setup that looks like this:</p>
+
+            <div class="highlight"><pre><code class="html">&lt;!doctype html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;title&gt;XComponents&lt;/title&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+
+  &lt;!--set the hidden class here, so everything is immediately hidden--&gt;
+  &lt;style type="text/css"&gt;
+    .hidden {
+      display:none;
+    }
+  &lt;/style&gt;
+  
+  &lt;!-- polyfill for html imports --&gt;
+  &lt;script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"&gt;&lt;/script&gt;
+  &lt;!-- load all xcomponents resources (js & css) --&gt;
+  &lt;link rel="import" href="/bower_components/xcomponents/dist/includes/includes.html"&gt;
+
+  &lt;!-- xcomponents app config --&gt;
+  &lt;script src="config.js"&gt;&lt;/script&gt; 
+  
+&lt;/head&gt;
+
+&lt;body ng-controller="xcController" class="hidden"&gt;
+
+  &lt;xc-header title="Title"&gt;&lt;/xc-header&gt;
+
+  &lt;xc-layout&gt;&lt;/xc-layout&gt;
+
+  &lt;xc-footer&gt;&lt;/xc-footer&gt;
+
+&lt;/body&gt;&lt;/html&gt;</code></pre></div>
+
+<p>This gives you a basic XComponents starter page that loads all the required resources. Resources are included using web components (using the <a href="http://polymer-project.org" target="_blank">Polymer</a> polyfill). It includes a header and footer.</p>
+
+          </div>
+
+          <div id="doc-header" class="bs-docs-section">
+            <h3>Header</h3>
+
+            <div class="navbar navbar-default bootcards-navbar-double" role="navigation">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+              </div>
+            
+              <a class="navbar-brand" title="Bootcards Starter" href="/">XComponents</a>  
+
+              <!--navbar menu options: shown on desktop only -->
+              <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right bootcards-nav-secondary">
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle navbar-link" data-toggle="dropdown" role="button" aria-expanded="false">
+                      <i class="fa fa-globe"></i>
+                      Languages <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">Deutsch</a></li>
+                      <li><a href="#"><i class="fa fa-fw fa-check pull-right"></i>English</a></li>
+                      <li><a href="#">Espanol</a></li>
+                    </ul>
+                  </li> 
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-fw fa-lock"></i>
+                      Login
+                    </a>
+                  </li>    
+                </ul>
+                <ul class="nav navbar-nav navbar-right bootcards-nav-primary">
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                      <i class="fa fa-fw fa-dashboard"></i>
+                      Home <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#"><i class="fa fa-fw fa-envelope-o"></i> Action</a></li>
+                      <li><a href="#"><i class="fa fa-fw fa-film"></i> Another action</a></li>
+                      <li><a href="#"><i class="fa fa-fw fa-file-o"></i> Something else here</a></li>
+                      <li class="divider"></li>
+                      <li><a href="#"><i class="fa fa-fw fa-bar-chart-o"></i> Separated link</a></li>
+                    </ul>
+                  </li>
+                  
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-fw fa-briefcase"></i>
+                      Portfolio
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-fw fa-bullhorn"></i>
+                      Blog
+                    </a>
+                  </li>
+                  
+                </ul>
+              </div>
+            </div><!--container-fluid-->
+          </div>  <!--navbar--> 
+
+          <p>(example shown has two lines of menu options - the default is just a single line)</p>
+
+            <pre><code>&lt;xc-header title="Title"&gt;&lt;/xc-header&gt;</code></pre>
+
+            <table class="table table-condensed">
+<thead><tr>
+  <th>Attribute</th><th>Value</th><th>Sample</th>
+</tr></thead>
+<tbody>
+  <tr><td>title</td><td>Header title</td><td>Cars</td></tr>
+</tbody>
+</table>
+
+            <p>
+              The <code>header</code> element gives you a header that contains a title and a navigation menu. The navigation menu can optionally span two lines. It includes an offcanvas menu for smartphones. The menu options must be configured in the <code>config.js</code> file in an array named <code>menuOptions</code>. The <code>menuAlignRight</code> property can be used to control alignment of the header menu on desktop (only relevant for a single line of menu options). Every object can have a label, url and icon. Sample contents for <code>config.js</code>:
+
+            </p>
+
+            <div class="highlight"><pre><code class="javascript">var xcomponents = { };
+
+xcomponents.menuAlignRight : false,
+
+xcomponents.menuOptions : [
+    { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
+      menuOptions : [
+        { label : 'Dutch', url : 'contacts-accordion.html'},
+        { label : 'English', url : 'contacts-accordion.html'}
+      ]
+    },
+    { label : 'Help', isSecondary : true, icon : 'fa-question-circle'},
+    
+    { label : 'Dashboard', url : 'index.html', icon : 'fa-dashboard' },
+    { label : 'Lists', url : 'lists.html', icon : 'fa-list',
+      menuOptions : [
+        { label : 'Cars', url : 'cars.html', icon : 'fa-list-alt' }
+      ]
+    },
+  ];</code></pre></div>
+
+          </div>
+
+          <div id="doc-layout" class="bs-docs-section">
+            <h3>Layout</h3>
+
+            <pre><code>&lt;xc-layout&gt;&lt;/xc-layout&gt;</code></pre>
+
+            <p>
+                The <code>layout</code> constructs the HTML needed for a standard Bootcards layout.
+            </p>
+
+          </div>
+
+					<div id="doc-footer" class="bs-docs-section">
+  <h3>Footer</h3>
+
+  <pre><code>&lt;xc-footer&gt;&lt;/xc-footer&gt;</code></pre>
+
+  <p>
+              The <code>footer</code> element gives you a footer text on desktop and a tabbed footer panel on smartphones/ tablets. The menu options must be configured in the <code>config.js</code> file in an array named <code>footerOptions</code>. Every object can have a label, url and icon. Sample contents for <code>config.js</code>:
+
+            </p>
+
+<pre><code>var xcomponents = { };
+
+xcomponents.footerOptions : [
+  { label : 'Dashboard', url : '/index.html', icon : 'fa-dashboard'},
+  { label : 'Contacts', url : 'contacts-flat.html', icon : 'fa-users' }
+];</code></pre>
+
+</div>
+
+<div id="doc-lists" class="bs-docs-section">
+            <h2>Lists</h2>
+            <p class="lead"> Lists are used to navigate the entities in your app (e.g. Contacts, Files, Messages, etc).</p>
+             <p>
+    The list objects make a call to a configurable REST API to retrieve data and shows this data on the page as a list. The details on how the list is displayed can be configured in attributes. There are four list types: flat, detailed, accordion and categorised. A nested <code>form</code> object can be used to display detailed data for the objects in the list.
+  </p>
+            
+
+</div>
+
+<div id="doc-flatlist" class="bs-docs-section">
+  <h3>Flat list</h3>
+
+  <div class="bs-example bs-example-type">
+            
+              <div class="bootcards-list">
+                <div class="panel panel-default">       
+                  <div class="list-group">
+                    <a class="list-group-item" href="#">
+                      <img src="images/Sofia Acey.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Acey, Sofia</h4>
+                      <p class="list-group-item-text">Masung Corp.</p>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Joseph Barish.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Barish, Joseph</h4>
+                      <p class="list-group-item-text">Masung Corp.</p>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Sarah Benson.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Benson, Sarah</h4>
+                      <p class="list-group-item-text">ZetaComm</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+                        
+            </div>
+
+  <pre><code>&lt;xc-list 
+    title="People"
+    list-width="5" 
+    allow-add="true"
+    order-by="lastName"
+    order-reversed="false"
+    url="/api/Contacts/:id"
+    summary-field="name"
+    details-field="company"
+    image-field="thumbnailUrl"
+    image-placeholder-icon="user"
+    autoload-first="true"
+    type="flat"
+    infinite-scroll="true"&gt;
+
+    &lt;xc-form 
+      url="/api/Contacts/:id" 
+      default-text="Select a contact from the list"
+      thumbnail-field="thumbnailUrl"
+      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+  &lt;/xc-list&gt;</code></pre>
+
+  <table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th><th>Sample</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>type</td><td>List type, can be 'flat', 'detailed', 'accordion' or 'categorised'</td><td>flat</td></tr>
+    <tr><td>title</td><td>(optional) List title</td><td>People</td></tr>
+    <tr><td>infinite-scroll</td><td>Activate infinite scroll. The list will show a 'load more' link if disabled.</td><td>true/ false</td></tr>
+    <tr><td>list-width</td><td>Relative list of the width. Can be a number from 1 to 12 (like the Bootstrap grid system)</td><td>5</td></tr>
+    <tr><td>allow-add</td><td>Controls if an add button will be displayed</td><td>true / false</td></tr>
+    <tr><td>order-by</td><td>Controls the sort order of the entries in the list. Should be the name of a property in the list</td><td>lastName</td></tr>
+    <tr><td>order-reversed</td><td>Inverts the sort order</td><td>true / false</td></tr>
+    <tr><td>url</td><td>URL to the REST API endpoint of the list</td><td>/api/Contacts/:id</td></tr>
+    <tr><td>summary-field</td><td>Object property shown in the list (top line).</td><td>name</td></tr>
+    <tr><td>details-field</td><td>Object property shown in the list (bottom line).</td><td>company</td></tr>
+    <tr><td>image-field</td><td>Object property containing a link to an image.</td><td>thumbnailUrl</td></tr>
+    <tr><td>image-placeholder-icon</td><td>Name of a (Font Awesome) icon to show as an image placeholder (if no image is available)</td><td>user</td></tr>
+    <tr><td>autoload-first</td><td>Auto loads the first entry in the list in the form object</td><td>true / false</td></tr>
+  </tbody>
+  </table>
+
+</div>
+
+<div id="doc-detailedlist" class="bs-docs-section">
+  <h3>Detailed list</h3>
+
+  <div class="bs-example bs-example-type">
+            
+              <div class="bootcards-list">
+                <div class="panel panel-default">       
+                  <div class="list-group">
+                    <a class="list-group-item" href="#">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <i class="fa fa-3x fa-building-o pull-left"></i>
+                          <h4 class="list-group-item-heading">Alparvis Ltd</h4>
+                          <p class="list-group-item-text">London, UK</p>
+                        </div>
+                        <div class="col-sm-6">
+                          <p class="list-group-item-text">Contractor</p>
+                          <p class="list-group-item-text">$12,000 Revenue YTD</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <i class="fa fa-3x fa-building-o pull-left"></i>
+                          <h4 class="list-group-item-heading">Camion Corp</h4>
+                          <p class="list-group-item-text">Tokyo, Japan</p>
+                        </div>
+                        <div class="col-sm-6">
+                          <p class="list-group-item-text">Customer</p>
+                          <p class="list-group-item-text">$75,000 Revenue YTD</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <i class="fa fa-3x fa-building-o pull-left"></i>
+                          <h4 class="list-group-item-heading">Derenden Systems</h4>
+                          <p class="list-group-item-text">Albuquerque, USA</p>
+                        </div>
+                        <div class="col-sm-6">
+                          <p class="list-group-item-text">Supplier</p>
+                          <p class="list-group-item-text">$1.3m Revenue YTD</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+                        
+            </div>
+
+  <pre><code>&lt;xc-list 
+    title="People"
+    list-width="5" 
+    allow-add="true"
+    order-by="lastName"
+    order-reversed="false"
+    url="/api/Contacts/:id"
+    summary-field="name"
+    details-field="company"
+    details-field-sub-top="phone"
+    details-field-sub-bottom="country"
+    autoload-first="true"
+    type="detailed"
+    infinite-scroll="true"&gt;
+
+    &lt;xc-form 
+      url="/api/Contacts/:id" 
+      default-text="Select a contact from the list"
+      thumbnail-field="thumbnailUrl"
+      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+  &lt;/xc-list&gt;</code></pre>
+
+  <table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th><th>Sample</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>details-field-sub-top<br />
+    details-field-sub-bottom</td><td>Shown at the top/ bottom right of every detailed list entry</td><td>phone</td></tr>
+  </tbody>
+  </table>
+
+</div>
+
+<div id="doc-categorizedlist" class="bs-docs-section">
+  <h3>Categorized list</h3>
+
+  <div class="bs-example bs-example-type">
+            
+              <div class="bootcards-list">
+                <div class="panel panel-default">       
+                  <div class="list-group">
+                      <div class="list-group-item bootcards-list-subheading">United Kingdom</div>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Sofia Acey.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Acey, Sofia</h4>
+                      <p class="list-group-item-text">Masung Corp.</p>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Joseph Barish.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Barish, Joseph</h4>
+                      <p class="list-group-item-text">Masung Corp.</p>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Sarah Benson.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Benson, Sarah</h4>
+                      <p class="list-group-item-text">ZetaComm</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+                        
+            </div>
+
+  <div class="highlight"><pre><code class="html">&lt;xc-list 
+    title="People"
+    list-width="5" 
+    allow-add="true"
+    group-by="department"
+    order-by="lastName"
+    order-reversed="false"
+    url="/api/Contacts/:id"
+    summary-field="name"
+    details-field="company"
+    image-field="thumbnailUrl"
+    image-placeholder-icon="user"
+    autoload-first="true"
+    type="categorised"
+    filter-by="country"
+    filter-value="UK"&gt;
+
+    &lt;xc-form 
+      url="/api/Contacts/:id" 
+      default-text="Select a contact from the list"
+      thumbnail-field="thumbnailUrl"
+      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+  &lt;/xc-list&gt;</code></pre></div>
+
+  <table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th><th>Sample</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>group-by</td><td>For categorized lists, the propety to group the list items by</td><td>department</td></tr>
+     <tr><td>filter-by</td><td>Property to filter the list items by</td><td>country</td></tr>
+      <tr><td>filter-value</td><td>Value to filter by</td><td>UK</td></tr>
+    
+  </tbody>
+  </table>
+
+</div>
+
+<div id="doc-accordionlist" class="bs-docs-section">
+  <h3>Accordion list</h3>
+
+  <p>Similar to the categorized list, but now with collapsible/ expandable categories.</p>
+
+  <div class="bs-example bs-example-type">
+            
+              <div class="bootcards-list">
+                <div class="panel panel-default">       
+                  <div class="list-group">
+                    <a class="list-group-item bootcards-list-subheading" >United Kingdom
+            
+          </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Sofia Acey.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Acey, Sofia</h4>
+                      <p class="list-group-item-text">Masung Corp.</p>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Joseph Barish.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Barish, Joseph</h4>
+                      <p class="list-group-item-text">Masung Corp.</p>
+                    </a>
+                    <a class="list-group-item" href="#">
+                      <img src="images/Sarah Benson.jpg" class="img-rounded pull-left"/>
+                      <h4 class="list-group-item-heading">Benson, Sarah</h4>
+                      <p class="list-group-item-text">ZetaComm</p>
+                    </a>
+                    <a class="collapsed list-group-item bootcards-list-subheading" >
+            Germany
+          </a>
+                  </div>
+                </div>
+              </div>
+                        
+            </div>
+
+   <div class="highlight"><pre><code class="html">&lt;xc-list 
+    title="People"
+    list-width="5" 
+    allow-add="true"
+    group-by="department"
+    order-by="lastName"
+    order-reversed="false"
+    url="/api/Contacts/:id"
+    summary-field="name"
+    details-field="company"
+    image-field="thumbnailUrl"
+    image-placeholder-icon="user"
+    type="categorised"&gt;
+
+    &lt;xc-form 
+      url="/api/Contacts/:id" 
+      default-text="Select a contact from the list"
+      thumbnail-field="thumbnailUrl"
+      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+  &lt;/xc-list&gt;</code></pre></div>
+
+</div>
+	
+					<div id="doc-cards" class="bs-docs-section">
+						<h3>Cards</h3>
+					</div>
+
+					<div id="doc-base" class="bs-docs-section">
+						<h3>Base Cards</h3>
+						<p class="lead">Base Cards display a list of information separated by dividers.</p>
+
+						<div class="bs-example bs-example-type">
+	
+							<div class="panel panel-default">
+								<div class="panel-heading clearfix">
+									<h3 class="panel-title pull-left">Base Card Title</h3>
+									<a class="btn btn-primary pull-right" href="#">
+										<i class="fa fa-pencil"></i>
+										Edit
+									</a>
+								</div>
+								<div class="list-group">
+									<div class="list-group-item">
+										<p class="list-group-item-text">Name</p>
+										<h4 class="list-group-item-heading">John Smith</h4>
+									</div>
+									<div class="list-group-item">
+										<p class="list-group-item-text">Occupation</p>
+										<h4 class="list-group-item-heading">Web Developer</h4>
+									</div>
+									<div class="list-group-item">
+										<p class="list-group-item-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam mauris tellus, vehicula ut tellus id, suscipit dapibus tortor. Integer viverra turpis ac fringilla hendrerit. Sed faucibus posuere felis et pellentesque. Cras varius tortor vitae molestie tempor. Proin ut viverra elit, ac gravida tortor.</p>
+									</div>
+								</div>
+								<div class="panel-footer">
+									<small>Built with Bootcards - Base Card</small>
+								</div>
+							</div>
+						</div>
+<div class="highlight"><pre><code class="html">&lt;xc-base ng-if="$parent.selected.id =='base'" footer-text="Built with Bootcards - Base Card"
+  title="Base Card"&gt;
+  
+  &lt;div class="list-group-item"&gt;
+      &lt;p class="list-group-item-text"&gt;Name&lt;/p&gt;
+        &lt;h4 class="list-group-item-heading"&gt;John Smith&lt;/h4&gt;
+    &lt;/div&gt;
+    &lt;div class="list-group-item"&gt;
+        &lt;p class="list-group-item-text"&gt;Occupation&lt;/p&gt;
+        &lt;h4 class="list-group-item-heading"&gt;Web Developer&lt;/h4&gt;
+    &lt;/div&gt;
+    &lt;div class="list-group-item"&gt;
+        &lt;p class="list-group-item-text"&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam mauris tellus, vehicula ut tellus id, suscipit dapibus tortor. Integer viverra turpis ac fringilla hendrerit. Sed faucibus posuere felis et pellentesque. Cras varius tortor vitae molestie tempor. Proin ut viverra elit, ac gravida tortor.&lt;/p&gt;
+    &lt;/div&gt;
+
+&lt;/xc-base&gt;</code></pre></div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th><th>Sample</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>title</td><td>Title of the card</td><td>My card</td></tr>
+    <tr><td>footer-text</td><td>Show in the footer area of the card</td><td></td></tr>
+  </tbody>
+  </table>
+					</div>
+	
+					<div id="doc-formcard" class="bs-docs-section">
+						<h3>Form Cards</h3>
+						<p class="lead">Form Cards are used for user input in your app and to display the contents of an object.</p>
+
+						<div class="bs-example bs-example-type">
+	
+							<div class="panel panel-default">
+								<div class="panel-heading clearfix">
+									<h3 class="panel-title pull-left">Form Card Title</h3>
+									<div class="btn-group pull-right">
+										<button class="btn btn-danger">
+											<i class="fa fa-times"></i>
+											Cancel
+										</button>
+										<button class="btn btn-success">
+											<i class="fa fa-check"></i>
+											Save
+										</button>
+									</div>
+								</div>
+								<div class="modal-body">
+									<form class="form-horizontal">
+										<div class="form-group">
+											<label class="col-xs-3 control-label">Name</label>
+											<div class="col-xs-9">
+												<input type="text" class="form-control" value="John Smith">
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-xs-3 control-label">Occupation</label>
+											<div class="col-xs-9">
+												<select class="form-control">
+													<option>Designer</option>
+													<option selected>Developer</option>
+													<option>Salesman</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-xs-3 control-label">Description</label>
+											<div class="col-xs-9">
+												<textarea class="form-control" rows="6">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam mauris tellus, vehicula ut tellus id, suscipit dapibus tortor. Integer viverra turpis ac fringilla hendrerit. Sed faucibus posuere felis et pellentesque. Cras varius tortor vitae molestie tempor. Proin ut viverra elit, ac gravida tortor.</textarea>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="panel-footer">
+									<small>Built with Bootcards - Form Card</small>
+								</div>
+							</div>
+						</div>
+<div class="highlight"><pre><code class="html">&lt;xc-form
+  url="/api/Contacts/:id"
+  item-id="30233C541B56C65380257CDD0024D420" 
+  thumbnail-field="thumbnailUrl"
+  thumbnail-show-with="name"&gt;&lt;/xc-form&gt;</code></pre></div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>url</td><td>REST endpoint to retrieve data from</td></tr>
+    <tr><td>item-id</td><td>Variable in the REST endpoint</td></tr>
+    <tr><td>thumbnail-field</td><td>Name of the thumbnail property</td></tr>
+    <tr><td>thumbnail-show-with</td><td>Name of the property to show the thumbnail next to.</td></tr>
+    
+  </tbody>
+  </table>
+
+  <p>Besides the configuration with HTML attributes, to display form data you also need to add a section to the application's <code>config.js</code> file. There you can control which object properties to show (in read and/or edit mode), which properties are required, etc. Sample contents:</p>
+
+  <div class="highlight"><pre><code class="javascript">var xcomponents = { };
+
+xcomponents.modelName = 'Contact';
+
+xcomponents.fields = [
+  { label : 'First name' , field: 'firstName', required: true, read: false},
+  { label : 'Last name' , field: 'lastName', required: true, read: false},
+  { field : 'name', edit: false, formula : ['firstName', 'lastName'] },
+  { field : 'title' }, 
+  { field : 'city' },
+  { field : 'company' },
+  { field : 'country', type : 'select', options : ['UK', 'USA (West Coast)', 'USA (East Coast)', 'The Netherlands']},
+  { label : 'Mobile enabled', field : 'mobileEnabled', type : 'toggle', labelTrue : 'On', labelFalse : 'Off'},
+  { field : 'devices', type : 'select-multiple', options : ['iPad 4', 'iPad Air', 'iPhone 6', 'iPhone 6 Plus', 'iPod Touch']},
+  { label : 'Email' , field:'email', type:'email', required: true},
+  { label : 'Phone', field:'phone', type: 'phone'},
+  { field : 'comments', type : 'multiline'}
+];
+
+xcomponents.imageBase = 'http://your.server/path/to/images/';</code></pre></div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Field</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>modelName</td><td>Name of the model that's being used</td></tr>
+    <tr><td>fields</td><td>Array of fields to show in read and/or edit mode. At a minimum you should defined the field name to use: <code>{ field : 'title'}</code>. Other attributes that can be used are:<br />
+    <br />
+    <code>label</code><br />
+    <code>required</code> (true/ false)<br />
+    <code>read</code>: show in read mode: true (default) or false<br />
+    <code>edit</code>: show in edit mode: true (default) or false<br />
+    <code>formula</code>: formula to compute object properties, only concatenation is currently supported<br />
+    <code>type</code>: text (default), select, select-multiple, toggle, email, phone, multiline<br />
+    <code>options</code>: array of options for select fields<br /></td></tr>
+    <tr><td>image-base</td><td>Base url for images</td></tr>
+    
+  </tbody>
+  </table>
+
+					</div>
+
+          <div id="doc-reading" class="bs-docs-section">
+            <h3>Reading Cards</h3>
+
+            <div class="bs-example bs-example-type">
+  
+              <div class="panel panel-default bootcards-richtext" > 
+  <div class="panel-heading clearfix">
+    <h3 class="panel-title pull-left ng-binding">Reading Card</h3>
+      
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary icon-only" href="#" ng-click="increaseFontSize()">
+        <i class="fa fa-lg fa-search-plus"></i></a>
+        <a class="btn btn-primary icon-only" href="#" ng-click="decreaseFontSize()">
+        <i class="fa fa-lg fa-search-minus"></i></a>
+    </div>
+  </div>
+    <div class="panel-body typographyreadcontent">
+          <h1>h1. Bootstrap heading&nbsp;<small>Secondary text</small></h1>
+          <h2>h2. Bootstrap heading&nbsp;<small>Secondary text</small></h2>
+          <h3>h3. Bootstrap heading &nbsp;<small>Secondary text</small></h3>
+          <h4>h4. Bootstrap heading &nbsp;<small>Secondary text</small></h4>
+          <h5>h5. Bootstrap heading &nbsp;<small>Secondary text</small></h5>
+          <h6>h6. Bootstrap heading &nbsp;<small>Secondary text</small></h6>
+         <p>Nullam quis risus eget urna mollis ornare vel eu leo. Cum
+                  sociis natoque penatibus et
+                  magnis dis parturient montes, nascetur ridiculus mus. Nullam
+                  id dolor id nibh ultricies vehicula.
+            </p>
+            <p>Cum sociis natoque penatibus et
+                  magnis dis parturient montes,
+                  nascetur ridiculus mus. Donec
+                  ullamcorper nulla non metus
+                  auctor fringilla. Duis mollis,
+                  est non commodo luctus, nisi
+                  erat porttitor ligula, eget
+                  lacinia odio sem nec elit. Donec
+                  ullamcorper nulla non metus
+                  auctor fringilla.</p><p>Maecenas sed diam eget risus
+                  varius blandit sit amet non
+                  magna. Donec id elit non mi
+                  porta gravida at eget metus.
+                  Duis
+                  mollis, est non commodo
+                  luctus, nisi erat porttitor
+                  ligula, eget
+                  lacinia odio sem
+                  nec elit.
+            </p>
+         
+    </div>
+  <div class="panel-footer">
+    <small class="pull-left ng-binding">Built with Bootcards - Reading Card</small>
+  </div>
+</div>
+
+
+<div class="highlight"><pre><code class="html">&lt;xc-reading 
+      title="Reading Card" 
+      footer-text="Built with Bootcards - Reading Card"&gt;
+
+  &lt;div&gt;
+    Contents here...
+  &lt;/div&gt;
+
+&lt;/xc-reading&gt;</code></pre></div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    <tr><td colspan="2">same as base card</td></tr>
+  </tbody>
+  </table>
+          </div>
+
+
+<div id="doc-summary" class="bs-docs-section">
+            <h3>Summary Cards and Summary Items</h3>
+            <p class="lead">Summary cards can be used on dashboards, etc to highlight important pieces of data in your app.</p>
+            <div class="bs-example bs-example-type">
+  
+              <div class="panel panel-default bootcards-summary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Summary Card Heading</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-xs-6 col-sm-4">
+                      <a class="bootcards-summary-item" href="#">
+                        <i class="fa fa-3x fa-users"></i>
+                        <h4>Contacts <span class="label label-info">432</span></h4>
+                      </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                      <a class="bootcards-summary-item" href="#">
+                        <i class="fa fa-3x fa-building-o"></i>
+                        <h4>Companies <span class="label label-info">98</span></span></h4>
+                      </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                      <a class="bootcards-summary-item" href="#">
+                        <i class="fa fa-3x fa-clipboard"></i>
+                        <h4>Notes <span class="label label-danger">54</span></h4>
+                      </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                      <a class="bootcards-summary-item" href="#">
+                        <i class="fa fa-3x fa-files-o"></i>
+                        <h4>Files <span class="label label-info">65</span></h4>
+                      </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                      <a class="bootcards-summary-item" href="#">
+                        <i class="fa fa-3x fa-check-square-o"></i>
+                        <h4>Tasks <span class="label label-warning">109</span></h4>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel-footer">
+                  <small>Built with Bootcards - Summary Card</small>
+                </div>  
+              </div>
+              
+            </div>
+  
+<div class="highlight"><pre><code class="html">&lt;xc-summary 
+  title="Summary Card" footer-text="Built with Bootcards - Summary Card"&gt;
+
+  &lt;xc-summary-item title="Contacts" icon="fa-users" target=""&gt;&lt;/xc-summary-item&gt;
+  &lt;xc-summary-item title="Companies" icon="fa-building-o" target=""&gt;&lt;/xc-summary-item&gt;
+  &lt;xc-summary-item title="Notes" icon="fa-clipboard" target=""&gt;&lt;/xc-summary-item&gt;
+  &lt;xc-summary-item title="Charts" icon="fa-bar-chart-o" target=""&gt;&lt;/xc-summary-item&gt;
+  &lt;xc-summary-item title="Files" icon="fa-files-o" target=""&gt;&lt;/xc-summary-item&gt;
+  &lt;xc-summary-item title="Tasks" icon="fa-check-square-o" target=""&gt;&lt;/xc-summary-item&gt;
+
+&lt;/xc-summary&gt;</code></pre></div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    <tr><td colspan="2">for summary object: same as base card</td></tr>
+    <tr><td>icon</td><td>Icon used on the summary item</td></tr>
+    <tr><td>target</td><td>URL to link to</td></tr>
+  </table>
+
+
+          </div>
+
+<!--media-->
+	
+  <div id="doc-mediacard" class="bs-docs-section">
+            <h3>Media Cards</h3>
+            <p class="lead">Media Cards hold larger images or videos.</p>
+            <div class="bs-example bs-example-type">
+  
+              <div class="panel panel-default bootcards-media">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Media Card Heading</h3>
+                </div>
+                <div class="panel-body">
+                  Media card description lorem ipsum dolor est compendium
+                </div>
+                <img src="http://www.teamstudio.com/Portals/218295/images/istock_000001242290small.jpg" class="img-responsive"/>
+                <div class="panel-footer">
+                  <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                      <button class="btn btn-default">
+                        <i class="fa fa-arrow-down"></i>
+                        Download
+                      </button>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-default">
+                        <i class="fa fa-star"></i>
+                        Favorite
+                      </button>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-default">
+                        <i class="fa fa-envelope"></i>
+                        Email
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+  
+<div class="highlight"><pre><code class="html">&lt;xc-file 
+  title="Media Card"
+  description="Media card description lorem ipsum dolor est compendium"
+  allow-favorite="true"
+  allow-email="true"
+  preview-url="http://www.teamstudio.com/Portals/218295/images/istock_000001242290small.jpg"&gt;
+&lt;/xc-file&gt;</code></pre></div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    
+    <tr><td>description</td><td>Description text</td></tr>
+    <tr><td>allow-favorite</td><td>Show the favorite link</td></tr>
+     <tr><td>allow-email</td><td>Show the email link</td></tr>
+      <tr><td>preview-url</td><td>URL to the image</td></tr>
+  </table>
+          </div>
+  
+          <div id="doc-filecard" class="bs-docs-section">
+            <h3>File Cards</h3>
+            <p class="lead">File Cards are intended to show information and functions for non-media file formats (PDFs, Word documents, spreadsheets, etc).</p>
+            <div class="bs-example bs-example-type">
+  
+              <div class="panel panel-default bootcards-file">
+                <div class="panel-heading">
+                  <h3 class="panel-title">File Card Heading</h3>
+                </div>
+                <div class="list-group">
+                  <div class="list-group-item">
+                    <a href="#">
+                      <i class="icon-file-pdf"></i>
+                    </a>
+                    <h4 class="list-group-item-heading">
+                      <a href="#">
+                        File Name Goes Here
+                      </a>
+                    </h4>
+                    <p class="list-group-item-text"><strong>PDF</strong></p>
+                    <p class="list-group-item-text"><strong>3.2Mb</strong></p>
+                  </div>
+                  <div class="list-group-item">
+                    <p class="list-group-item-text"><strong>Added by John Smith on 5 March 2014</strong></p>
+                  </div>
+                  <div class="list-group-item">
+                    <p class="list-group-item-text">MediaFile card description lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum commodo, nulla ut porta interdum, mi mi venenatis felis, vitae pellentesque ante eros at enim.</p>
+                  </div>
+                </div>
+                <div class="panel-footer">
+                  <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                      <button class="btn btn-default">
+                        <i class="fa fa-arrow-down"></i>
+                        Download
+                      </button>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-default">
+                        <i class="fa fa-star"></i>
+                        Favorite
+                      </button>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-default">
+                        <i class="fa fa-envelope"></i>
+                        Email
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <div class="highlight">
+<pre><code class="html">&lt;xc-file
+  title="File Card"
+  file-name="File Name Goes Here"
+  file-type="pdf"
+  file-size="3.2 MB"
+  summary="Added by John Smith on 5 March 2014"
+  description="MediaFile card description lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum commodo, nulla ut porta interdum, mi mi venenatis felis, vitae pellentesque ante eros at enim."
+  url="/a/b/file.pdf"
+  allow-favorite="true"
+  allow-email="true"&gt;
+&lt;/xc-file&gt;</code></pre>
+            </div>
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    
+    <tr><td>summary</td><td>Short summary description </td></tr>
+    <tr><td>description</td><td>Description text</td></tr>
+    <tr><td>allow-favorite</td><td>Show the favorite link</td></tr>
+     <tr><td>allow-email</td><td>Show the email link</td></tr>
+      <tr><td>url</td><td>URL to the file</td></tr>
+
+  <tr><td>file-name</td><td>Name of the file</td></tr>
+  <tr><td>file-type</td><td>File type/ extension</td></tr>
+  <tr><td>file-size</td><td>Displayed file size</td></tr>
+  </table>
+
+
+          </div>
+					
+	
+	
+					<div id="doc-chartcard" class="bs-docs-section">
+						<h3>Chart Cards</h3>
+						<p class="lead">Chart cards contain charts powered by Morris.js.</p>
+						<p>These can be used with Table cards in order to toggle between a chart view and the raw data.</p>
+						<div class="bs-example bs-example-type">
+	
+							<div class="panel panel-default bootcards-chart">
+								<div class="panel-heading">
+									<h3 class="panel-title">Chart Card Heading</h3>					
+								</div>
+								<div class="bootcards-chart-canvas" id="barChart"></div>
+								<div class="panel-footer">
+									<small>Built with Bootcards - Chart Card</small>
+								</div>					
+							</div>
+						
+							<script type="text/javascript">
+								var drawCharts = function() {
+									$("#barChart").empty();
+									Morris.Bar({
+										element: 'barChart',
+										data: [
+											{person: 'Guy Bardsley', sales: 550},
+											{person: 'Adam Callahan', sales: 1500},
+											{person: 'Arlo Geist', sales: 3750},
+											{person: 'Sheila Hutchins', sales: 3500}
+										],
+										xkey: 'person',
+										ykeys: ['sales'],
+										labels: ['Sales'],
+										hideHover: 'auto'
+									});
+								}
+								$(document).ready( function() {
+									drawCharts();
+								});
+								$(window).on('resize', function() {
+									drawCharts();
+								});						
+							</script>						
+							
+						</div>
+	
+            <div class="highlight"><pre><code class="html">&lt;xc-chart chart-id="closed-sales" 
+  title="Chart Card"
+  chart-type="donut"
+  value-prefix="$"&gt;
+&lt;/xc-chart&gt;</code></pre></div>
+            					</div>
+
+
+<table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    
+    <tr><td>chart</td><td>One of: donut, bar, area, line</td></tr>
+    
+  </table>
+
+
+  <p>Besides the configuration with HTML attributes, to display a chart you also need to add a section to the application's <code>config.js</code> file. There you can set the chart data to use. Sample contents:</p>
+
+  <pre><code>var xcomponents = { };
+
+xcomponents.charts['closed-sales'] = [
+  {label: 'Guy Bardsley', value: 560 },
+  {label: 'Adam Callahan', value: 1500 },
+  {label: 'Arlo Geist', value: 3750 },
+  {label: 'Sheila Hutchins', value: 3500 },
+  {label: 'Jeanette Quijano', value: 1250 },
+  {label: 'Simon Sweet', value: 5250 }
+];</code></pre>
+
+	
+					</div>
+
+          <!--other-->
+          <div id="doc-other" class="bs-docs-section">
+            <h3>Other</h3>
+          </div>
+
+          <!--carousel-->
+          <div id="doc-carousel" class="bs-docs-section">
+            <h3>Carousel</h3>
+            <p class="lead">To display an image carousel.</p>
+            <div class="highlight"><pre><code class="html">&lt;xc-carousel
+  interval="1000"&gt;
+&lt;/xc-carousel&gt;</code></pre></div>
+
+  <table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    
+    <tr><td>interval</td><td>Time in Ms to display every slide</td></tr>
+    
+  </table>
+
+            <p>Besides the configuration with HTML attributes, to display a chart you also need to add a section to the application's <code>config.js</code> file. There you can set the image slides to display. Sample contents:</p>
+
+  <div class="highlight"><pre><code class="javascript">var xcomponents = { };
+
+xcomponents.carouselSlides = [     
+  {image : "images/fog.jpeg", text : "Fog"},
+  {image : "images/mountain.jpeg", text : "Mountain"},
+  {image : "images/bike.jpeg", text : "Bike"}
+];</code></pre>
+
+          </div>
+
+        </div>
+
+      </div>
+		</div><!--col-->
+
+	</div><!--container-->
+
+</div><!--row-->
+
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+
+<script type="text/javascript">
+  //activate highlight.js
+  hljs.initHighlightingOnLoad();
+
+</script>
+
+
+</body>
+</html>

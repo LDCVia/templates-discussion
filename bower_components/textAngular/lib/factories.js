@@ -61,7 +61,7 @@ angular.module('textAngular.factories', [])
 		} else return html;
 	};
 	return taFixChrome;
-}).factory('taSanitize', ['$sanitize', 'taDOM', function taSanitizeFactory($sanitize, taDOM){
+}).factory('taSanitize', ['$sanitize', function taSanitizeFactory($sanitize){
 
 	var convert_infos = [
 		{
@@ -79,7 +79,7 @@ angular.module('textAngular.factories', [])
 	var styleMatch = [];
 	for(var i = 0; i < convert_infos.length; i++){
 		var _partialStyle = '(' + convert_infos[i].property + ':\\s*(';
-		for(j = 0; j < convert_infos[i].values.length; j++){
+		for(var j = 0; j < convert_infos[i].values.length; j++){
 			/* istanbul ignore next: not needed to be tested yet */
 			if(j > 0) _partialStyle += '|';
 			_partialStyle += convert_infos[i].values[j];
@@ -110,9 +110,9 @@ angular.module('textAngular.factories', [])
 	
 	function transformLegacyStyles(html){
 		if(!html || !angular.isString(html) || html.length <= 0) return html;
-		var i, j;
+		var i;
 		var styleElementMatch = /<([^>\/]+?)style=("([^"]+)"|'([^']+)')([^>]*)>/ig;
-		var match, styleVal, newTag, lastNewTag = '', newHtml, finalHtml = '', lastIndex = 0;
+		var match, subMatch, styleVal, newTag, lastNewTag = '', newHtml, finalHtml = '', lastIndex = 0;
 		while(match = styleElementMatch.exec(html)){
 			// one of the quoted values ' or "
 			/* istanbul ignore next: quotations match */
@@ -168,7 +168,7 @@ angular.module('textAngular.factories', [])
 			// record last index after this tag
 			lastIndex = match.index + match[0].length;
 			// construct tag without the align attribute
-			newTag = '<' + match[1] + match[5];
+			var newTag = '<' + match[1] + match[5];
 			// add the style attribute
 			if(/style=("([^"]+)"|'([^']+)')/ig.test(newTag)){
 				/* istanbul ignore next: quotations match */
@@ -211,7 +211,7 @@ angular.module('textAngular.factories', [])
 		// Do processing for <pre> tags, removing tabs and return carriages outside of them
 		
 		var _preTags = safe.match(/(<pre[^>]*>.*?<\/pre[^>]*>)/ig);
-		processedSafe = safe.replace(/(&#(9|10);)*/ig, '');
+		var processedSafe = safe.replace(/(&#(9|10);)*/ig, '');
 		var re = /<pre[^>]*>.*?<\/pre[^>]*>/ig;
 		var index = 0;
 		var lastIndex = 0;
