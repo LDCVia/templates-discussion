@@ -37,6 +37,10 @@ app.factory('RESTFactory', ['$http', function($http) {
 
 		},
 
+		login : function(url, data, callback){
+      return $http.post(url, JSON.stringify(data)).success(callback);
+    },
+
 		insert : function(url, toInsert) {
 			console.error('not implemented');
 		},

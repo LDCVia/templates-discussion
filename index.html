@@ -1,33 +1,34 @@
 <!doctype html>
 <html>
 
-<head>
-  <title>LDC Via Discussion</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <title>LDC Via Discussion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!--set the hidden class here, so everything is immediately hidden-->
-  <style type="text/css">
-    .hidden {
-      display:none;
-    }
-  </style>
+    <!--set the hidden class here, so everything is immediately hidden-->
+    <style type="text/css">
+      .hidden {
+        display:none;
+      }
+    </style>
 
-  <!-- polyfill for html imports & xcomponents resources -->
-    <script type="text/javascript" src="/bower_components/ldcvia-xcomponents/dist/js/xc-base.js"></script>
-    <script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"></script>
+    <!-- polyfill for html imports & xcomponents resources -->
     <link rel="import" href="/bower_components/ldcvia-xcomponents/dist/includes/includes.html">
 
-  <!-- xcomponents app config -->
-  <script src="discussion.js"></script>
+  </head>
+  <body ng-controller="xcController" class="hidden">
 
-</head>
-<body class="hidden" ng-controller="xcController">
+    <xc-header title="All Documents"></xc-header>
 
-  <xc-header title="All Documents"></xc-header>
+    <div ng-view>
+    </div>
 
-  <div ng-view>
-  </div>
+    <xc-footer></xc-footer>
 
-  <xc-footer></xc-footer>
+    <!-- xcomponents app config -->
+    <script type="text/javascript" src="/bower_components/ldcvia-xcomponents/dist/js/xc-base.js"></script>
+    <script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"></script>
+    <script src="discussion.js"></script>
 
-</body></html>
+  </body>
+</html>

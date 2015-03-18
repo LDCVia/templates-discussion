@@ -1,8 +1,8 @@
-/* xcomponents 0.1.0 2015-03-18 10:19 */
+/* xcomponents 0.1.0 2015-03-18 2:41 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
-app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory', 
+app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
 		function( RESTFactory, PouchFactory, LowlaFactory) {
 
 	return {
@@ -16,7 +16,7 @@ app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
 			case 'lowla':
 				return LowlaFactory;
 			default:
-				return RESTFactory; 
+				return RESTFactory;
 			}
 
 		}
@@ -38,38 +38,42 @@ app.factory('RESTFactory', ['$http', function($http) {
 
 		},
 
+		login : function(url, data, callback){
+      return $http.post(url, JSON.stringify(data)).success(callback);
+    },
+
 		insert : function(url, toInsert) {
 			console.error('not implemented');
 		},
 
-		all : function(url) { 
+		all : function(url) {
 
 			url = url.replace(":id", "");
 
 			console.log('querying REST service at ' + url);
 
 			return $http.get(url).then( function(res) {
-				console.log('returning '  + res.data.length + ' items');
-				return res.data;
+				console.log('returning '  + res.data.data.length + ' items');
+				return res.data.data;
 			});
 
 		},
 
 		saveNew : function(url, item) {
-			
+
 			url = url.replace(":id", "");
 
-			return $http.post(url, item).then( function(res) {
+			return $http.put(url, item).then( function(res) {
 				return res.data;
 			});
 
 		},
 
 		update : function(url, item) {
-		
+
 			url = url.replace(":id", "");
 
-			return $http.put(url, item).then( function(res) {
+			return $http.post(url, item).then( function(res) {
 				return res.data;
 			});
 
@@ -83,7 +87,7 @@ app.factory('RESTFactory', ['$http', function($http) {
 		deleteAll : function() {
 
 			console.error('not implemented');
-			
+
 		},
 
 		getById : function(url, id) {
@@ -133,8 +137,8 @@ app.factory('PouchFactory', ['pouchDB', function(pouchDB) {
 			return pouch.bulkDocs(toInsert);
 		},
 
-		all : function(dbName) { 
-			
+		all : function(dbName) {
+
 			var db = pouchDB(dbName);
 
 			console.log('querying Pouch database named ' + dbName);
@@ -143,13 +147,13 @@ app.factory('PouchFactory', ['pouchDB', function(pouchDB) {
 			.then( function(res) {
 
 				var queryResults = [];
-	                
+
 	            angular.forEach(res.rows, function(r) {
 	            	queryResults.push(r.doc);
 	            });
 
 	            console.log('returning ' + queryResults.length + ' results');
-	            
+
 				return queryResults;
 			})
 			.catch( function(err) {
@@ -205,7 +209,7 @@ app.factory('PouchFactory', ['pouchDB', function(pouchDB) {
 				console.error(err);
 				return null;
 			});
-			
+
 		},
 
 		delete : function(dbName, item) {
@@ -268,7 +272,7 @@ app.factory('LowlaFactory', [function() {
 			return items.insert(toInsert);
 		},
 
-		all : function(dbName) { 
+		all : function(dbName) {
 
 			var items = this.getDb().collection(dbName, collection);
 
@@ -292,7 +296,7 @@ app.factory('LowlaFactory', [function() {
 			delete item['$$hashKey'];
 
 			return items.insert(item);
-			
+
 			/*return db.post(item).then( function(res) {
 
 				if (res.ok) {
@@ -329,7 +333,7 @@ app.factory('LowlaFactory', [function() {
 					console.error('error while inserting', err);
 				}
 			);
-			
+
 		},
 
 		delete : function(dbName, item) {
@@ -358,7 +362,7 @@ app.factory('LowlaFactory', [function() {
 				return null;
 
 			});
-			
+
 		},
 
 		exists : function(dbName, id) {
@@ -371,6 +375,7 @@ app.factory('LowlaFactory', [function() {
 
 
 }]);
+
 /*
  * Main XComponents module
  *
@@ -387,28 +392,37 @@ var app = angular.module('xcomponents', [
 	'ngAnimate',
 	'ngSanitize',
 	'textAngular',
-	'ui.bootstrap'
+	'ui.bootstrap',
+	'ldcvia.login'
 ]);
 
 //bootstrapping code
 var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
 
 if (hasNativeHTMLImportsSupport) {
-	
+
 	angular.element(document).ready(function() {
 		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
 		angular.bootstrap(document, ['xcomponents']);
 	});
 
 } else {
-	window.addEventListener('HTMLImportsLoaded', function(e){ 
+	window.addEventListener('HTMLImportsLoaded', function(e){
 		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
 		angular.bootstrap(document, ['xcomponents']);
 	});
 }
 
-app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils) {
-	
+app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils, $cookieStore, $location) {
+	if ($cookieStore.get('apikey')){
+		$rootScope.apikey = $cookieStore.get('apikey');
+		$rootScope.user = $cookieStore.get('user');
+	}
+	if ($rootScope.apikey == null) {
+		console.log('We need to log in');
+		$location.path("/login");
+	}
+
 	$scope.menuOptions = [];
 
 	//load the OS specific CSS
@@ -434,7 +448,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 		css += 'bootcards-desktop-lite.min.css';
 		body.addClass('bootcards-desktop');
 	}
-	
+
 	var head = angular.element(document.getElementsByTagName('head')[0]);
 	head.append("<link rel='stylesheet' href='" + css + "' />");
 
@@ -480,11 +494,11 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 				}
 
 				if (f.type == 'select' || f.type == 'select-multiple') {
-				
+
 					if (f.options.hasOwnProperty('endpoint')) {
 
 						f.options = xcUtils.resolveRemoteOptionsList(f.options);
-						
+
 					} else if (f.options.length>0 && typeof f.options[0] == 'string') {
 
 						var o = [];
@@ -510,7 +524,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 					config.fieldsFormula.push(f);
 				}
 
-				
+
 			}
 		}
 
@@ -547,14 +561,13 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 			//filter by field type
 			return $filter(fieldType)(item);
 		} else if (!filterName) {
-			return item;	
+			return item;
 		} else {
 			var _res = $interpolate('{{value | ' + filterName + '}}');
 			return _res( {value : item } );
 		}
 	};
 });
-
 
 
 //polyfill for indexOf function
@@ -1146,8 +1159,8 @@ app.controller('UpdateItemInstanceCtrl',
 
 var app = angular.module('xcomponents');
 
-app.directive('xcForm', 
-	['$rootScope', 'xcDataFactory', 
+app.directive('xcForm',
+	['$rootScope', 'xcDataFactory',
 	function($rootScope, xcDataFactory) {
 
 	return {
@@ -1159,7 +1172,7 @@ app.directive('xcForm',
 			defaultText : '@',
 			thumbnailField : '@',
 			thumbnailShowWith : '@',
-			iconField : '@',				/*icon*/ 
+			iconField : '@',				/*icon*/
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			allowDelete : '=?',
 			datastoreType : '@'
@@ -1180,6 +1193,8 @@ app.directive('xcForm',
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.modelName = xcUtils.getConfig('modelName');
 			$scope.isNew = true;
+			$scope.host = xcUtils.getConfig('host');
+			$scope.db = xcUtils.getConfig('db');
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				$scope.selectedItem = item;
@@ -1188,7 +1203,7 @@ app.directive('xcForm',
 				if (item == null) {
 
 					$scope.thumbnailSrc==null;
-					
+
 				} else {
 
 					if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
@@ -1206,8 +1221,8 @@ app.directive('xcForm',
 				}
 
 			});
- 
-			//load specified entry 
+
+			//load specified entry
 			if (typeof $scope.itemId != 'undefined' ) {
 
 				var f = xcDataFactory.getStore($attrs.datastoreType);
@@ -1246,8 +1261,8 @@ app.directive('xcForm',
 					}
 
 				});
-				
-				
+
+
 			}
 
 			$scope.editDetails = function() {
@@ -1332,7 +1347,7 @@ app.directive('xcForm',
 				});
 
 			};
-			
+
 		}
 
 	};
@@ -1350,8 +1365,8 @@ app.directive('animateOnChange', function($animate) {
 						$animate.removeClass(elem,c);
 					});
 				}
-			})  
-	}; 
+			})
+	};
 });
 
 
@@ -1370,7 +1385,7 @@ app.directive('xcHeader', function() {
 		templateUrl : 'xc-header.html',
 		transclude : true,
 
-		controller : function($rootScope, $scope, $document, xcUtils, $timeout) {
+		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore) {
 
 			$scope.showBackButton = false;
 
@@ -1412,6 +1427,18 @@ app.directive('xcHeader', function() {
 				return (menuOption.hasOwnProperty('menuOptions') && menuOption.menuOptions.length>0);
 			};
 
+			$scope.logout = function(){
+        $cookieStore.remove('apikey');
+				$cookieStore.remove('user');
+        $rootScope.apikey = null;
+				$rootScope.user = null;
+        window.location.reload();
+      };
+
+      $scope.isLoggedIn = function() {
+        return $rootScope.apikey != null;
+      }
+
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){
 
@@ -1426,14 +1453,14 @@ app.directive('xcHeader', function() {
 					var i = a.children("i");
 					i.addClass("fa-chevron-circle-right").removeClass("fa-chevron-circle-down");
 				});
-		    }); 
+		    });
 
 		    $rootScope.$on("selectItemEvent", function(ev, item) {
 		    	//item selected: hide the 'menu' button
 
 		    	if (bootcards.isXS() ) {
 
-		    		if ( !$scope.toggleMenuButton) {	
+		    		if ( !$scope.toggleMenuButton) {
 						$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
 					}
 					if ( !$scope.backButton) {
@@ -1464,12 +1491,13 @@ app.directive('xcHeader', function() {
 				$scope.$emit('selectItemEvent', null);
 				$rootScope.hideList = false;
 			};
-   
+
 		}
 
 	};
 
 });
+
 
 var app = angular.module('xcomponents');
 
@@ -2436,22 +2464,22 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"list-group\">\n" +
+    "    <div class=\"list-group\">\n" +
     "\n" +
     "			<div ng-repeat=\"field in fieldsRead\">\n" +
     "\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='text'\">\n" +
     "\n" +
     "					<span ng-if=\"field.field == thumbnailShowWith\">\n" +
-    "					\n" +
+    "\n" +
     "						<!--placeholder-->\n" +
     "						<i ng-if=\"showPlaceholder()\" class=\"fa fa-3x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +
     "						<i ng-if=\"showIcon()\" class=\"fa fa-3x pull-left\" ng-class=\"'fa-' + item[iconField]\"></i>\n" +
     "\n" +
     "						<!--image-->\n" +
-    "						<img \n" +
+    "						<img\n" +
     "							ng-if=\"showImage()\"\n" +
-    "							class=\"img-rounded pull-left\" \n" +
+    "							class=\"img-rounded pull-left\"\n" +
     "							ng-src=\"{{thumbnailSrc}}\" />\n" +
     "					</span>\n" +
     "\n" +
@@ -2474,28 +2502,35 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
     "				</div>\n" +
-    "				<a href=\"mailto:{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
+    "				<div ng-if=\"field.type=='files'\">\n" +
+    "			    <div class=\"list-group-item\" ng-repeat=\"file in selectedItem[field.field]\">\n" +
+    "			      <label>{{field.label}}</label>\n" +
+    "			      <h4>\n" +
+    "							<a href=\"{{host + '/attachment/' + db + '/' + selectedItem['__form'] + '/' + selectedItem['__unid'] + '/' + file + '?apikey=' + apikey}}\" target=\"newwin\">{{file}}</a>\n" +
+    "						</h4>\n" +
+    "			    </div>\n" +
+    "			  </div>\n" +
+    "				<a href=\"mailto:{{selectedItem[field.field]}}\" class=\"list-group-item\"\n" +
     "					ng-if=\"field.type=='email'\">\n" +
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</a>\n" +
-    "				<a href=\"tel:{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
+    "				<a href=\"tel:{{selectedItem[field.field]}}\" class=\"list-group-item\"\n" +
     "					ng-if=\"field.type=='phone'\">\n" +
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</a>\n" +
-    "				<a href=\"{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
+    "				<a href=\"{{selectedItem[field.field]}}\" class=\"list-group-item\"\n" +
     "					ng-if=\"field.type=='link'\">\n" +
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</a>\n" +
     "\n" +
-    "			<div>\n" +
-    "		</div>\n" +
+    "      <div>\n" +
+    "    </div>\n" +
     "\n" +
-    "	</div>\n" +
-    "\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("xc-header.html", []).run(["$templateCache", function($templateCache) {
@@ -2508,7 +2543,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "		<div class=\"navbar-header\">\n" +
     "\n" +
-    "			<a class=\"navbar-brand\" ng-class=\"{'no-menu' : !hasMenu() }\">{{::title}}</a>	\n" +
+    "			<a class=\"navbar-brand\" ng-class=\"{'no-menu' : !hasMenu() }\">{{::title}}</a>\n" +
     "\n" +
     "      <button class=\"navbar-toggle\" data-target=\".navbar-collapse\" data-toggle=\"collapse\" type=\"button\">\n" +
     "        <span class=\"sr-only\">Toggle menu</span>\n" +
@@ -2540,10 +2575,14 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "        {{o.callback}}\n" +
     "          <!--basic option-->\n" +
-    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o)\">\n" +
-    "            <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
-    "            {{o.label}}\n" +
-    "          </a>\n" +
+    "					<a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o) && !o.logout\">\n" +
+    "					  <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
+    "					  {{o.label}}\n" +
+    "					</a>\n" +
+    "					<a ng-click=\"logout()\" ng-if=\"!hasSubmenu(o) && o.logout && isLoggedIn()\">\n" +
+    "					  <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
+    "					  {{o.label}}\n" +
+    "					</a>\n" +
     "\n" +
     "          <!--dropdown-->\n" +
     "          <a href=\"#\" ng-if=\"hasSubmenu(o)\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n" +
@@ -2636,7 +2675,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "        <a href=\"#\" ng-if=\"hasSubmenu(o)\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" ng-click=\"o.collapsed = !o.collapsed\">\n" +
     "          <i class=\"fa fa-fw fa-chevron-circle-right\"></i>&nbsp;{{::o.label}}\n" +
     "        </a>\n" +
-    " \n" +
+    "\n" +
     "        <div collapse=\"o.collapsed\" ng-if=\"hasSubmenu(o)\" >\n" +
     "\n" +
     "          <ul class=\"nav navmenu-nav\"  >\n" +
@@ -2649,13 +2688,14 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "        </div>\n" +
     "\n" +
     "      </li>\n" +
-    "     \n" +
+    "\n" +
     "    </ul>\n" +
     "\n" +
     "    <div ng-show=\"appVersion != ''\" style=\"margin-top:20px; padding-left: 20px; font-size: 12px; color: #777\">{{appVersion}}</div>\n" +
     "  </nav>\n" +
     "\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("xc-image.html", []).run(["$templateCache", function($templateCache) {
@@ -2905,24 +2945,24 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "			<ng-include src=\"'xc-list-heading.html'\"></ng-include>\n" +
     "\n" +
     "			<div class=\"list-group\">\n" +
-    "				\n" +
-    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\"  ng-click=\"select(item)\"\n" +
+    "\n" +
+    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\"  ng-click=\"select(item)\"\n" +
     "					ng-class=\"{'active' : selected == item}\">\n" +
     "\n" +
     "					<!--(placeholder) icon-->\n" +
     "					<i ng-if=\"showPlaceholder(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +
     "					<i ng-if=\"showIcon(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + item[iconField]\"></i>\n" +
-    "					\n" +
+    "\n" +
     "					<!--image-->\n" +
-    "					<img \n" +
+    "					<img\n" +
     "						ng-if=\"showImage(item)\"\n" +
-    "						class=\"img-rounded pull-left\" \n" +
+    "						class=\"img-rounded pull-left\"\n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
     "					<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
     "					<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
-    "					\n" +
+    "\n" +
     "				</a>\n" +
     "\n" +
     "				<div class=\"list-group-item\" ng-show=\"isLoading\">\n" +
@@ -2952,7 +2992,6 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "	</div>\n" +
     "\n" +
     "</div>\n" +
-    "\n" +
     "");
 }]);
 

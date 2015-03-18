@@ -14,7 +14,7 @@ app.directive('xcHeader', function() {
 		templateUrl : 'xc-header.html',
 		transclude : true,
 
-		controller : function($rootScope, $scope, $document, xcUtils, $timeout) {
+		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore) {
 
 			$scope.showBackButton = false;
 
@@ -56,6 +56,18 @@ app.directive('xcHeader', function() {
 				return (menuOption.hasOwnProperty('menuOptions') && menuOption.menuOptions.length>0);
 			};
 
+			$scope.logout = function(){
+        $cookieStore.remove('apikey');
+				$cookieStore.remove('user');
+        $rootScope.apikey = null;
+				$rootScope.user = null;
+        window.location.reload();
+      };
+
+      $scope.isLoggedIn = function() {
+        return $rootScope.apikey != null;
+      }
+
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){
 
@@ -70,14 +82,14 @@ app.directive('xcHeader', function() {
 					var i = a.children("i");
 					i.addClass("fa-chevron-circle-right").removeClass("fa-chevron-circle-down");
 				});
-		    }); 
+		    });
 
 		    $rootScope.$on("selectItemEvent", function(ev, item) {
 		    	//item selected: hide the 'menu' button
 
 		    	if (bootcards.isXS() ) {
 
-		    		if ( !$scope.toggleMenuButton) {	
+		    		if ( !$scope.toggleMenuButton) {
 						$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
 					}
 					if ( !$scope.backButton) {
@@ -108,7 +120,7 @@ app.directive('xcHeader', function() {
 				$scope.$emit('selectItemEvent', null);
 				$rootScope.hideList = false;
 			};
-   
+
 		}
 
 	};

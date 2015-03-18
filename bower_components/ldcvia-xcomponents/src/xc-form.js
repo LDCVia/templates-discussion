@@ -1,8 +1,8 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcForm', 
-	['$rootScope', 'xcDataFactory', 
+app.directive('xcForm',
+	['$rootScope', 'xcDataFactory',
 	function($rootScope, xcDataFactory) {
 
 	return {
@@ -14,7 +14,7 @@ app.directive('xcForm',
 			defaultText : '@',
 			thumbnailField : '@',
 			thumbnailShowWith : '@',
-			iconField : '@',				/*icon*/ 
+			iconField : '@',				/*icon*/
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			allowDelete : '=?',
 			datastoreType : '@'
@@ -35,6 +35,8 @@ app.directive('xcForm',
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.modelName = xcUtils.getConfig('modelName');
 			$scope.isNew = true;
+			$scope.host = xcUtils.getConfig('host');
+			$scope.db = xcUtils.getConfig('db');
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				$scope.selectedItem = item;
@@ -43,7 +45,7 @@ app.directive('xcForm',
 				if (item == null) {
 
 					$scope.thumbnailSrc==null;
-					
+
 				} else {
 
 					if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
@@ -61,8 +63,8 @@ app.directive('xcForm',
 				}
 
 			});
- 
-			//load specified entry 
+
+			//load specified entry
 			if (typeof $scope.itemId != 'undefined' ) {
 
 				var f = xcDataFactory.getStore($attrs.datastoreType);
@@ -101,8 +103,8 @@ app.directive('xcForm',
 					}
 
 				});
-				
-				
+
+
 			}
 
 			$scope.editDetails = function() {
@@ -187,7 +189,7 @@ app.directive('xcForm',
 				});
 
 			};
-			
+
 		}
 
 	};
@@ -205,6 +207,6 @@ app.directive('animateOnChange', function($animate) {
 						$animate.removeClass(elem,c);
 					});
 				}
-			})  
-	}; 
+			})
+	};
 });

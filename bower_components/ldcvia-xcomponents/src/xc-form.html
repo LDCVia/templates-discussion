@@ -21,22 +21,22 @@
 
 		</div>
 
-		<div class="list-group">
+    <div class="list-group">
 
 			<div ng-repeat="field in fieldsRead">
 
 				<div class="list-group-item" ng-if="field.type=='text'">
 
 					<span ng-if="field.field == thumbnailShowWith">
-					
+
 						<!--placeholder-->
 						<i ng-if="showPlaceholder()" class="fa fa-3x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>
 						<i ng-if="showIcon()" class="fa fa-3x pull-left" ng-class="'fa-' + item[iconField]"></i>
 
 						<!--image-->
-						<img 
+						<img
 							ng-if="showImage()"
-							class="img-rounded pull-left" 
+							class="img-rounded pull-left"
 							ng-src="{{thumbnailSrc}}" />
 					</span>
 
@@ -59,25 +59,31 @@
 					<label>{{field.label}}</label>
 					<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field]"></h4>
 				</div>
-				<a href="mailto:{{selectedItem[field.field]}}" class="list-group-item" 
+				<div ng-if="field.type=='files'">
+			    <div class="list-group-item" ng-repeat="file in selectedItem[field.field]">
+			      <label>{{field.label}}</label>
+			      <h4>
+							<a href="{{host + '/attachment/' + db + '/' + selectedItem['__form'] + '/' + selectedItem['__unid'] + '/' + file + '?apikey=' + apikey}}" target="newwin">{{file}}</a>
+						</h4>
+			    </div>
+			  </div>
+				<a href="mailto:{{selectedItem[field.field]}}" class="list-group-item"
 					ng-if="field.type=='email'">
 					<label>{{field.label}}</label>
 					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</a>
-				<a href="tel:{{selectedItem[field.field]}}" class="list-group-item" 
+				<a href="tel:{{selectedItem[field.field]}}" class="list-group-item"
 					ng-if="field.type=='phone'">
 					<label>{{field.label}}</label>
 					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</a>
-				<a href="{{selectedItem[field.field]}}" class="list-group-item" 
+				<a href="{{selectedItem[field.field]}}" class="list-group-item"
 					ng-if="field.type=='link'">
 					<label>{{field.label}}</label>
 					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</a>
 
-			<div>
-		</div>
-
-	</div>
+      <div>
+    </div>
 
 </div>

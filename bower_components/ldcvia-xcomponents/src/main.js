@@ -14,28 +14,37 @@ var app = angular.module('xcomponents', [
 	'ngAnimate',
 	'ngSanitize',
 	'textAngular',
-	'ui.bootstrap'
+	'ui.bootstrap',
+	'ldcvia.login'
 ]);
 
 //bootstrapping code
 var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
 
 if (hasNativeHTMLImportsSupport) {
-	
+
 	angular.element(document).ready(function() {
 		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
 		angular.bootstrap(document, ['xcomponents']);
 	});
 
 } else {
-	window.addEventListener('HTMLImportsLoaded', function(e){ 
+	window.addEventListener('HTMLImportsLoaded', function(e){
 		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
 		angular.bootstrap(document, ['xcomponents']);
 	});
 }
 
-app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils) {
-	
+app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils, $cookieStore, $location) {
+	if ($cookieStore.get('apikey')){
+		$rootScope.apikey = $cookieStore.get('apikey');
+		$rootScope.user = $cookieStore.get('user');
+	}
+	if ($rootScope.apikey == null) {
+		console.log('We need to log in');
+		$location.path("/login");
+	}
+
 	$scope.menuOptions = [];
 
 	//load the OS specific CSS
@@ -61,7 +70,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 		css += 'bootcards-desktop-lite.min.css';
 		body.addClass('bootcards-desktop');
 	}
-	
+
 	var head = angular.element(document.getElementsByTagName('head')[0]);
 	head.append("<link rel='stylesheet' href='" + css + "' />");
 
@@ -107,11 +116,11 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 				}
 
 				if (f.type == 'select' || f.type == 'select-multiple') {
-				
+
 					if (f.options.hasOwnProperty('endpoint')) {
 
 						f.options = xcUtils.resolveRemoteOptionsList(f.options);
-						
+
 					} else if (f.options.length>0 && typeof f.options[0] == 'string') {
 
 						var o = [];
@@ -137,7 +146,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 					config.fieldsFormula.push(f);
 				}
 
-				
+
 			}
 		}
 
@@ -174,11 +183,10 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 			//filter by field type
 			return $filter(fieldType)(item);
 		} else if (!filterName) {
-			return item;	
+			return item;
 		} else {
 			var _res = $interpolate('{{value | ' + filterName + '}}');
 			return _res( {value : item } );
 		}
 	};
 });
-

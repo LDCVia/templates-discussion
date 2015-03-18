@@ -1,6 +1,7 @@
 <div ng-controller="xcController">
 <xc-list
   title="All Documents"
+  url="https://beta.ldcvia.com/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic"
   list-width="5"
   allow-add="true"
   order-by="__created"
@@ -14,7 +15,10 @@
   group-by="Categories"
   infinite-scroll="true">
   <xc-form
-    default-text="Select a topic from the list">
+    default-text="Select a topic from the list"
+    url="https://beta.ldcvia.com/1.0/document/dev-londc-com-discussion-nsf/MainTopic/:id"
+    >
+
   </xc-form>
 </xc-list>
 </div>

@@ -7,7 +7,7 @@
 
 		<div class="navbar-header">
 
-			<a class="navbar-brand" ng-class="{'no-menu' : !hasMenu() }">{{::title}}</a>	
+			<a class="navbar-brand" ng-class="{'no-menu' : !hasMenu() }">{{::title}}</a>
 
       <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
         <span class="sr-only">Toggle menu</span>
@@ -39,10 +39,14 @@
 
         {{o.callback}}
           <!--basic option-->
-          <a href="{{o.url}}" ng-if="!hasSubmenu(o)">
-            <i class="fa" ng-class="o.icon ? o.icon : null"></i>
-            {{o.label}}
-          </a>
+					<a href="{{o.url}}" ng-if="!hasSubmenu(o) && !o.logout">
+					  <i class="fa" ng-class="o.icon ? o.icon : null"></i>
+					  {{o.label}}
+					</a>
+					<a ng-click="logout()" ng-if="!hasSubmenu(o) && o.logout && isLoggedIn()">
+					  <i class="fa" ng-class="o.icon ? o.icon : null"></i>
+					  {{o.label}}
+					</a>
 
           <!--dropdown-->
           <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="dropdown">
@@ -135,7 +139,7 @@
         <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="dropdown" ng-click="o.collapsed = !o.collapsed">
           <i class="fa fa-fw fa-chevron-circle-right"></i>&nbsp;{{::o.label}}
         </a>
- 
+
         <div collapse="o.collapsed" ng-if="hasSubmenu(o)" >
 
           <ul class="nav navmenu-nav"  >
@@ -148,7 +152,7 @@
         </div>
 
       </li>
-     
+
     </ul>
 
     <div ng-show="appVersion != ''" style="margin-top:20px; padding-left: 20px; font-size: 12px; color: #777">{{appVersion}}</div>
