@@ -316,10 +316,10 @@ app.directive('xcList',
 						$scope.select(targetItem);
 
 						xcDataFactory.getStore($scope.datastoreType)
-						.saveNew( $scope.url, targetItem )
+						.saveNew( $scope.documentURL, targetItem )
 						.then( function(res) {
 
-							if ($scope.type == 'categorised' || $scope.type=='accordion'){
+							if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type == 'flat'){
 
 								//do a full refresh of the list
 								$rootScope.$emit('refreshList', '');

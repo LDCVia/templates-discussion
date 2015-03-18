@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-18 4:47 */
+/* xcomponents 0.1.0 2015-03-18 4:54 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -1901,10 +1901,10 @@ app.directive('xcList',
 						$scope.select(targetItem);
 
 						xcDataFactory.getStore($scope.datastoreType)
-						.saveNew( $scope.url, targetItem )
+						.saveNew( $scope.documentURL, targetItem )
 						.then( function(res) {
 
-							if ($scope.type == 'categorised' || $scope.type=='accordion'){
+							if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type == 'flat'){
 
 								//do a full refresh of the list
 								$rootScope.$emit('refreshList', '');
