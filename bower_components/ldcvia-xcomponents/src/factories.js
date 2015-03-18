@@ -1,4 +1,3 @@
-
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -297,14 +296,12 @@ app.factory('LowlaFactory', [function() {
 			return items.insert(item);
 
 			/*return db.post(item).then( function(res) {
-
 				if (res.ok) {
 					item.id = res.id;
 					return item;
 				} else {
 					alert('Error while inserting in Pouch');
 				}
-
 			})*/
 		},
 

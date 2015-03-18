@@ -1,5 +1,4 @@
-/* xcomponents 0.1.0 2015-03-18 2:41 */
-
+/* xcomponents 0.1.0 2015-03-18 3:07 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -298,14 +297,12 @@ app.factory('LowlaFactory', [function() {
 			return items.insert(item);
 
 			/*return db.post(item).then( function(res) {
-
 				if (res.ok) {
 					item.id = res.id;
 					return item;
 				} else {
 					alert('Error while inserting in Pouch');
 				}
-
 			})*/
 		},
 
