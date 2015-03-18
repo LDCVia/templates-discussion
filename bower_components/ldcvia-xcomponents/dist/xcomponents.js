@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-18 3:07 */
+/* xcomponents 0.1.0 2015-03-18 3:12 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -23,7 +23,7 @@ app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
 
 }]);
 
-app.factory('RESTFactory', ['$http', function($http) {
+app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($http, $rootScope, $cookieStore) {
 
 	return {
 
@@ -59,27 +59,57 @@ app.factory('RESTFactory', ['$http', function($http) {
 		},
 
 		saveNew : function(url, item) {
-
-			url = url.replace(":id", "");
+			var date = new Date();
+			var time = date.getTime();
+			var url = url.replace(":id", time);
 
 			return $http.put(url, item).then( function(res) {
 				return res.data;
 			});
-
 		},
 
 		update : function(url, item) {
 
-			url = url.replace(":id", "");
+			url = url.replace(":id", item.__unid);
 
-			return $http.post(url, item).then( function(res) {
-				return res.data;
-			});
-
+      item.__modified = new Date();
+      item.Body = {
+        "type": "multipart",
+        "content": [{
+          "contentType": "text/html; charset=UTF-8",
+          "data": item.Body__parsed
+        }]
+      };
+			try{
+	      var fileInput = document.getElementById('file');
+				if (fileInput){
+					var file = fileInput.files[0];
+		      var reader = new FileReader();
+					reader.onload = function(e) {
+	          item.Body.content.push({
+	            "contentType": file.type + "; name=\"" + file.name + "\"",
+	            "contentDisposition": "attachment; filename=\"" + file.name + "\"",
+	            "contentTransferEncoding": "base64",
+	            "data": reader.result.match(/,(.*)$/)[1]
+	          });
+						return $http.post(url, item).then( function(res) {
+							return res.data;
+						});
+					};
+				}else{
+					return $http.post(url, item).then( function(res) {
+						return res.data;
+					});
+				}
+			}catch(e){
+				return $http.post(url, item).then( function(res) {
+					return res.data;
+				});
+			}
 		},
 
 		delete : function(url, item) {
-			url = url.replace(":id", item.id);
+			url = url.replace(":id", item.__unid);
 			return $http.delete(url);
 		},
 
@@ -413,7 +443,7 @@ if (hasNativeHTMLImportsSupport) {
 app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils, $cookieStore, $location) {
 	if ($cookieStore.get('apikey')){
 		$rootScope.apikey = $cookieStore.get('apikey');
-		$rootScope.user = $cookieStore.get('user');
+		$rootScope.username = $cookieStore.get('username');
 	}
 	if ($rootScope.apikey == null) {
 		console.log('We need to log in');
@@ -649,13 +679,13 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 		},
 
-		calculateFormFields : function(form) {
+		calculateFormFields : function(form, callback) {
 
 			//add computed fields: get the list of fields that need to be computed
 			var f = $rootScope.config['fieldsFormula'];
 
 			for (var i=0; i<f.length; i++) {
-				
+
 				var fieldName = f[i].field;
 				var fields = f[i].formula;
 				var _res = [];
@@ -667,6 +697,38 @@ app.factory('xcUtils', function($rootScope, $http) {
 				form[fieldName] = _res.join(' ');
 
 			}
+
+			//Add LDC Via fields
+			form.From = $rootScope.username;
+			form.Body = {
+				"type": "multipart",
+				"content": [{
+					"contentType": "text/html; charset=UTF-8",
+					"data": form.Body__parsed
+				}]
+			};
+			try{
+				var fileInput = document.getElementById('file');
+				if (fileInput){
+					var file = fileInput.files[0];
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						form.Body.content.push({
+							"contentType": file.type + "; name=\"" + file.name + "\"",
+							"contentDisposition": "attachment; filename=\"" + file.name + "\"",
+							"contentTransferEncoding": "base64",
+							"data": reader.result.match(/,(.*)$/)[1]
+						});
+						callback();
+					};
+					reader.readAsDataURL(file);
+				}else{
+					callback()
+				}
+			}catch(e){
+				callback();
+			}
+
 		},
 
 		getSortByFunction : function(orderBy, orderReversed) {
@@ -677,13 +739,13 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 
 			return function(a,b) {
-				
+
 				var _a = (a[orderBy] || '');
 				var _b = (b[orderBy] || '');
 
 				if (typeof _a === 'string') { _a = _a.toLowerCase(); }
 				if (typeof _b === 'string') { _b = _b.toLowerCase(); }
-			
+
 				var modifier = (orderReversed ? -1 : 1);
 				if ( _a < _b )
 					return -1 * modifier;
@@ -722,7 +784,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 
 		    //sort groups by group name
-	    	groups.sort( function(a,b) {	
+	    	groups.sort( function(a,b) {
 				var _n1 = (a['name'] || '');
 				var _n2 = (b['name'] || '');
 
@@ -751,10 +813,10 @@ app.factory('xcUtils', function($rootScope, $http) {
 				});
 
 				return o;
-				
+
 			});
 		}
-	
+
 
 	};
 
@@ -853,7 +915,7 @@ app.directive('xcChart', function() {
 								.fadeIn('fast');
 					});
 				} else {
-				
+
 					var $data = $ev.parents('.bootcards-table');
 					$data.fadeOut( 'fast', function()  {
 						$data
@@ -871,7 +933,7 @@ app.directive('xcChart', function() {
 			$timeout( function() {
 				if ($scope.chart) { $scope.chart.redraw(); }
 			}, 150);
-			
+
 		},
 
 		link : function(scope, el, attrs) {
@@ -885,7 +947,7 @@ app.directive('xcChart', function() {
 			var ylabels = [];
 
 			angular.forEach( scope.chartData[0], function(value, key) {
-				if (!xkey) { 
+				if (!xkey) {
 					xkey = key;
 				} else {
 					ykeys.push( key);
@@ -951,7 +1013,7 @@ app.directive('xcChart', function() {
 					return myDonut({
 					    element: el,
 					    data: chartData,
-					    formatter: function (y, data) { 
+					    formatter: function (y, data) {
 					    	//prefixes the values by an $ sign, adds thousands seperators
 							nStr = y + '';
 							x = nStr.split('.');
@@ -984,7 +1046,7 @@ app.directive('xcChart', function() {
 				});
 
 			} else if (attrs.chartType === 'line') {
-					
+
 				scope.chart = Morris.Line({
 				    element: canvas[0],
 				    data: scope.chartData,
@@ -1032,7 +1094,7 @@ app.directive('xcFile', function() {
 			url : '@',
 			allowFavorite : '=',
 			allowEmail : '='
-			
+
 		},
 
 		replace : true,
@@ -1067,22 +1129,22 @@ app.directive('xcFooter', function() {
 
 var app = angular.module('xcomponents');
 
-app.controller('UpdateItemInstanceCtrl', 
+app.controller('UpdateItemInstanceCtrl',
 	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
 	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
-	
+
 		if (field.type == 'date' && isNew) {
 			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
 						selectedItem[field.field] = new Date(); break;
-				}	
+				}
 			}
 		}
-	
+
 	});
 
 	//create a copy of the object we're editing (to deal with 'cancel')
@@ -1121,7 +1183,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.saveItem = function(form) {
 
 		//validate the input
-		if (!form.$valid) { 
+		if (!form.$valid) {
 
 	  		var msgs = [];
 
@@ -1130,7 +1192,7 @@ app.controller('UpdateItemInstanceCtrl',
 	  		if (form.$error.required) {
 	  			msgs.push("- fill in all required fields\n");
 	  		}
-	  		
+
 	  		if (form.$error.email) {
 				msgs.push("- enter a valid email address\n");
 	  		}
@@ -1192,6 +1254,7 @@ app.directive('xcForm',
 			$scope.isNew = true;
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
+			$scope.apikey = $rootScope.apikey;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				$scope.selectedItem = item;
@@ -1311,20 +1374,20 @@ app.directive('xcForm',
 
 			$scope.saveItem = function(targetItem) {
 
-				xcUtils.calculateFormFields(targetItem);
+				xcUtils.calculateFormFields(targetItem, function(){
+					$scope.selectedItem = targetItem;
 
-				$scope.selectedItem = targetItem;
+					xcDataFactory.getStore($scope.datastoreType)
+					.update( $scope.url, $scope.selectedItem)
+					.then( function(res) {
 
-				xcDataFactory.getStore($scope.datastoreType)
-				.update( $scope.url, $scope.selectedItem)
-				.then( function(res) {
+						$rootScope.$emit('refreshList', '');
+						$scope.isNew = false;
 
-					$rootScope.$emit('refreshList', '');
-					$scope.isNew = false;
-
-				})
-				.catch( function(err) {
-					alert("The item could not be saved/ updated: " + err.statusText);
+					})
+					.catch( function(err) {
+						alert("The item could not be saved/ updated: " + err.statusText);
+					});
 				});
 
 			};
@@ -1516,15 +1579,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				
+
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-			
+
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-	
+
 			});
 
 		}
@@ -1549,8 +1612,8 @@ app.directive('xcLayout', [ function() {
 
 var app = angular.module("xcomponents");
 
-app.directive('xcList', 
-	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 
+app.directive('xcList',
+	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory',
 	function($rootScope, $filter, xcUtils, xcDataFactory) {
 
 	var loadData = function(scope) {
@@ -1569,19 +1632,19 @@ app.directive('xcList',
 			scope.hasMore = false;
 			scope.items = scope.srcDataEntries;
 			scope.totalNumItems = scope.items.length;
-			
+
 		} else {
 
 			xcDataFactory.getStore(scope.datastoreType)
 			.all(scope.url).then( function(res) {
-				
+
 				var numRes = res.length;
 
 				//console.log('found ' + numRes + ' at ' + scope.url);
 
 				if (scope.filterBy && scope.filterValue) {
 					//filter the result set
-					
+
 					var filteredRes = [];
 
 					angular.forEach( res, function(entry, idx) {
@@ -1594,12 +1657,12 @@ app.directive('xcList',
 					res = filteredRes;
 
 				}
-				
+
 				if (scope.type == 'categorised' || scope.type=='accordion') {
 
 					scope.groups = xcUtils.getGroups( res, scope.groupBy, scope.orderBy, scope.orderReversed );
 					scope.isLoading = false;
-					
+
 					//auto load first entry in the first group
 					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
 
@@ -1610,7 +1673,7 @@ app.directive('xcList',
 							}
 						}
 					}
-		
+
 				} else {			//flat or detailed
 
 					//sort the results
@@ -1641,7 +1704,7 @@ app.directive('xcList',
 			type : '@',				/*list type, options: flat (default), categorised, accordion*/
 			listWidth : '=' ,		/*width of the list (nr 1..11)*/
 			summaryField : '@',		/*name of the field used as a summary field*/
-			detailsField : '@',     
+			detailsField : '@',
 			detailsFieldType : '@',		/*text or date*/
 			detailsFieldSubTop : '@',
 			detailsFieldSubBottom : '@',
@@ -1649,15 +1712,15 @@ app.directive('xcList',
 			autoloadFirst : '=?',
 			allowAdd : '=',
 			groupBy : '@',			/*only relevant for categorised, accordion lists*/
-			filterBy : '@',	
-			filterSrc : '@',		
-			filterValue : '@',		
+			filterBy : '@',
+			filterSrc : '@',
+			filterValue : '@',
 			orderBy : '@',
 			orderReversed : '@',
 			url : '@',
 			srcData : '@',
 			imageField : '@',		/*image*/
-			iconField : '@',		/*icon*/ 
+			iconField : '@',		/*icon*/
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
 			infiniteScroll : '@',
@@ -1667,7 +1730,7 @@ app.directive('xcList',
 		restrict : 'E',
 		transclude : true,
 		replace : true,
-		
+
 		templateUrl: function(elem,attrs) {
 			//calculate the template to use
 			return 'xc-list-' + attrs.type + '.html';
@@ -1677,12 +1740,12 @@ app.directive('xcList',
 
 			scope.colLeft = 'col-sm-' + attrs.listWidth;
 			scope.colRight = 'col-sm-' + (12 - parseInt(attrs.listWidth, 10) );
-			
+
 			loadData(scope);
 
 		},
 
-		controller: function($rootScope, $scope, $modal, $filter, xcUtils) {
+		controller: function($rootScope, $scope, $modal, $filter, xcUtils, $cookieStore) {
 
 			$scope.hideList = false;
 			$scope.orderReversed = $scope.$eval( $scope.orderReversed);		//for booleans
@@ -1705,16 +1768,17 @@ app.directive('xcList',
 			$scope.numPages = 1;
 
 			$scope.modelName = xcUtils.getConfig('modelName');
-      		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
+      $scope.fieldsRead = xcUtils.getConfig('fieldsRead');
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.imageBase = xcUtils.getConfig('imageBase');
+			$scope.documentURL = xcUtils.getConfig('documentURL');
 
 			$scope.fieldFilters = xcUtils.getConfig('fieldFilters');
 
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
 			});
-			
+
 			//custom list entries
 			if ($scope.srcData) {
 				$scope.srcDataEntries = xcUtils.getConfig( $scope.srcData);
@@ -1763,9 +1827,9 @@ app.directive('xcList',
 					if (data.reason =='save') {
 						$scope.saveNewItem(data.item);
 					}
-			    }, function () {
-			      //console.log('modal closed');
-			    });
+		    }, function () {
+		      //console.log('modal closed');
+		    });
 
 
 			};
@@ -1812,23 +1876,23 @@ app.directive('xcList',
 			};
 
 			$scope.select = function(item) {
-		
+
 				$scope.selected = item;
 				$scope.$emit('selectItemEvent', item);
 
 				//broadcast event to child scopes
 				$scope.$broadcast('itemSelected', item);
-				
+
 			};
 
-			
+
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 
 				if ($scope.filterBy) {
 					$scope.filterValue = item[$scope.filterSrc];
 					loadData($scope);
 				}
-				
+
 			});
 
 			$scope.showImage = function(item) {
@@ -1860,39 +1924,38 @@ app.directive('xcList',
 
 		    $scope.saveNewItem = function(targetItem) {
 
-		    	xcUtils.calculateFormFields(targetItem);
+		    	xcUtils.calculateFormFields(targetItem, function(){
+						$scope.select(targetItem);
 
-		    	$scope.select(targetItem);
-				
-				xcDataFactory.getStore($scope.datastoreType)
-				.saveNew( $scope.url, targetItem )
-				.then( function(res) {
+						xcDataFactory.getStore($scope.datastoreType)
+						.saveNew( $scope.documentURL, targetItem )
+						.then( function(res) {
 
-					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
+							if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type=='flat'){
 
-						//do a full refresh of the list
-						$rootScope.$emit('refreshList', '');
+								//do a full refresh of the list
+								$rootScope.$emit('refreshList', '');
 
-					} else {
+							} else {
 
-						//add the item to the list and sort it
-						var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
+								//add the item to the list and sort it
+								var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
 
-						$scope.items.push(res);
+								$scope.items.push(res);
 
-				        //resort
-				        var ress = $scope.items;
-				        ress.sort( sortFunction );
+						        //resort
+						        var ress = $scope.items;
+						        ress.sort( sortFunction );
 
-				        $scope.items = ress;
+						        $scope.items = ress;
 
-					}				
+							}
 
-				})
-				.catch( function(err) {
-					alert("The item could not be saved/ updated: " + err.statusText);
-				});
-
+						})
+						.catch( function(err) {
+							alert("The item could not be saved/ updated: " + err.statusText);
+						});
+					});
 			};
 
 		}
@@ -1906,7 +1969,7 @@ app.filter('searchFilter', function() {
    return function(items, word, numPerPage) {
 
     var filtered = [];
-  
+
     if (!word) {return items;}
 
     angular.forEach(items, function(item) {
@@ -2097,38 +2160,38 @@ app.directive('xcUpload', function() {
 			$scope.doCrop = false;
 			$scope.customSelect = null;
 			$scope.orientation = 0;
-		
+
 			$scope.init = function() {
-				
+
 				this.customSelect = $('.js-custom-select-var').text();
-				
+
 				if (this.customSelect != null && this.customSelect.length>0) {
-				
+
 					// move the 'photo select' button to a custom location
 					var move = $('.js-photouploader-upload');
 					var to = $(this.customSelect);
-					
+
 					if (move.length==1 && to.length==1) {
 						move.appendTo(to);
-						
+
 						// hide the default photo select
 						$('.js-photouploader .photoUpload').hide();
 
 					}
 				}
 			};
-	
+
 			$scope.loadImage = function( file) {
-				
+
 				loadImage(
 			        file,
 			        function (canvas) {
-			        	
+
 			        	// clean up
 			            $('.js-photouploader-preview img, .js-photouploader canvas').remove();
-			            
+
 			            canvas.id = 'photoUploadCanvas';
-			     
+
 			        	$('.js-photouploader-preview').append(canvas);
 			        	$('.js-photouploader-rotate').removeClass('hidden');
 			        	$('.js-photouploader-preview .fa').addClass('hidden');
@@ -2143,11 +2206,11 @@ app.directive('xcUpload', function() {
 				);
 
 			};
-				
+
 			$scope.rotateImage = function(clockWise) {
-				
+
 				var $resizeFileUpload = $('.js-photouploader-upload');
-				
+
 				if ( $resizeFileUpload[0].files.length === 0) {
 					return;
 				}
@@ -2162,7 +2225,7 @@ app.directive('xcUpload', function() {
 				} else if ($scope.orientation == 8) {
 					$scope.orientation = (clockWise ? 0 : 3);
 				}
-				
+
 				$scope.loadImage(file);
 			};
 
@@ -2420,6 +2483,9 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='toggle'\">	\n" +
     "				<xc-toggle ng-model=\"selectedItem[field.field]\"></xc-toggle>\n" +
     "			</div>\n" +
+		"			<div class=\"col-xs-9\" ng-if=\"field.type=='files'\">	\n" +
+    "				<input type=\"file\" id=\"file\" name=\"file\" />\n" +
+    "			</div>\n" +
     "			\n" +
     "		</div> \n" +
     "\n" +
@@ -2494,6 +2560,14 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "				<div class=\"list-group-item\" ng-if=\"field.type=='multiline'\">\n" +
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
+    "				</div>\n" +
+		"				<div class=\"list-group-item\" ng-if=\"field.type=='notesname'\">\n" +
+    "					<label>{{field.label}}</label>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | notesname\"></h4>\n" +
+    "				</div>\n" +
+    "				<div class=\"list-group-item\" ng-if=\"field.type=='implodelist'\">\n" +
+    "					<label>{{field.label}}</label>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | implodelist\"></h4>\n" +
     "				</div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='html'\">\n" +
     "					<label>{{field.label}}</label>\n" +
@@ -3006,7 +3080,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "\n" +
     "			<div class=\"col-xs-4\" ng-if=\"allowAdd\">\n" +
     "\n" +
-    "				<a class=\"btn btn-primary btn-block\" href=\"#\" ng-click=\"addNewItem()\">\n" +
+    "				<a class=\"btn btn-primary btn-block\" href=\"#/home\" ng-click=\"addNewItem()\">\n" +
     "					<i class=\"fa fa-plus\"></i> \n" +
     "					<span>Add</span>\n" +
     "				</a>\n" +

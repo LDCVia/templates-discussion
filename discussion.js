@@ -2,9 +2,10 @@
 Basic configuration of the application
 */
 xcomponents.appVersion = '0.1';
-xcomponents.host = 'https://beta.ldcvia.com/1.0';
+xcomponents.host = 'https://local.ldcvia.com:3001/1.0';
 xcomponents.db = 'dev-londc-com-demos-discussion-nsf';
 xcomponents.apikey = null;
+xcomponents.documentURL = xcomponents.host + '/document/' + xcomponents.db + '/MainTopic/:id';
 /*
 Define Header and Footer options
 */
@@ -36,7 +37,8 @@ xcomponents.fields = [{
   label: 'Created By',
   field: 'From',
   type: 'notesname',
-  edit: false
+  edit: false,
+  read: true
 }, {
   label: 'Category',
   field: 'Categories',
@@ -129,7 +131,23 @@ xcomponents.addCallback(function() {
       }
       return out.join(",");
     };
-  });
+  })
+  //Implode List Filter
+  app.filter('implodelist', function() {
+    return function(input) {
+      if (Array.isArray(input)){
+        return input.join(", ");
+      }else{
+        return input;
+      }
+    }
+  })
+  //HTML Filter
+  app.filter('gethtml', ['$sce', function($sce){
+    return function(input){
+      return $sce.trustAsHtml(input);
+    }
+  }]);
 
 });
 
@@ -154,7 +172,7 @@ angular.module('ldcvia.login', ['ngRoute'])
             $cookieStore.put('apikey', response.apikey);
             $cookieStore.put('username', response.email);
             $rootScope.apikey = response.apikey;
-            $rootScope.user = response;
+            $rootScope.username = response.email;
             var app = angular.module('xcomponents');
             var port = "";
             if (document.location.port != 80 && document.location.port != 443){

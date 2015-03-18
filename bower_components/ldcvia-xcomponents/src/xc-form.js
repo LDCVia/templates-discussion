@@ -37,6 +37,7 @@ app.directive('xcForm',
 			$scope.isNew = true;
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
+			$scope.apikey = $rootScope.apikey;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				$scope.selectedItem = item;
