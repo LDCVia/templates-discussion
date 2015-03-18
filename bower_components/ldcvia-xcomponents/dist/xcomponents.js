@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-18 4:38 */
+/* xcomponents 0.1.0 2015-03-18 4:45 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -3056,7 +3056,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "\n" +
     "			<div class=\"col-xs-4\" ng-if=\"allowAdd\">\n" +
     "\n" +
-    "				<a class=\"btn btn-primary btn-block\" href=\"#\" ng-click=\"addNewItem()\">\n" +
+    "				<a class=\"btn btn-primary btn-block\" href=\"#/home\" ng-click=\"addNewItem()\">\n" +
     "					<i class=\"fa fa-plus\"></i>\n" +
     "					<span>Add</span>\n" +
     "				</a>\n" +
