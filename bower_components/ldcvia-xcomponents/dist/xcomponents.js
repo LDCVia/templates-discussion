@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-17 4:14 */
+/* xcomponents 0.1.0 2015-03-18 10:19 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
