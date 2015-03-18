@@ -17,7 +17,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			var f = $rootScope.config['fieldsFormula'];
 
 			for (var i=0; i<f.length; i++) {
-				
+
 				var fieldName = f[i].field;
 				var fields = f[i].formula;
 				var _res = [];
@@ -29,6 +29,38 @@ app.factory('xcUtils', function($rootScope, $http) {
 				form[fieldName] = _res.join(' ');
 
 			}
+
+			//Add LDC Via fields
+			form.From = $rootScope.username;
+			form.Body = {
+				"type": "multipart",
+				"content": [{
+					"contentType": "text/html; charset=UTF-8",
+					"data": form.Body__parsed
+				}]
+			};
+			try{
+				var fileInput = document.getElementById('file');
+				if (fileInput){
+					var file = fileInput.files[0];
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						form.Body.content.push({
+							"contentType": file.type + "; name=\"" + file.name + "\"",
+							"contentDisposition": "attachment; filename=\"" + file.name + "\"",
+							"contentTransferEncoding": "base64",
+							"data": reader.result.match(/,(.*)$/)[1]
+						});
+						callback();
+					};
+					reader.readAsDataURL(file);
+				}else{
+					callback()
+				}
+			}catch(e){
+				callback();
+			}
+
 		},
 
 		getSortByFunction : function(orderBy, orderReversed) {
@@ -39,13 +71,13 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 
 			return function(a,b) {
-				
+
 				var _a = (a[orderBy] || '');
 				var _b = (b[orderBy] || '');
 
 				if (typeof _a === 'string') { _a = _a.toLowerCase(); }
 				if (typeof _b === 'string') { _b = _b.toLowerCase(); }
-			
+
 				var modifier = (orderReversed ? -1 : 1);
 				if ( _a < _b )
 					return -1 * modifier;
@@ -84,7 +116,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 
 		    //sort groups by group name
-	    	groups.sort( function(a,b) {	
+	    	groups.sort( function(a,b) {
 				var _n1 = (a['name'] || '');
 				var _n2 = (b['name'] || '');
 
@@ -113,10 +145,10 @@ app.factory('xcUtils', function($rootScope, $http) {
 				});
 
 				return o;
-				
+
 			});
 		}
-	
+
 
 	};
 

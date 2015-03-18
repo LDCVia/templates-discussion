@@ -157,20 +157,20 @@ app.directive('xcForm',
 
 			$scope.saveItem = function(targetItem) {
 
-				xcUtils.calculateFormFields(targetItem);
+				xcUtils.calculateFormFields(targetItem, function(){
+					$scope.selectedItem = targetItem;
 
-				$scope.selectedItem = targetItem;
+					xcDataFactory.getStore($scope.datastoreType)
+					.update( $scope.url, $scope.selectedItem)
+					.then( function(res) {
 
-				xcDataFactory.getStore($scope.datastoreType)
-				.update( $scope.url, $scope.selectedItem)
-				.then( function(res) {
+						$rootScope.$emit('refreshList', '');
+						$scope.isNew = false;
 
-					$rootScope.$emit('refreshList', '');
-					$scope.isNew = false;
-
-				})
-				.catch( function(err) {
-					alert("The item could not be saved/ updated: " + err.statusText);
+					})
+					.catch( function(err) {
+						alert("The item could not be saved/ updated: " + err.statusText);
+					});
 				});
 
 			};

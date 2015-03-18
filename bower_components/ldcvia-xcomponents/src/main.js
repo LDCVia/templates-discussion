@@ -38,7 +38,7 @@ if (hasNativeHTMLImportsSupport) {
 app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils, $cookieStore, $location) {
 	if ($cookieStore.get('apikey')){
 		$rootScope.apikey = $cookieStore.get('apikey');
-		$rootScope.user = $cookieStore.get('user');
+		$rootScope.username = $cookieStore.get('username');
 	}
 	if ($rootScope.apikey == null) {
 		console.log('We need to log in');

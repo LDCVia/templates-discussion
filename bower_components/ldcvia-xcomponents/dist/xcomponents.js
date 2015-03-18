@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-18 3:12 */
+/* xcomponents 0.1.0 2015-03-18 4:38 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -59,6 +59,7 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 		},
 
 		saveNew : function(url, item) {
+
 			var date = new Date();
 			var time = date.getTime();
 			var url = url.replace(":id", time);
@@ -66,46 +67,17 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			return $http.put(url, item).then( function(res) {
 				return res.data;
 			});
+
 		},
 
 		update : function(url, item) {
 
 			url = url.replace(":id", item.__unid);
 
-      item.__modified = new Date();
-      item.Body = {
-        "type": "multipart",
-        "content": [{
-          "contentType": "text/html; charset=UTF-8",
-          "data": item.Body__parsed
-        }]
-      };
-			try{
-	      var fileInput = document.getElementById('file');
-				if (fileInput){
-					var file = fileInput.files[0];
-		      var reader = new FileReader();
-					reader.onload = function(e) {
-	          item.Body.content.push({
-	            "contentType": file.type + "; name=\"" + file.name + "\"",
-	            "contentDisposition": "attachment; filename=\"" + file.name + "\"",
-	            "contentTransferEncoding": "base64",
-	            "data": reader.result.match(/,(.*)$/)[1]
-	          });
-						return $http.post(url, item).then( function(res) {
-							return res.data;
-						});
-					};
-				}else{
-					return $http.post(url, item).then( function(res) {
-						return res.data;
-					});
-				}
-			}catch(e){
-				return $http.post(url, item).then( function(res) {
-					return res.data;
-				});
-			}
+			return $http.post(url, item).then( function(res) {
+				return res.data;
+			});
+
 		},
 
 		delete : function(url, item) {
@@ -679,7 +651,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 		},
 
-		calculateFormFields : function(form, callback) {
+		calculateFormFields : function(form) {
 
 			//add computed fields: get the list of fields that need to be computed
 			var f = $rootScope.config['fieldsFormula'];
@@ -822,6 +794,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 
 });
 
+
 var app = angular.module('xcomponents');
 
 app.directive('xcBase', function() {
@@ -915,7 +888,7 @@ app.directive('xcChart', function() {
 								.fadeIn('fast');
 					});
 				} else {
-
+				
 					var $data = $ev.parents('.bootcards-table');
 					$data.fadeOut( 'fast', function()  {
 						$data
@@ -933,7 +906,7 @@ app.directive('xcChart', function() {
 			$timeout( function() {
 				if ($scope.chart) { $scope.chart.redraw(); }
 			}, 150);
-
+			
 		},
 
 		link : function(scope, el, attrs) {
@@ -947,7 +920,7 @@ app.directive('xcChart', function() {
 			var ylabels = [];
 
 			angular.forEach( scope.chartData[0], function(value, key) {
-				if (!xkey) {
+				if (!xkey) { 
 					xkey = key;
 				} else {
 					ykeys.push( key);
@@ -1013,7 +986,7 @@ app.directive('xcChart', function() {
 					return myDonut({
 					    element: el,
 					    data: chartData,
-					    formatter: function (y, data) {
+					    formatter: function (y, data) { 
 					    	//prefixes the values by an $ sign, adds thousands seperators
 							nStr = y + '';
 							x = nStr.split('.');
@@ -1046,7 +1019,7 @@ app.directive('xcChart', function() {
 				});
 
 			} else if (attrs.chartType === 'line') {
-
+					
 				scope.chart = Morris.Line({
 				    element: canvas[0],
 				    data: scope.chartData,
@@ -1094,7 +1067,7 @@ app.directive('xcFile', function() {
 			url : '@',
 			allowFavorite : '=',
 			allowEmail : '='
-
+			
 		},
 
 		replace : true,
@@ -1129,22 +1102,22 @@ app.directive('xcFooter', function() {
 
 var app = angular.module('xcomponents');
 
-app.controller('UpdateItemInstanceCtrl',
+app.controller('UpdateItemInstanceCtrl', 
 	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
 	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
-
+	
 		if (field.type == 'date' && isNew) {
 			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
 						selectedItem[field.field] = new Date(); break;
-				}
+				}	
 			}
 		}
-
+	
 	});
 
 	//create a copy of the object we're editing (to deal with 'cancel')
@@ -1183,7 +1156,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.saveItem = function(form) {
 
 		//validate the input
-		if (!form.$valid) {
+		if (!form.$valid) { 
 
 	  		var msgs = [];
 
@@ -1192,7 +1165,7 @@ app.controller('UpdateItemInstanceCtrl',
 	  		if (form.$error.required) {
 	  			msgs.push("- fill in all required fields\n");
 	  		}
-
+	  		
 	  		if (form.$error.email) {
 				msgs.push("- enter a valid email address\n");
 	  		}
@@ -1579,15 +1552,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-
+				
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-
+			
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-
+	
 			});
 
 		}
@@ -1768,7 +1741,7 @@ app.directive('xcList',
 			$scope.numPages = 1;
 
 			$scope.modelName = xcUtils.getConfig('modelName');
-      $scope.fieldsRead = xcUtils.getConfig('fieldsRead');
+      		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.imageBase = xcUtils.getConfig('imageBase');
 			$scope.documentURL = xcUtils.getConfig('documentURL');
@@ -1827,9 +1800,9 @@ app.directive('xcList',
 					if (data.reason =='save') {
 						$scope.saveNewItem(data.item);
 					}
-		    }, function () {
-		      //console.log('modal closed');
-		    });
+			    }, function () {
+			      //console.log('modal closed');
+			    });
 
 
 			};
@@ -1928,10 +1901,10 @@ app.directive('xcList',
 						$scope.select(targetItem);
 
 						xcDataFactory.getStore($scope.datastoreType)
-						.saveNew( $scope.documentURL, targetItem )
+						.saveNew( $scope.url, targetItem )
 						.then( function(res) {
 
-							if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type=='flat'){
+							if ($scope.type == 'categorised' || $scope.type=='accordion'){
 
 								//do a full refresh of the list
 								$rootScope.$emit('refreshList', '');
@@ -1943,11 +1916,11 @@ app.directive('xcList',
 
 								$scope.items.push(res);
 
-						        //resort
-						        var ress = $scope.items;
-						        ress.sort( sortFunction );
+										//resort
+										var ress = $scope.items;
+										ress.sort( sortFunction );
 
-						        $scope.items = ress;
+										$scope.items = ress;
 
 							}
 
@@ -1956,6 +1929,7 @@ app.directive('xcList',
 							alert("The item could not be saved/ updated: " + err.statusText);
 						});
 					});
+
 			};
 
 		}
@@ -2160,38 +2134,38 @@ app.directive('xcUpload', function() {
 			$scope.doCrop = false;
 			$scope.customSelect = null;
 			$scope.orientation = 0;
-
+		
 			$scope.init = function() {
-
+				
 				this.customSelect = $('.js-custom-select-var').text();
-
+				
 				if (this.customSelect != null && this.customSelect.length>0) {
-
+				
 					// move the 'photo select' button to a custom location
 					var move = $('.js-photouploader-upload');
 					var to = $(this.customSelect);
-
+					
 					if (move.length==1 && to.length==1) {
 						move.appendTo(to);
-
+						
 						// hide the default photo select
 						$('.js-photouploader .photoUpload').hide();
 
 					}
 				}
 			};
-
+	
 			$scope.loadImage = function( file) {
-
+				
 				loadImage(
 			        file,
 			        function (canvas) {
-
+			        	
 			        	// clean up
 			            $('.js-photouploader-preview img, .js-photouploader canvas').remove();
-
+			            
 			            canvas.id = 'photoUploadCanvas';
-
+			     
 			        	$('.js-photouploader-preview').append(canvas);
 			        	$('.js-photouploader-rotate').removeClass('hidden');
 			        	$('.js-photouploader-preview .fa').addClass('hidden');
@@ -2206,11 +2180,11 @@ app.directive('xcUpload', function() {
 				);
 
 			};
-
+				
 			$scope.rotateImage = function(clockWise) {
-
+				
 				var $resizeFileUpload = $('.js-photouploader-upload');
-
+				
 				if ( $resizeFileUpload[0].files.length === 0) {
 					return;
 				}
@@ -2225,7 +2199,7 @@ app.directive('xcUpload', function() {
 				} else if ($scope.orientation == 8) {
 					$scope.orientation = (clockWise ? 0 : 3);
 				}
-
+				
 				$scope.loadImage(file);
 			};
 
@@ -2427,9 +2401,9 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<i class=\"fa fa-check\"></i>Save\n" +
     "			</button>\n" +
     "		</div>\n" +
-    "		<h4 class=\"modal-title\">Edit {{modelName}}</h4>		\n" +
+    "		<h4 class=\"modal-title\">Edit {{modelName}}</h4>\n" +
     "	</div>\n" +
-    "					\n" +
+    "\n" +
     "	<div class=\"modal-body form-horizontal\">\n" +
     "\n" +
     "		<div class=\"form-group\" ng-repeat=\"field in fieldsEdit\" ng-class=\"{ 'has-error': cardForm[field.field].$dirty && cardForm[field.field].$invalid }\">\n" +
@@ -2455,39 +2429,40 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\"ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-md-9 needsclick\" ng-if=\"field.type=='html'\">\n" +
-    "				<div text-angular name=\"{{field.field}}\" \n" +
+    "				<div text-angular name=\"{{field.field}}\"\n" +
     "					class=\"needsclick\"\n" +
-    "					ta-toolbar=\"{{editorToolbarOptions}}\" \n" +
+    "					ta-toolbar=\"{{editorToolbarOptions}}\"\n" +
     "					ta-text-editor-class=\"border-around\"\n" +
     "					ta-html-editor-class=\"border-around\"\n" +
-    "					ng-model=\"selectedItem[field.field]\" \n" +
+    "					ng-model=\"selectedItem[field.field]\"\n" +
     "					ng-required=\"field.required\"></div>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select'\">\n" +
-    "				<select class=\"form-control\" \n" +
-    "					name=\"{{field.field}}\" \n" +
-    "					ng-model=\"selectedItem[field.field]\" \n" +
+    "				<select class=\"form-control\"\n" +
+    "					name=\"{{field.field}}\"\n" +
+    "					ng-model=\"selectedItem[field.field]\"\n" +
     "					ng-options=\"option.value as option.label for option in fieldOptions[field.field]\"\n" +
     "					ng-required=\"field.required\">\n" +
     "				</select>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select-multiple'\">\n" +
-    "				<select \n" +
-    "					class=\"form-control\" multiple \n" +
-    "					name=\"{{field.field}}\" \n" +
-    "					ng-model=\"selectedItem[field.field]\" \n" +
+    "				<select\n" +
+    "					class=\"form-control\" multiple\n" +
+    "					name=\"{{field.field}}\"\n" +
+    "					ng-model=\"selectedItem[field.field]\"\n" +
     "					ng-options=\"option.value as option.label for option in fieldOptions[field.field]\"\n" +
     "					ng-required=\"field.required\" >\n" +
     "				</select>\n" +
     "			</div>\n" +
-    "			<div class=\"col-xs-9\" ng-if=\"field.type=='toggle'\">	\n" +
+    "			<div class=\"col-xs-9\" ng-if=\"field.type=='toggle'\">\n" +
     "				<xc-toggle ng-model=\"selectedItem[field.field]\"></xc-toggle>\n" +
     "			</div>\n" +
-		"			<div class=\"col-xs-9\" ng-if=\"field.type=='files'\">	\n" +
+    "			<div class=\"col-xs-9\" ng-if=\"field.type=='files'\">\n" +
     "				<input type=\"file\" id=\"file\" name=\"file\" />\n" +
     "			</div>\n" +
-    "			\n" +
-    "		</div> \n" +
+    "\n" +
+    "\n" +
+    "		</div>\n" +
     "\n" +
     "	</div>\n" +
     "\n" +
@@ -2495,12 +2470,13 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "		<button type=\"button\" class=\"btn btn-danger btn-block\" ng-click=\"deleteItem()\">\n" +
     "			<i class=\"fa fa-trash-o\"></i>\n" +
     "			Delete {{modelName}}\n" +
-    "		</button>		\n" +
+    "		</button>\n" +
     "	</div>\n" +
     "\n" +
     "	</form>\n" +
     "\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("xc-form.html", []).run(["$templateCache", function($templateCache) {
@@ -2561,14 +2537,14 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
     "				</div>\n" +
-		"				<div class=\"list-group-item\" ng-if=\"field.type=='notesname'\">\n" +
-    "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | notesname\"></h4>\n" +
-    "				</div>\n" +
-    "				<div class=\"list-group-item\" ng-if=\"field.type=='implodelist'\">\n" +
-    "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | implodelist\"></h4>\n" +
-    "				</div>\n" +
+    "				<div class=\"list-group-item\" ng-if=\"field.type=='notesname'\">\n" +
+    "		    	<label>{{field.label}}</label>\n" +
+    "		    	<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | notesname\"></h4>\n" +
+    "		    </div>\n" +
+    "		    <div class=\"list-group-item\" ng-if=\"field.type=='implodelist'\">\n" +
+    "		    	<label>{{field.label}}</label>\n" +
+    "		    	<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | implodelist\"></h4>\n" +
+    "		    </div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='html'\">\n" +
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
@@ -3080,11 +3056,11 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "\n" +
     "			<div class=\"col-xs-4\" ng-if=\"allowAdd\">\n" +
     "\n" +
-    "				<a class=\"btn btn-primary btn-block\" href=\"#/home\" ng-click=\"addNewItem()\">\n" +
-    "					<i class=\"fa fa-plus\"></i> \n" +
+    "				<a class=\"btn btn-primary btn-block\" href=\"#\" ng-click=\"addNewItem()\">\n" +
+    "					<i class=\"fa fa-plus\"></i>\n" +
     "					<span>Add</span>\n" +
     "				</a>\n" +
-    "				\n" +
+    "\n" +
     "			</div>\n" +
     "\n" +
     "		</div>\n" +
@@ -3103,23 +3079,24 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "				      <i class=\"fa fa-search\"></i>\n" +
     "			      </div>\n" +
     "			    </div>\n" +
-    "				   \n" +
+    "\n" +
     "				<div class=\"col-xs-3\" ng-if=\"allowAdd && !title\">\n" +
     "\n" +
-    "					<a class=\"btn btn-primary btn-block\" href=\"#\" ng-click=\"addNewItem()\">\n" +
-    "						<i class=\"fa fa-plus\"></i> \n" +
+    "					<a class=\"btn btn-primary btn-block\" href=\"#/home\" ng-click=\"addNewItem()\">\n" +
+    "						<i class=\"fa fa-plus\"></i>\n" +
     "						<span>Add</span>\n" +
     "					</a>\n" +
-    "					\n" +
+    "\n" +
     "				</div>\n" +
     "\n" +
-    "			</div>						    \n" +
-    "		</div>				\n" +
+    "			</div>\n" +
+    "		</div>\n" +
     "\n" +
     "\n" +
-    "	</div>		\n" +
+    "	</div>\n" +
     "\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("xc-reading.html", []).run(["$templateCache", function($templateCache) {

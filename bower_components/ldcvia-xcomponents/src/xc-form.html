@@ -55,6 +55,14 @@
 					<label>{{field.label}}</label>
 					<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field]"></h4>
 				</div>
+				<div class="list-group-item" ng-if="field.type=='notesname'">
+		    	<label>{{field.label}}</label>
+		    	<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field] | notesname"></h4>
+		    </div>
+		    <div class="list-group-item" ng-if="field.type=='implodelist'">
+		    	<label>{{field.label}}</label>
+		    	<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field] | implodelist"></h4>
+		    </div>
 				<div class="list-group-item" ng-if="field.type=='html'">
 					<label>{{field.label}}</label>
 					<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field]"></h4>

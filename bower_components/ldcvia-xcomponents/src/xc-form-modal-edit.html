@@ -14,9 +14,9 @@
 				<i class="fa fa-check"></i>Save
 			</button>
 		</div>
-		<h4 class="modal-title">Edit {{modelName}}</h4>		
+		<h4 class="modal-title">Edit {{modelName}}</h4>
 	</div>
-					
+
 	<div class="modal-body form-horizontal">
 
 		<div class="form-group" ng-repeat="field in fieldsEdit" ng-class="{ 'has-error': cardForm[field.field].$dirty && cardForm[field.field].$invalid }">
@@ -42,36 +42,40 @@
 				<a class="fa fa-times-circle fa-lg clearer" ng-hide="isEmpty(selectedItem[field.field])"ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-md-9 needsclick" ng-if="field.type=='html'">
-				<div text-angular name="{{field.field}}" 
+				<div text-angular name="{{field.field}}"
 					class="needsclick"
-					ta-toolbar="{{editorToolbarOptions}}" 
+					ta-toolbar="{{editorToolbarOptions}}"
 					ta-text-editor-class="border-around"
 					ta-html-editor-class="border-around"
-					ng-model="selectedItem[field.field]" 
+					ng-model="selectedItem[field.field]"
 					ng-required="field.required"></div>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='select'">
-				<select class="form-control" 
-					name="{{field.field}}" 
-					ng-model="selectedItem[field.field]" 
+				<select class="form-control"
+					name="{{field.field}}"
+					ng-model="selectedItem[field.field]"
 					ng-options="option.value as option.label for option in fieldOptions[field.field]"
 					ng-required="field.required">
 				</select>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='select-multiple'">
-				<select 
-					class="form-control" multiple 
-					name="{{field.field}}" 
-					ng-model="selectedItem[field.field]" 
+				<select
+					class="form-control" multiple
+					name="{{field.field}}"
+					ng-model="selectedItem[field.field]"
 					ng-options="option.value as option.label for option in fieldOptions[field.field]"
 					ng-required="field.required" >
 				</select>
 			</div>
-			<div class="col-xs-9" ng-if="field.type=='toggle'">	
+			<div class="col-xs-9" ng-if="field.type=='toggle'">
 				<xc-toggle ng-model="selectedItem[field.field]"></xc-toggle>
 			</div>
-			
-		</div> 
+			<div class="col-xs-9" ng-if="field.type=='files'">
+				<input type="file" id="file" name="file" />
+			</div>
+
+
+		</div>
 
 	</div>
 
@@ -79,7 +83,7 @@
 		<button type="button" class="btn btn-danger btn-block" ng-click="deleteItem()">
 			<i class="fa fa-trash-o"></i>
 			Delete {{modelName}}
-		</button>		
+		</button>
 	</div>
 
 	</form>
