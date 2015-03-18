@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-18 4:45 */
+/* xcomponents 0.1.0 2015-03-18 4:47 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -651,7 +651,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 		},
 
-		calculateFormFields : function(form) {
+		calculateFormFields : function(form, callback) {
 
 			//add computed fields: get the list of fields that need to be computed
 			var f = $rootScope.config['fieldsFormula'];

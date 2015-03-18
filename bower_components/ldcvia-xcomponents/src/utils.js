@@ -11,7 +11,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 		},
 
-		calculateFormFields : function(form) {
+		calculateFormFields : function(form, callback) {
 
 			//add computed fields: get the list of fields that need to be computed
 			var f = $rootScope.config['fieldsFormula'];
