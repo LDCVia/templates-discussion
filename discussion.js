@@ -16,12 +16,22 @@ xcomponents.menuOptions = [{
   logout: true
 }, {
   label: 'All Documents',
-  url: 'index.html#/',
+  url: 'index.html#/home',
   icon: 'fa-dashboard'
-}];
+},
+{
+  label: 'By Category',
+  url: 'index.html#/category',
+  icon: 'fa-list'
+}
+];
 xcomponents.footerOptions = [{
   label: 'All Documents',
-  url: '/index.html#/',
+  url: '/index.html#/home',
+  icon: 'fa-dashboard'
+}, {
+  label: 'By Category',
+  url: '/index.html#/category',
   icon: 'fa-dashboard'
 }];
 
@@ -98,6 +108,10 @@ xcomponents.addCallback(function() {
   app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/home', {
       templateUrl: 'home.html',
+      controller: 'xcController'
+    });
+    $routeProvider.when('/category', {
+      templateUrl: 'category.html',
       controller: 'xcController'
     });
     $routeProvider.

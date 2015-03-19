@@ -52,7 +52,7 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 
 			return $http.get(url).then( function(res) {
 				console.log('returning '  + res.data.data.length + ' items');
-				return res.data.data;
+				return res.data;
 			});
 
 		},
