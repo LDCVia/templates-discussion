@@ -18,20 +18,11 @@ xcomponents.menuOptions = [{
   label: 'All Documents',
   url: 'index.html#/home',
   icon: 'fa-dashboard'
-},
-{
-  label: 'By Category',
-  url: 'index.html#/category',
-  icon: 'fa-list'
 }
 ];
 xcomponents.footerOptions = [{
   label: 'All Documents',
   url: '/index.html#/home',
-  icon: 'fa-dashboard'
-}, {
-  label: 'By Category',
-  url: '/index.html#/category',
   icon: 'fa-dashboard'
 }];
 
@@ -59,7 +50,7 @@ xcomponents.fields = [{
   label: 'Category',
   field: 'Categories',
   type: 'select-multiple',
-  options: ['Design', 'Development', 'Manufacturing', 'Sales'],
+  options: { endpoint:xcomponents.host + '/list/' + xcomponents.db + '/MainTopic/Categories'},
   read: false,
   edit: true
 }, {

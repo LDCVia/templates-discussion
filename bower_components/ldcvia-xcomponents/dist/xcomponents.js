@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 8:17 */
+/* xcomponents 0.1.0 2015-03-19 10:41 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -781,7 +781,11 @@ app.factory('xcUtils', function($rootScope, $http) {
 			return $http.get(optionSettings.endpoint).then( function (res) {
 
 				angular.forEach( res.data, function(option) {
-					o.push( {label : option[optionSettings.label], value : option[optionSettings.value] });
+					if (optionSettings.label && optionSettings.value){
+						o.push( {label : option[optionSettings.label], value : option[optionSettings.value] });
+					}else{
+						o.push( {label: option, value: option});
+					}
 				});
 
 				return o;

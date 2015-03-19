@@ -141,7 +141,11 @@ app.factory('xcUtils', function($rootScope, $http) {
 			return $http.get(optionSettings.endpoint).then( function (res) {
 
 				angular.forEach( res.data, function(option) {
-					o.push( {label : option[optionSettings.label], value : option[optionSettings.value] });
+					if (optionSettings.label && optionSettings.value){
+						o.push( {label : option[optionSettings.label], value : option[optionSettings.value] });
+					}else{
+						o.push( {label: option, value: option});
+					}
 				});
 
 				return o;
