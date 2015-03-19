@@ -63,6 +63,7 @@
 					class="form-control" multiple
 					name="{{field.field}}"
 					ng-model="selectedItem[field.field]"
+					ng-selected="{{selectedItem[field.field].indexOf(o) > -1}}"
 					ng-options="option.value as option.label for option in fieldOptions[field.field]"
 					ng-required="field.required" >
 				</select>

@@ -2,7 +2,7 @@
 Basic configuration of the application
 */
 xcomponents.appVersion = '0.1';
-xcomponents.host = 'https://local.ldcvia.com:3001/1.0';
+xcomponents.host = 'https://beta.ldcvia.com/1.0';
 xcomponents.db = 'dev-londc-com-demos-discussion-nsf';
 xcomponents.apikey = null;
 xcomponents.documentURL = xcomponents.host + '/document/' + xcomponents.db + '/MainTopic/:id';

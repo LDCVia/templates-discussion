@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 2:22 */
+/* xcomponents 0.1.0 2015-03-19 3:16 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -2514,6 +2514,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "					class=\"form-control\" multiple\n" +
     "					name=\"{{field.field}}\"\n" +
     "					ng-model=\"selectedItem[field.field]\"\n" +
+    "					ng-selected=\"{{selectedItem[field.field].indexOf(o) > -1}}\"\n" +
     "					ng-options=\"option.value as option.label for option in fieldOptions[field.field]\"\n" +
     "					ng-required=\"field.required\" >\n" +
     "				</select>\n" +

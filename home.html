@@ -1,7 +1,7 @@
 <div ng-controller="xcController">
   <xc-list
     title="All Documents"
-    url="https://local.ldcvia.com:3001/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic?count=20"
+    url="https://beta.ldcvia.com/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic?count=20"
     list-width="5"
     allow-add="true"
     order-by="__created"
@@ -16,12 +16,12 @@
     infinite-scroll="false">
     <xc-form
       default-text="Select a topic from the list"
-      url="https://local.ldcvia.com:3001/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
+      url="https://beta.ldcvia.com/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
       >
     </xc-form>
     <xc-list
       title="Responses"
-      url="https://local.ldcvia.com:3001/1.0/responses/dev-londc-com-demos-discussion-nsf/MainTopic/:id?expand=true"
+      url="https://beta.ldcvia.com/1.0/responses/dev-londc-com-demos-discussion-nsf/MainTopic/:id?expand=true"
       allow-add="false"
       allow-search="false"
       order-by="__created"

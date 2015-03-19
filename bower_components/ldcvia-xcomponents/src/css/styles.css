@@ -1,3 +1,9 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway);
+
+body {
+	font-family: 'Raleway', sans-serif;
+}
+
 /*right aligned button in header*/
 .bootcards-header-right {
 	position:absolute;
@@ -121,7 +127,7 @@ a {
 .js-photouploader-preview img,
 .js-photouploader-preview canvas {
 	height : auto;
-	width : 300px;	
+	width : 300px;
 }
 
 /*reset bootstrap style*/
