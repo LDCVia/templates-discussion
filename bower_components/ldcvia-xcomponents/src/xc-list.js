@@ -100,6 +100,7 @@ app.directive('xcList',
 			type : '@',				/*list type, options: flat (default), categorised, accordion*/
 			listWidth : '=' ,		/*width of the list (nr 1..11)*/
 			summaryField : '@',		/*name of the field used as a summary field*/
+			summaryFieldType : '@',
 			detailsField : '@',
 			detailsFieldType : '@',		/*text or date*/
 			detailsFieldSubTop : '@',
@@ -153,6 +154,7 @@ app.directive('xcList',
 			$scope.autoloadFirst = (typeof $scope.autoloadFirst == 'undefined' ? false : $scope.autoloadFirst);
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
 			$scope.detailsFieldType = (typeof $scope.detailsFieldType == 'undefined' ? 'text' : $scope.detailsFieldType);
+			$scope.summaryFieldType = (typeof $scope.summaryFieldType == 'undefined' ? 'text' : $scope.summaryFieldType);
 
 			$scope.isLoading = true;
       		$scope.hasMore = false;
@@ -164,7 +166,7 @@ app.directive('xcList',
 			$scope.numPages = 1;
 
 			$scope.modelName = xcUtils.getConfig('modelName');
-      		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
+      $scope.fieldsRead = xcUtils.getConfig('fieldsRead');
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.imageBase = xcUtils.getConfig('imageBase');
 			$scope.documentURL = xcUtils.getConfig('documentURL');

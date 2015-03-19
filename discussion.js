@@ -149,7 +149,7 @@ xcomponents.addCallback(function() {
     }
   })
   //HTML Filter
-  app.filter('gethtml', ['$sce', function($sce){
+  app.filter('html', ['$sce', function($sce){
     return function(input){
       return $sce.trustAsHtml(input);
     }
