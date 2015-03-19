@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 10:41 */
+/* xcomponents 0.1.0 2015-03-19 1:14 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -1234,29 +1234,32 @@ app.directive('xcForm',
 			$scope.apikey = $rootScope.apikey;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				$scope.selectedItem = item;
-				$scope.isNew = false;
+				var f = xcDataFactory.getStore($attrs.datastoreType);
+				f.getById($scope.url, item.__unid)
+				.then(function(item){
+					$scope.selectedItem = item;
+					$scope.isNew = false;
 
-				if (item == null) {
+					if (item == null) {
 
-					$scope.thumbnailSrc==null;
+						$scope.thumbnailSrc==null;
 
-				} else {
+					} else {
 
-					if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-						$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
-					}
-
-					angular.forEach($scope.fieldsEdit, function(fld) {
-						//convert date fields (stored as strings) to JS date objects
-						if (fld.type == 'date') {
-							if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
-								$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
-							}
+						if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
+							$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
 						}
-					});
-				}
 
+						angular.forEach($scope.fieldsEdit, function(fld) {
+							//convert date fields (stored as strings) to JS date objects
+							if (fld.type == 'date') {
+								if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
+									$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+								}
+							}
+						});
+					}
+				})
 			});
 
 			//load specified entry
@@ -1273,7 +1276,7 @@ app.directive('xcForm',
 
 						$scope.isNew = false;
 
-						f.getById($scope.itemId)
+						f.getById($scope.url, $scope.itemId)
 						.then( function(item) {
 
 							$scope.selectedItem = item;
@@ -1611,64 +1614,72 @@ app.directive('xcList',
 			scope.totalNumItems = scope.srcDataEntries.length;
 
 		} else {
-
-			xcDataFactory.getStore(scope.datastoreType)
-			.all(scope.url).then( function(res) {
-
-				var numRes = res.data.length;
-
-				//console.log('found ' + numRes + ' at ' + scope.url);
-
-				if (scope.filterBy && scope.filterValue) {
-					//filter the result set
-
-					var filteredRes = [];
-
-					angular.forEach( res.data, function(entry, idx) {
-
-						if (entry[scope.filterBy] == scope.filterValue) {
-							filteredRes.push( entry);
-						}
-					});
-
-					res.data = filteredRes;
-
+			var url = scope.url;
+			if (scope.embedded){
+				url = xcUtils.getConfig('responseURL');
+				if (scope.selectedItemId != null){
+					url = url.replace(':id', scope.selectedItemId);
 				}
+			}
+			if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
+				xcDataFactory.getStore(scope.datastoreType)
+				.all(url).then( function(res) {
 
-				if (scope.type == 'categorised' || scope.type=='accordion') {
+					var numRes = res.data.length;
 
-					scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
-					scope.isLoading = false;
+					//console.log('found ' + numRes + ' at ' + scope.url);
 
-					//auto load first entry in the first group
-					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+					if (scope.filterBy && scope.filterValue) {
+						//filter the result set
 
-						if (scope.groups.length>0) {
-							if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
-							if (scope.type == 'accordion') {		//auto expand first group
-								scope.groups[0].collapsed = false;
+						var filteredRes = [];
+
+						angular.forEach( res.data, function(entry, idx) {
+
+							if (entry[scope.filterBy] == scope.filterValue) {
+								filteredRes.push( entry);
+							}
+						});
+
+						res.data = filteredRes;
+
+					}
+
+					if (scope.type == 'categorised' || scope.type=='accordion') {
+
+						scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
+						scope.isLoading = false;
+
+						//auto load first entry in the first group
+						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+
+							if (scope.groups.length>0) {
+								if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
+								if (scope.type == 'accordion') {		//auto expand first group
+									scope.groups[0].collapsed = false;
+								}
 							}
 						}
+
+					} else {			//flat or detailed
+
+						//sort the results
+						res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
+
+			      scope.items = res.data;
+						scope.isLoading = false;
+						scope.totalNumItems = res.count;
+						scope.hasMore = scope.itemsShown < scope.totalNumItems;
+
+						//auto load first entry in the list
+						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+							scope.select( res.data[0] );
+						}
+
 					}
 
-				} else {			//flat or detailed
-
-					//sort the results
-					res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
-
-		      scope.items = res.data;
-					scope.isLoading = false;
-					scope.totalNumItems = res.count;
-					scope.hasMore = scope.itemsShown < scope.totalNumItems;
-
-					//auto load first entry in the list
-					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-						scope.select( res.data[0] );
-					}
-
-				}
-
-			});
+				});
+			}
 
 		}
 	};
@@ -1864,12 +1875,13 @@ app.directive('xcList',
 
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-
+				$scope.selectedItemId = item.__unid;
 				if ($scope.filterBy) {
 					$scope.filterValue = item[$scope.filterSrc];
+				}
+				if ($scope.embedded){
 					loadData($scope);
 				}
-
 			});
 
 			$scope.showImage = function(item) {
@@ -2840,24 +2852,24 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "					<a ng-class=\"{'collapsed' : group.collapsed}\" class=\"list-group-item bootcards-list-subheading\" ng-click=\"toggleCategory(group)\">\n" +
     "						{{group.name}}\n" +
     "					</a>\n" +
-    "				\n" +
+    "\n" +
     "					<a class=\"list-group-item\" ng-show=\"!group.collapsed\" ng-repeat=\"item in group.entries | filter : filter\" ng-click=\"select(item)\"\n" +
-    "						ng-class=\"{'active' : selected == item}\">\n" +
+    "						ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +
     "\n" +
     "						<!--(placeholder) icon-->\n" +
     "						<i ng-if=\"showPlaceholder(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +
     "						<i ng-if=\"showIcon(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + item[iconField]\"></i>\n" +
-    "					\n" +
+    "\n" +
     "						<!--image-->\n" +
-    "						<img \n" +
+    "						<img\n" +
     "						ng-if=\"showImage(item)\"\n" +
-    "						class=\"img-rounded pull-left\" \n" +
+    "						class=\"img-rounded pull-left\"\n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
     "						<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
     "						<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
-    "						\n" +
+    "\n" +
     "					</a>\n" +
     "\n" +
     "				</div>\n" +
@@ -2908,24 +2920,24 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "					<div class=\"list-group-item bootcards-list-subheading\" >\n" +
     "						{{group.name}}\n" +
     "					</div>\n" +
-    "				\n" +
+    "\n" +
     "					<a class=\"list-group-item\" ng-repeat=\"item in group.entries | filter : filter\" ng-click=\"select(item)\"\n" +
-    "						ng-class=\"{'active' : selected == item}\">\n" +
+    "						ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +
     "\n" +
     "						<!--(placeholder) icon-->\n" +
     "						<i ng-if=\"showPlaceholder(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +
     "						<i ng-if=\"showIcon(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + item[iconField]\"></i>\n" +
-    "					\n" +
+    "\n" +
     "						<!--image-->\n" +
-    "						<img \n" +
+    "						<img\n" +
     "						ng-show=\"showImage(item)\"\n" +
-    "						class=\"img-rounded pull-left\" \n" +
+    "						class=\"img-rounded pull-left\"\n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
     "						<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
     "						<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
-    "						\n" +
+    "\n" +
     "					</a>\n" +
     "\n" +
     "				</div>\n" +
@@ -2971,9 +2983,9 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "			<ng-include src=\"'xc-list-heading.html'\"></ng-include>\n" +
     "\n" +
     "			<div class=\"list-group\">\n" +
-    "				\n" +
+    "\n" +
     "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\"  ng-click=\"select(item)\"\n" +
-    "					ng-class=\"{'active' : selected == item}\">\n" +
+    "					ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +
     "\n" +
     "					<div class=\"row\">\n" +
     "\n" +
@@ -2982,11 +2994,11 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "							<!--(placeholder) icon-->\n" +
     "							<i ng-if=\"showPlaceholder(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +
     "							<i ng-if=\"showIcon(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + item[iconField]\"></i>\n" +
-    "							\n" +
+    "\n" +
     "							<!--image-->\n" +
-    "							<img \n" +
+    "							<img\n" +
     "								ng-if=\"showImage(item)\"\n" +
-    "								class=\"img-rounded pull-left\" \n" +
+    "								class=\"img-rounded pull-left\"\n" +
     "								ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
     "							<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
@@ -3001,7 +3013,7 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "\n" +
     "					</div>\n" +
     "\n" +
-    "					\n" +
+    "\n" +
     "				</a>\n" +
     "\n" +
     "				<div class=\"list-group-item\" ng-show=\"isLoading\">\n" +
@@ -3047,7 +3059,7 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "			<div class=\"list-group\">\n" +
     "\n" +
     "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\"  ng-click=\"select(item)\"\n" +
-    "					ng-class=\"{'active' : selected == item}\">\n" +
+    "					ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +
     "\n" +
     "					<!--(placeholder) icon-->\n" +
     "					<i ng-if=\"showPlaceholder(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +

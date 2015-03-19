@@ -22,64 +22,72 @@ app.directive('xcList',
 			scope.totalNumItems = scope.srcDataEntries.length;
 
 		} else {
-
-			xcDataFactory.getStore(scope.datastoreType)
-			.all(scope.url).then( function(res) {
-
-				var numRes = res.data.length;
-
-				//console.log('found ' + numRes + ' at ' + scope.url);
-
-				if (scope.filterBy && scope.filterValue) {
-					//filter the result set
-
-					var filteredRes = [];
-
-					angular.forEach( res.data, function(entry, idx) {
-
-						if (entry[scope.filterBy] == scope.filterValue) {
-							filteredRes.push( entry);
-						}
-					});
-
-					res.data = filteredRes;
-
+			var url = scope.url;
+			if (scope.embedded){
+				url = xcUtils.getConfig('responseURL');
+				if (scope.selectedItemId != null){
+					url = url.replace(':id', scope.selectedItemId);
 				}
+			}
+			if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
+				xcDataFactory.getStore(scope.datastoreType)
+				.all(url).then( function(res) {
 
-				if (scope.type == 'categorised' || scope.type=='accordion') {
+					var numRes = res.data.length;
 
-					scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
-					scope.isLoading = false;
+					//console.log('found ' + numRes + ' at ' + scope.url);
 
-					//auto load first entry in the first group
-					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+					if (scope.filterBy && scope.filterValue) {
+						//filter the result set
 
-						if (scope.groups.length>0) {
-							if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
-							if (scope.type == 'accordion') {		//auto expand first group
-								scope.groups[0].collapsed = false;
+						var filteredRes = [];
+
+						angular.forEach( res.data, function(entry, idx) {
+
+							if (entry[scope.filterBy] == scope.filterValue) {
+								filteredRes.push( entry);
+							}
+						});
+
+						res.data = filteredRes;
+
+					}
+
+					if (scope.type == 'categorised' || scope.type=='accordion') {
+
+						scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
+						scope.isLoading = false;
+
+						//auto load first entry in the first group
+						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+
+							if (scope.groups.length>0) {
+								if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
+								if (scope.type == 'accordion') {		//auto expand first group
+									scope.groups[0].collapsed = false;
+								}
 							}
 						}
+
+					} else {			//flat or detailed
+
+						//sort the results
+						res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
+
+			      scope.items = res.data;
+						scope.isLoading = false;
+						scope.totalNumItems = res.count;
+						scope.hasMore = scope.itemsShown < scope.totalNumItems;
+
+						//auto load first entry in the list
+						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+							scope.select( res.data[0] );
+						}
+
 					}
 
-				} else {			//flat or detailed
-
-					//sort the results
-					res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
-
-		      scope.items = res.data;
-					scope.isLoading = false;
-					scope.totalNumItems = res.count;
-					scope.hasMore = scope.itemsShown < scope.totalNumItems;
-
-					//auto load first entry in the list
-					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-						scope.select( res.data[0] );
-					}
-
-				}
-
-			});
+				});
+			}
 
 		}
 	};
@@ -275,12 +283,13 @@ app.directive('xcList',
 
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-
+				$scope.selectedItemId = item.__unid;
 				if ($scope.filterBy) {
 					$scope.filterValue = item[$scope.filterSrc];
+				}
+				if ($scope.embedded){
 					loadData($scope);
 				}
-
 			});
 
 			$scope.showImage = function(item) {

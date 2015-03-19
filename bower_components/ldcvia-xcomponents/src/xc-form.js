@@ -40,29 +40,32 @@ app.directive('xcForm',
 			$scope.apikey = $rootScope.apikey;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				$scope.selectedItem = item;
-				$scope.isNew = false;
+				var f = xcDataFactory.getStore($attrs.datastoreType);
+				f.getById($scope.url, item.__unid)
+				.then(function(item){
+					$scope.selectedItem = item;
+					$scope.isNew = false;
 
-				if (item == null) {
+					if (item == null) {
 
-					$scope.thumbnailSrc==null;
+						$scope.thumbnailSrc==null;
 
-				} else {
+					} else {
 
-					if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-						$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
-					}
-
-					angular.forEach($scope.fieldsEdit, function(fld) {
-						//convert date fields (stored as strings) to JS date objects
-						if (fld.type == 'date') {
-							if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
-								$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
-							}
+						if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
+							$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
 						}
-					});
-				}
 
+						angular.forEach($scope.fieldsEdit, function(fld) {
+							//convert date fields (stored as strings) to JS date objects
+							if (fld.type == 'date') {
+								if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
+									$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+								}
+							}
+						});
+					}
+				})
 			});
 
 			//load specified entry
@@ -79,7 +82,7 @@ app.directive('xcForm',
 
 						$scope.isNew = false;
 
-						f.getById($scope.itemId)
+						f.getById($scope.url, $scope.itemId)
 						.then( function(item) {
 
 							$scope.selectedItem = item;

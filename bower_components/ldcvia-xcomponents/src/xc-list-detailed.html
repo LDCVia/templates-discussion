@@ -7,9 +7,9 @@
 			<ng-include src="'xc-list-heading.html'"></ng-include>
 
 			<div class="list-group">
-				
+
 				<a class="list-group-item animate-repeat" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.id"  ng-click="select(item)"
-					ng-class="{'active' : selected == item}">
+					ng-class="{'active' : selectedItemId == item.__unid}">
 
 					<div class="row">
 
@@ -18,11 +18,11 @@
 							<!--(placeholder) icon-->
 							<i ng-if="showPlaceholder(item)" class="fa fa-2x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>
 							<i ng-if="showIcon(item)" class="fa fa-2x pull-left" ng-class="'fa-' + item[iconField]"></i>
-							
+
 							<!--image-->
-							<img 
+							<img
 								ng-if="showImage(item)"
-								class="img-rounded pull-left" 
+								class="img-rounded pull-left"
 								ng-src="{{ imageBase + item[imageField] }}" />
 
 							<h4 class="list-group-item-heading">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>
@@ -37,7 +37,7 @@
 
 					</div>
 
-					
+
 				</a>
 
 				<div class="list-group-item" ng-show="isLoading">

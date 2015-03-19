@@ -12,24 +12,24 @@
 					<div class="list-group-item bootcards-list-subheading" >
 						{{group.name}}
 					</div>
-				
+
 					<a class="list-group-item" ng-repeat="item in group.entries | filter : filter" ng-click="select(item)"
-						ng-class="{'active' : selected == item}">
+						ng-class="{'active' : selectedItemId == item.__unid}">
 
 						<!--(placeholder) icon-->
 						<i ng-if="showPlaceholder(item)" class="fa fa-2x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>
 						<i ng-if="showIcon(item)" class="fa fa-2x pull-left" ng-class="'fa-' + item[iconField]"></i>
-					
+
 						<!--image-->
-						<img 
+						<img
 						ng-show="showImage(item)"
-						class="img-rounded pull-left" 
+						class="img-rounded pull-left"
 						ng-src="{{ imageBase + item[imageField] }}" />
 
 						<h4 class="list-group-item-heading">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>
 
 						<p class="list-group-item-text">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>
-						
+
 					</a>
 
 				</div>

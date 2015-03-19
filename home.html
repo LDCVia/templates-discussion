@@ -1,24 +1,40 @@
 <div ng-controller="xcController">
-<xc-list
-  title="All Documents"
-  url="https://local.ldcvia.com:3001/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic?count=20"
-  list-width="5"
-  allow-add="true"
-  order-by="__created"
-  order-reversed="true"
-  summary-field="Subject"
-  details-field="From"
-  details-field-type="notesname"
-  image-placeholder-icon="document"
-  autoload-first="true"
-  type="flat"
-  group-by="Categories"
-  infinite-scroll="false">
-  <xc-form
-    default-text="Select a topic from the list"
-    url="https://local.ldcvia.com:3001/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
-    >
-
-  </xc-form>
-</xc-list>
+  <xc-list
+    title="All Documents"
+    url="https://local.ldcvia.com:3001/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic?count=20"
+    list-width="5"
+    allow-add="true"
+    order-by="__created"
+    order-reversed="true"
+    summary-field="Subject"
+    details-field="From"
+    details-field-type="notesname"
+    image-placeholder-icon="document"
+    autoload-first="true"
+    type="flat"
+    group-by="Categories"
+    infinite-scroll="false">
+    <xc-form
+      default-text="Select a topic from the list"
+      url="https://local.ldcvia.com:3001/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
+      >
+    </xc-form>
+    <xc-list
+      title="Responses"
+      url="https://local.ldcvia.com:3001/1.0/responses/dev-londc-com-demos-discussion-nsf/MainTopic/:id?expand=true"
+      allow-add="false"
+      allow-search="false"
+      order-by="__created"
+      order-reversed="true"
+      summary-field="Subject"
+      details-field="From"
+      details-field-type="notesname"
+      image-placeholder-icon="document"
+      autoload-first="false"
+      type="flat"
+      group-by="Categories"
+      infinite-scroll="false"
+      embedded="true">
+    </xc-list>
+  </xc-list>
 </div>

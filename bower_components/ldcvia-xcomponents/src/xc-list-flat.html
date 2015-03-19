@@ -9,7 +9,7 @@
 			<div class="list-group">
 
 				<a class="list-group-item animate-repeat" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid"  ng-click="select(item)"
-					ng-class="{'active' : selected == item}">
+					ng-class="{'active' : selectedItemId == item.__unid}">
 
 					<!--(placeholder) icon-->
 					<i ng-if="showPlaceholder(item)" class="fa fa-2x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>

@@ -6,6 +6,7 @@ xcomponents.host = 'https://local.ldcvia.com:3001/1.0';
 xcomponents.db = 'dev-londc-com-demos-discussion-nsf';
 xcomponents.apikey = null;
 xcomponents.documentURL = xcomponents.host + '/document/' + xcomponents.db + '/MainTopic/:id';
+xcomponents.responseURL = xcomponents.host + '/responses/' + xcomponents.db + '/MainTopic/:id?expand=true';
 /*
 Define Header and Footer options
 */
