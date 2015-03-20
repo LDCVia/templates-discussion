@@ -55,7 +55,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	$rootScope.iOS = $scope.iOS;
 	$rootScope.Android = $scope.Android;
 
-	var baseFolder = '/bower_components';
+	var baseFolder = 'bower_components';
 	var css = baseFolder + '/bootcards/dist/css/';
 
 	var body = angular.element( $document[0].body);

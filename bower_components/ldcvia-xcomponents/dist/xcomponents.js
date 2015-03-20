@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 3:16 */
+/* xcomponents 0.1.0 2015-03-20 11:51 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -432,7 +432,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	$rootScope.iOS = $scope.iOS;
 	$rootScope.Android = $scope.Android;
 
-	var baseFolder = '/bower_components';
+	var baseFolder = 'bower_components';
 	var css = baseFolder + '/bootcards/dist/css/';
 
 	var body = angular.element( $document[0].body);
