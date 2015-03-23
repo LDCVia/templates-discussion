@@ -303,18 +303,50 @@ app.directive('xcList',
 					      "value": group.name
 					    }]
 					  };
+						group.isLoading = true;
 						xcDataFactory.getStore($scope.datastoreType)
 						.allfilter($scope.url, filter).then( function(res) {
 
 							group.collapsed = !expand.collapsed;
 							group.entries = res.data;
 
+							$scope.totalNumItems = res.count;
+							group.totalNumItems = res.count;
+							group.hasMore = group.entries.length < res.count;
+							$scope.hasMore = group.hasMore;
+							group.isLoading = false;
+							$scope.isLoading = false;
 						});
 					} else {
 						group.collapsed = true;
 						group.entries = [];
 					}
 				});
+			};
+
+			$scope.groupLoadMore = function(group) {
+				if (group.hasMore && !group.isLoading) {
+					//Now go and get the data for this category (at least the first page anyway)
+					var filter = {
+						"filters": [{
+							"operator": "contains",
+							"field": $scope.categoryfield,
+							"value": group.name
+						}]
+					};
+					group.isLoading = true;
+					xcDataFactory.getStore($scope.datastoreType)
+					.allfilter($scope.url + "&start=" + group.entries.length, filter).then( function(res) {
+
+						group.entries = group.entries.concat(res.data);
+
+						$scope.totalNumItems = res.count;
+						group.hasMore = group.entries.length < res.count;
+						$scope.hasMore = group.hasMore;
+						group.isLoading = false;
+						$scope.isLoading = false;
+					});
+				}
 			};
 
 			$scope.select = function(item) {
@@ -423,7 +455,7 @@ app.directive('xcList',
 					.saveNew( $scope.documentURL, targetItem )
 					.then( function(res) {
 
-						if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type == 'flat'){
+						if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type=='accordion-remote' || $scope.type == 'flat'){
 
 							//do a full refresh of the list
 							$rootScope.$emit('refreshList', '');
