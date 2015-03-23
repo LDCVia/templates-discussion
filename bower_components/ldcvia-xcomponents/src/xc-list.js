@@ -29,78 +29,81 @@ app.directive('xcList',
 					url = url.replace(':id', scope.selectedItemId);
 				}
 			}
-			if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
-				xcDataFactory.getStore(scope.datastoreType)
-				.all(url).then( function(res) {
-
-					var numRes = res.data.length;
-
-					//console.log('found ' + numRes + ' at ' + scope.url);
-
-					if (scope.filterBy && scope.filterValue) {
-						//filter the result set
-
-						var filteredRes = [];
-
-						angular.forEach( res.data, function(entry, idx) {
-
-							if (entry[scope.filterBy] == scope.filterValue) {
-								filteredRes.push( entry);
-							}
+			if(scope.type == 'accordion-remote'){
+				if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
+					xcDataFactory.getStore(scope.datastoreType)
+					.list(scope.categoryurl).then( function(res) {
+						scope.groups = [];
+						res = res.sort(function (a, b) {
+				    	return a.toLowerCase().localeCompare(b.toLowerCase());
 						});
+						for (var g in res){
+							scope.groups.push({"name": res[g], "entries": [], "collapsed": true});
+						}
 
-						res.data = filteredRes;
-
-					}
-
-					if (scope.type == 'categorised' || scope.type=='accordion') {
-
-						scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
 						scope.isLoading = false;
+					});
+				}
+			}else{
+				if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
+					xcDataFactory.getStore(scope.datastoreType)
+					.all(url).then( function(res) {
 
-						//auto load first entry in the first group
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+						var numRes = res.data.length;
 
-							if (scope.groups.length>0) {
-								if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
-								if (scope.type == 'accordion') {		//auto expand first group
-									scope.groups[0].collapsed = false;
+						//console.log('found ' + numRes + ' at ' + scope.url);
+
+						if (scope.filterBy && scope.filterValue) {
+							//filter the result set
+
+							var filteredRes = [];
+
+							angular.forEach( res.data, function(entry, idx) {
+
+								if (entry[scope.filterBy] == scope.filterValue) {
+									filteredRes.push( entry);
+								}
+							});
+
+							res.data = filteredRes;
+
+						}
+
+						if (scope.type == 'categorised' || scope.type=='accordion') {
+
+							scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
+							scope.isLoading = false;
+
+							//auto load first entry in the first group
+							if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+
+								if (scope.groups.length>0) {
+									if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
+									if (scope.type == 'accordion') {		//auto expand first group
+										scope.groups[0].collapsed = false;
+									}
 								}
 							}
-						}
 
-					} else if(scope.type == 'accordion-remote') {
-						scope.groups = xcUtils.getRemoteGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
-						scope.isLoading = false;
+						} else {			//flat or detailed
 
-						//auto load first entry in the first group
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+							//sort the results
+							res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
 
-							if (scope.groups.length>0) {
-								if (scope.groups[0].entries.length>0) {
-									scope.select( scope.groups[0].entries[0] ); 
-								}
-								scope.groups[0].collapsed = false;
+				      scope.items = res.data;
+							scope.isLoading = false;
+							scope.totalNumItems = res.count;
+							scope.hasMore = scope.itemsShown < scope.totalNumItems;
+
+							//auto load first entry in the list
+							if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+								scope.select( res.data[0] );
 							}
-						}
-					} else {			//flat or detailed
 
-						//sort the results
-						res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
-
-			      scope.items = res.data;
-						scope.isLoading = false;
-						scope.totalNumItems = res.count;
-						scope.hasMore = scope.itemsShown < scope.totalNumItems;
-
-						//auto load first entry in the list
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-							scope.select( res.data[0] );
 						}
 
-					}
-
-				});
+					});
+				}
 			}
 
 		}
@@ -135,7 +138,9 @@ app.directive('xcList',
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
 			infiniteScroll : '@',
-			embedded : '@'
+			embedded : '@',
+			categoryurl: '@',
+			categoryfield: '@'
 		},
 
 		restrict : 'E',
@@ -287,6 +292,31 @@ app.directive('xcList',
 				});
 			};
 
+			$scope.toggleCategoryRemote = function(expand) {
+				angular.forEach( $scope.groups, function(group) {
+					if (group.name == expand.name) {
+						//Now go and get the data for this category (at least the first page anyway)
+						var filter = {
+					    "filters": [{
+					      "operator": "contains",
+					      "field": $scope.categoryfield,
+					      "value": group.name
+					    }]
+					  };
+						xcDataFactory.getStore($scope.datastoreType)
+						.allfilter($scope.url, filter).then( function(res) {
+
+							group.collapsed = !expand.collapsed;
+							group.entries = res.data;
+
+						});
+					} else {
+						group.collapsed = true;
+						group.entries = [];
+					}
+				});
+			};
+
 			$scope.select = function(item) {
 
 				$scope.selected = item;
@@ -426,29 +456,3 @@ app.directive('xcList',
 	};
 
 }]);
-
-app.filter('searchFilter', function() {
-
-   return function(items, word, numPerPage) {
-
-    var filtered = [];
-
-    if (!word) {return items;}
-
-    angular.forEach(items, function(item) {
-        if(item.lastName.toLowerCase().indexOf(word.toLowerCase()) !== -1){
-            filtered.push(item);
-        }
-    });
-
-    /*
-
-    filtered.sort(function(a,b){
-        if(a.indexOf(word) < b.indexOf(word)) return -1;
-        else if(a.indexOf(word) > b.indexOf(word)) return 1;
-        else return 0;
-    });*/
-
-    return filtered;
-  };
-});

@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-23 2:23 */
+/* xcomponents 0.1.0 2015-03-23 4:03 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -62,6 +62,32 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 				return res.data;
 			});
 
+		},
+
+		allfilter : function(url, filter) {
+			url = url.replace(":host", xcomponents.host);
+			url = url.replace(":db", xcomponents.db);
+			url = url.replace(":id", "");
+
+			console.log('querying REST service at ' + url);
+
+			return $http.post(url, filter).then( function(res) {
+				console.log('returning '  + res.data.data.length + ' items');
+				return res.data;
+			});
+
+		},
+
+		list : function(url) {
+			url = url.replace(":host", xcomponents.host);
+			url = url.replace(":db", xcomponents.db);
+			url = url.replace(":id", "");
+			console.log('querying REST service at ' + url);
+
+			return $http.get(url).then( function(res) {
+				console.log('returning '  + res.data.length + ' items');
+				return res.data;
+			});
 		},
 
 		saveNew : function(url, item) {
@@ -904,7 +930,7 @@ app.directive('xcChart', function() {
 								.fadeIn('fast');
 					});
 				} else {
-				
+
 					var $data = $ev.parents('.bootcards-table');
 					$data.fadeOut( 'fast', function()  {
 						$data
@@ -922,7 +948,7 @@ app.directive('xcChart', function() {
 			$timeout( function() {
 				if ($scope.chart) { $scope.chart.redraw(); }
 			}, 150);
-			
+
 		},
 
 		link : function(scope, el, attrs) {
@@ -936,7 +962,7 @@ app.directive('xcChart', function() {
 			var ylabels = [];
 
 			angular.forEach( scope.chartData[0], function(value, key) {
-				if (!xkey) { 
+				if (!xkey) {
 					xkey = key;
 				} else {
 					ykeys.push( key);
@@ -1002,7 +1028,7 @@ app.directive('xcChart', function() {
 					return myDonut({
 					    element: el,
 					    data: chartData,
-					    formatter: function (y, data) { 
+					    formatter: function (y, data) {
 					    	//prefixes the values by an $ sign, adds thousands seperators
 							nStr = y + '';
 							x = nStr.split('.');
@@ -1035,7 +1061,7 @@ app.directive('xcChart', function() {
 				});
 
 			} else if (attrs.chartType === 'line') {
-					
+
 				scope.chart = Morris.Line({
 				    element: canvas[0],
 				    data: scope.chartData,
@@ -1083,7 +1109,7 @@ app.directive('xcFile', function() {
 			url : '@',
 			allowFavorite : '=',
 			allowEmail : '='
-			
+
 		},
 
 		replace : true,
@@ -1120,22 +1146,22 @@ app.directive('xcFooter', function() {
 
 var app = angular.module('xcomponents');
 
-app.controller('UpdateItemInstanceCtrl', 
+app.controller('UpdateItemInstanceCtrl',
 	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
 	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
-	
+
 		if (field.type == 'date' && isNew) {
 			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
 						selectedItem[field.field] = new Date(); break;
-				}	
+				}
 			}
 		}
-	
+
 	});
 
 	//create a copy of the object we're editing (to deal with 'cancel')
@@ -1174,7 +1200,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.saveItem = function(form) {
 
 		//validate the input
-		if (!form.$valid) { 
+		if (!form.$valid) {
 
 	  		var msgs = [];
 
@@ -1183,7 +1209,7 @@ app.controller('UpdateItemInstanceCtrl',
 	  		if (form.$error.required) {
 	  			msgs.push("- fill in all required fields\n");
 	  		}
-	  		
+
 	  		if (form.$error.email) {
 				msgs.push("- enter a valid email address\n");
 	  		}
@@ -1573,15 +1599,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				
+
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-			
+
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-	
+
 			});
 
 		}
@@ -1635,78 +1661,81 @@ app.directive('xcList',
 					url = url.replace(':id', scope.selectedItemId);
 				}
 			}
-			if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
-				xcDataFactory.getStore(scope.datastoreType)
-				.all(url).then( function(res) {
-
-					var numRes = res.data.length;
-
-					//console.log('found ' + numRes + ' at ' + scope.url);
-
-					if (scope.filterBy && scope.filterValue) {
-						//filter the result set
-
-						var filteredRes = [];
-
-						angular.forEach( res.data, function(entry, idx) {
-
-							if (entry[scope.filterBy] == scope.filterValue) {
-								filteredRes.push( entry);
-							}
+			if(scope.type == 'accordion-remote'){
+				if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
+					xcDataFactory.getStore(scope.datastoreType)
+					.list(scope.categoryurl).then( function(res) {
+						scope.groups = [];
+						res = res.sort(function (a, b) {
+				    	return a.toLowerCase().localeCompare(b.toLowerCase());
 						});
+						for (var g in res){
+							scope.groups.push({"name": res[g], "entries": [], "collapsed": true});
+						}
 
-						res.data = filteredRes;
-
-					}
-
-					if (scope.type == 'categorised' || scope.type=='accordion') {
-
-						scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
 						scope.isLoading = false;
+					});
+				}
+			}else{
+				if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
+					xcDataFactory.getStore(scope.datastoreType)
+					.all(url).then( function(res) {
 
-						//auto load first entry in the first group
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+						var numRes = res.data.length;
 
-							if (scope.groups.length>0) {
-								if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
-								if (scope.type == 'accordion') {		//auto expand first group
-									scope.groups[0].collapsed = false;
+						//console.log('found ' + numRes + ' at ' + scope.url);
+
+						if (scope.filterBy && scope.filterValue) {
+							//filter the result set
+
+							var filteredRes = [];
+
+							angular.forEach( res.data, function(entry, idx) {
+
+								if (entry[scope.filterBy] == scope.filterValue) {
+									filteredRes.push( entry);
+								}
+							});
+
+							res.data = filteredRes;
+
+						}
+
+						if (scope.type == 'categorised' || scope.type=='accordion') {
+
+							scope.groups = xcUtils.getGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
+							scope.isLoading = false;
+
+							//auto load first entry in the first group
+							if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+
+								if (scope.groups.length>0) {
+									if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
+									if (scope.type == 'accordion') {		//auto expand first group
+										scope.groups[0].collapsed = false;
+									}
 								}
 							}
-						}
 
-					} else if(scope.type == 'accordion-remote') {
-						scope.groups = xcUtils.getRemoteGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
-						scope.isLoading = false;
+						} else {			//flat or detailed
 
-						//auto load first entry in the first group
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+							//sort the results
+							res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
 
-							if (scope.groups.length>0) {
-								if (scope.groups[0].entries.length>0) {
-									scope.select( scope.groups[0].entries[0] ); 
-								}
-								scope.groups[0].collapsed = false;
+				      scope.items = res.data;
+							scope.isLoading = false;
+							scope.totalNumItems = res.count;
+							scope.hasMore = scope.itemsShown < scope.totalNumItems;
+
+							//auto load first entry in the list
+							if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+								scope.select( res.data[0] );
 							}
-						}
-					} else {			//flat or detailed
 
-						//sort the results
-						res.data.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
-
-			      scope.items = res.data;
-						scope.isLoading = false;
-						scope.totalNumItems = res.count;
-						scope.hasMore = scope.itemsShown < scope.totalNumItems;
-
-						//auto load first entry in the list
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-							scope.select( res.data[0] );
 						}
 
-					}
-
-				});
+					});
+				}
 			}
 
 		}
@@ -1741,7 +1770,9 @@ app.directive('xcList',
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
 			infiniteScroll : '@',
-			embedded : '@'
+			embedded : '@',
+			categoryurl: '@',
+			categoryfield: '@'
 		},
 
 		restrict : 'E',
@@ -1893,6 +1924,31 @@ app.directive('xcList',
 				});
 			};
 
+			$scope.toggleCategoryRemote = function(expand) {
+				angular.forEach( $scope.groups, function(group) {
+					if (group.name == expand.name) {
+						//Now go and get the data for this category (at least the first page anyway)
+						var filter = {
+					    "filters": [{
+					      "operator": "contains",
+					      "field": $scope.categoryfield,
+					      "value": group.name
+					    }]
+					  };
+						xcDataFactory.getStore($scope.datastoreType)
+						.allfilter($scope.url, filter).then( function(res) {
+
+							group.collapsed = !expand.collapsed;
+							group.entries = res.data;
+
+						});
+					} else {
+						group.collapsed = true;
+						group.entries = [];
+					}
+				});
+			};
+
 			$scope.select = function(item) {
 
 				$scope.selected = item;
@@ -1999,7 +2055,7 @@ app.directive('xcList',
 					.saveNew( $scope.documentURL, targetItem )
 					.then( function(res) {
 
-						if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type == 'flat'){
+						if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type == 'accordion-remote' || $scope.type == 'flat'){
 
 							//do a full refresh of the list
 							$rootScope.$emit('refreshList', '');
@@ -2032,32 +2088,6 @@ app.directive('xcList',
 	};
 
 }]);
-
-app.filter('searchFilter', function() {
-
-   return function(items, word, numPerPage) {
-
-    var filtered = [];
-
-    if (!word) {return items;}
-
-    angular.forEach(items, function(item) {
-        if(item.lastName.toLowerCase().indexOf(word.toLowerCase()) !== -1){
-            filtered.push(item);
-        }
-    });
-
-    /*
-
-    filtered.sort(function(a,b){
-        if(a.indexOf(word) < b.indexOf(word)) return -1;
-        else if(a.indexOf(word) > b.indexOf(word)) return 1;
-        else return 0;
-    });*/
-
-    return filtered;
-  };
-});
 
 
 var app = angular.module('xcomponents');
@@ -2926,13 +2956,12 @@ angular.module("xc-list-accordion-remote.html", []).run(["$templateCache", funct
     "\n" +
     "			<div class=\"list-group\">\n" +
     "\n" +
-    "				<div ng-repeat=\"group in groups | filter : filter\" class=\"animate-repeat\">\n" +
-    "					<div class=\"list-group-item bootcards-list-subheading\" >\n" +
+    "				<div ng-repeat=\"group in groups\" class=\"animate-repeat\">\n" +
+    "          <a ng-class=\"{'collapsed' : group.collapsed}\" class=\"list-group-item bootcards-list-subheading\" ng-click=\"toggleCategoryRemote(group)\">\n" +
     "						{{group.name}}\n" +
-    "					</div>\n" +
+    "					</a>\n" +
     "\n" +
-    "					<a class=\"list-group-item\" ng-repeat=\"item in group.entries | filter : filter\" ng-click=\"select(item)\"\n" +
-    "						ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +
+    "          <a class=\"list-group-item\" ng-show=\"!group.collapsed\" ng-repeat=\"item in group.entries | filter : filter\"  ng-click=\"select(item)\" ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +
     "\n" +
     "						<!--(placeholder) icon-->\n" +
     "						<i ng-if=\"showPlaceholder(item)\" class=\"fa fa-2x pull-left\" ng-class=\"'fa-' + imagePlaceholderIcon\"></i>\n" +
@@ -2940,7 +2969,7 @@ angular.module("xc-list-accordion-remote.html", []).run(["$templateCache", funct
     "\n" +
     "						<!--image-->\n" +
     "						<img\n" +
-    "						ng-show=\"showImage(item)\"\n" +
+    "						ng-if=\"showImage(item)\"\n" +
     "						class=\"img-rounded pull-left\"\n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +

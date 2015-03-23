@@ -62,6 +62,32 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			});
 
 		},
+		
+		allfilter : function(url, filter) {
+			url = url.replace(":host", xcomponents.host);
+			url = url.replace(":db", xcomponents.db);
+			url = url.replace(":id", "");
+
+			console.log('querying REST service at ' + url);
+
+			return $http.post(url, filter).then( function(res) {
+				console.log('returning '  + res.data.data.length + ' items');
+				return res.data;
+			});
+
+		},
+
+		list : function(url) {
+			url = url.replace(":host", xcomponents.host);
+			url = url.replace(":db", xcomponents.db);
+			url = url.replace(":id", "");
+			console.log('querying REST service at ' + url);
+
+			return $http.get(url).then( function(res) {
+				console.log('returning '  + res.data.length + ' items');
+				return res.data;
+			});
+		},
 
 		saveNew : function(url, item) {
 			url = url.replace(":host", xcomponents.host);

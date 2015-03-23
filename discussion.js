@@ -17,15 +17,23 @@ xcomponents.menuOptions = [{
   icon: 'fa-sign-out',
   logout: true
 }, {
-  label: 'All Documents',
-  url: 'index.html#/home',
+  label: 'By Date',
+  url: '#/home',
   icon: 'fa-dashboard'
+}, {
+  label: 'By Category',
+  url: '#/category',
+  icon: 'fa-list'
 }
 ];
 xcomponents.footerOptions = [{
-  label: 'All Documents',
-  url: '/index.html#/home',
+  label: 'By Date',
+  url: '#/home',
   icon: 'fa-dashboard'
+}, {
+  label: 'By Date',
+  url: '#/category',
+  icon: 'fa-list'
 }];
 xcomponents.footerTitle = "LDC Via Discussion using XComponents (alpha 1)";
 

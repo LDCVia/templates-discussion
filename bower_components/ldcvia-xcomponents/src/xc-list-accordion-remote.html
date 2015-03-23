@@ -8,13 +8,12 @@
 
 			<div class="list-group">
 
-				<div ng-repeat="group in groups | filter : filter" class="animate-repeat">
-					<div class="list-group-item bootcards-list-subheading" >
+				<div ng-repeat="group in groups" class="animate-repeat">
+          <a ng-class="{'collapsed' : group.collapsed}" class="list-group-item bootcards-list-subheading" ng-click="toggleCategoryRemote(group)">
 						{{group.name}}
-					</div>
+					</a>
 
-					<a class="list-group-item" ng-repeat="item in group.entries | filter : filter" ng-click="select(item)"
-						ng-class="{'active' : selectedItemId == item.__unid}">
+          <a class="list-group-item" ng-show="!group.collapsed" ng-repeat="item in group.entries | filter : filter"  ng-click="select(item)" ng-class="{'active' : selectedItemId == item.__unid}">
 
 						<!--(placeholder) icon-->
 						<i ng-if="showPlaceholder(item)" class="fa fa-2x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>
@@ -22,7 +21,7 @@
 
 						<!--image-->
 						<img
-						ng-show="showImage(item)"
+						ng-if="showImage(item)"
 						class="img-rounded pull-left"
 						ng-src="{{ imageBase + item[imageField] }}" />
 

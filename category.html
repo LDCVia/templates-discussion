@@ -1,7 +1,7 @@
 <div ng-controller="xcController">
 <xc-list
   title="By Category"
-  url="https://local.ldcvia.com:3001/1.0/collections/dev-londc-com-demos-discussion-nsf/MainTopic"
+  url=":host/search/:db/MainTopic?count=20"
   list-width="5"
   allow-add="true"
   order-by="__created"
@@ -11,12 +11,15 @@
   details-field-type="notesname"
   image-placeholder-icon="document"
   autoload-first="true"
-  type="accordion"
+  allowSearch="false"
+  type="accordion-remote"
+  categoryurl=":host/list/:db/MainTopic/Categories"
+  categoryfield="Categories"
   group-by="Categories"
-  infinite-scroll="true">
+  infinite-scroll="false">
   <xc-form
     default-text="Select a topic from the list"
-    url="https://local.ldcvia.com:3001/1.0/document/dev-londc-com-demos-discussion-nsf/MainTopic/:id"
+    url=":host/document/:db/MainTopic/:id"
     >
 
   </xc-form>
