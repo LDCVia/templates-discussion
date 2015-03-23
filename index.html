@@ -13,7 +13,46 @@
     </style>
 
     <!-- polyfill for html imports & xcomponents resources -->
-    <link rel="import" href="bower_components/ldcvia-xcomponents/dist/includes/includes.html">
+    <script type="text/javascript" src="./bower_components/ldcvia-xcomponents/dist/js/xc-base.js"></script>
+    <script type="text/javascript" src="./bower_components/webcomponentsjs/HTMLImports.min.js"></script>
+    <!-- <link rel="import" href="./bower_components/ldcvia-xcomponents/dist/includes/includes.html"> -->
+
+
+    <script src="./bower_components/ldcvia-xcomponents/dist/libs-angular.js"></script>
+
+    <script src="./bower_components/jquery/dist/jquery.min.js"></script>
+
+    <!-- include:pouch -->
+    <!-- include:lowla -->
+
+    <!--angular-pouch-->
+    <script type="text/javascript" src="./bower_components/angular-pouchdb/dist/angular-pouchdb.js"></script>
+
+    <!--morris/ raphael (for the charts)-->
+    <script src="./bower_components/morris.js/morris.min.js"></script>
+    <script type="text/javascript" src="./bower_components/raphael/raphael-min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bower_components/morris.js/morris.css">
+
+    <!--blueimp libs for the photo uploader-->
+    <script type="text/javascript" src="./bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.min.js"></script>
+    <script type="text/javascript" src="./bower_components/blueimp-load-image/js/load-image.all.min.js"></script>
+
+    <!--textangular html editor-->
+    <script type="text/javascript" src="./bower_components/textAngular/dist/textAngular-rangy.min.js"></script>
+    <script type="text/javascript" src="./bower_components/textAngular/dist/textAngular.min.js"></script>
+
+    <!-- bootstrap.js / bootcards.js -->
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./bower_components/bootcards/dist/js/bootcards.min.js"></script>
+
+    <script src="./bower_components/ldcvia-xcomponents/dist/xcomponents.js"></script>
+
+    <!-- styles -->
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./bower_components/textAngular/src/textAngular.css">
+    <link rel="stylesheet" href="./bower_components/ldcvia-xcomponents/dist/css/styles.css">
+
 
   </head>
   <body ng-controller="xcController" class="hidden">
@@ -23,11 +62,9 @@
     <div ng-view>
     </div>
 
-    <xc-footer></xc-footer>
+    <xc-footer title="LDC Via Discussion using XComponents"></xc-footer>
 
     <!-- xcomponents app config -->
-    <script type="text/javascript" src="bower_components/ldcvia-xcomponents/dist/js/xc-base.js"></script>
-    <script type="text/javascript" src="bower_components/webcomponentsjs/HTMLImports.min.js"></script>
     <script src="discussion.js"></script>
 
   </body>

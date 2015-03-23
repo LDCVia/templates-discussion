@@ -69,6 +69,20 @@ app.directive('xcList',
 							}
 						}
 
+					} else if(scope.type == 'accordion-remote') {
+						scope.groups = xcUtils.getRemoteGroups( res.data, scope.groupBy, scope.orderBy, scope.orderReversed );
+						scope.isLoading = false;
+
+						//auto load first entry in the first group
+						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+
+							if (scope.groups.length>0) {
+								if (scope.groups[0].entries.length>0) {
+									scope.select( scope.groups[0].entries[0] ); 
+								}
+								scope.groups[0].collapsed = false;
+							}
+						}
 					} else {			//flat or detailed
 
 						//sort the results

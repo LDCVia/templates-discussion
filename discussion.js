@@ -1,9 +1,10 @@
 /*
 Basic configuration of the application
 */
+
 xcomponents.appVersion = '0.1';
-xcomponents.host = 'https://beta.ldcvia.com/1.0';
-xcomponents.db = 'dev-londc-com-demos-discussion-nsf';
+xcomponents.host = 'https://' + gup('host') + '/1.0';
+xcomponents.db = gup('db');
 xcomponents.apikey = null;
 xcomponents.documentURL = xcomponents.host + '/document/' + xcomponents.db + '/MainTopic/:id';
 xcomponents.responseURL = xcomponents.host + '/responses/' + xcomponents.db + '/MainTopic/:id?expand=true';
@@ -26,6 +27,7 @@ xcomponents.footerOptions = [{
   url: '/index.html#/home',
   icon: 'fa-dashboard'
 }];
+xcomponents.footerTitle = "LDC Via Discussion using XComponents (alpha 1)";
 
 /*
 Define the main Topic model
@@ -184,7 +186,7 @@ angular.module('ldcvia.login', ['ngRoute'])
             if (document.location.port != 80 && document.location.port != 443){
               port = ":" + document.location.port;
             }
-            window.location = document.location.protocol +"//"+ document.location.hostname + port + document.location.pathname
+            window.location = document.location.protocol +"//"+ document.location.hostname + port + document.location.pathname + '?host=' + gup('host') + '&db=' + gup('db');
           }
         })
         .error(function(error) {
@@ -198,3 +200,15 @@ angular.module('ldcvia.login', ['ngRoute'])
 
   }
 ]);
+
+function gup( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
