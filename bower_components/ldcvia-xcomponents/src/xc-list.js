@@ -1,8 +1,8 @@
 var app = angular.module("xcomponents");
 
 app.directive('xcList',
-	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory',
-	function($rootScope, $filter, xcUtils, xcDataFactory) {
+	['$rootScope', '$controller', '$filter', 'xcUtils', 'xcDataFactory',
+	function($rootScope, $controller, $filter, xcUtils, xcDataFactory) {
 
 	var loadData = function(scope) {
 
@@ -45,8 +45,6 @@ app.directive('xcList',
 					.all(url).then( function(res) {
 
 						var numRes = res.data.length;
-
-						//console.log('found ' + numRes + ' at ' + scope.url);
 
 						if (scope.filterBy && scope.filterValue) {
 							//filter the result set
@@ -135,6 +133,7 @@ app.directive('xcList',
 			datastoreType : '@',
 			infiniteScroll : '@',
 			embedded : '@',
+			directEdit : '@',
 			categoryurl: '@',
 			documenturl: '@',
 			responseurl: '@',
@@ -179,6 +178,12 @@ app.directive('xcList',
 				}
 			}
 
+			// instantiate base controller
+			$controller('BaseController', {
+				$scope: $scope,
+				$modal : $modal
+			} );
+
       $scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
 			$scope.imageBase = $scope.model.imageBase;
@@ -190,6 +195,7 @@ app.directive('xcList',
 
 			//set defaults
 			$scope.embedded = (typeof $scope.embedded == 'undefined' ? false : $scope.embedded);
+			$scope.directEdit = (typeof $scope.directEdit == 'undefined' ? false : $scope.directEdit);
 			$scope.allowSearch = (typeof $scope.allowSearch == 'undefined' ? true : $scope.allowSearch);
 			$scope.autoloadFirst = (typeof $scope.autoloadFirst == 'undefined' ? false : $scope.autoloadFirst);
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
@@ -226,39 +232,6 @@ app.directive('xcList',
 
 			$scope.colClass = function() {
 				return ($scope.embedded ? '' : $scope.colLeft);
-			};
-
-			$scope.addNewItem = function() {
-
-				var modalInstance = $scope.modalInstance = $modal.open({
-					templateUrl: 'xc-form-modal-edit.html',
-					controller: 'UpdateItemInstanceCtrl',
-					backdrop : true,
-					resolve: {
-						selectedItem : function () {
-							return {};
-						},
-						model : function() {
-							return $scope.model;
-						},
-						isNew : function() {
-							return true;
-						},
-						allowDelete : function() {
-							return false;
-						}
-					}
-				});
-
-				modalInstance.result.then(function (data) {
-					if (data.reason =='save') {
-						$scope.saveNewItem(data.item);
-					}
-			    }, function () {
-			      //console.log('modal closed');
-			    });
-
-
 			};
 
 			//bind events for infinite scroll
@@ -300,6 +273,14 @@ app.directive('xcList',
 						group.collapsed = true;
 					}
 				});
+			};
+
+			$scope.itemClick = function(item) {
+				if ($scope.directEdit) {
+					$scope.editDetails(item);
+				} else {
+					$scope.select(item);
+				}
 			};
 
 			$scope.toggleCategoryRemote = function(expand) {
@@ -407,8 +388,6 @@ app.directive('xcList',
 
 						var numRes = res.data.length;
 						$scope.itemsShown += numRes;
-
-						//console.log('found ' + numRes + ' at ' + scope.url);
 
 						if ($scope.filterBy && $scope.filterValue) {
 							//filter the result set

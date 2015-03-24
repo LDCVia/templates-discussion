@@ -13,7 +13,7 @@
 						{{group.name}}
 					</a>
 
-          <a class="list-group-item" ng-show="!group.collapsed" ng-repeat="item in group.entries | filter : filter"  ng-click="select(item)" ng-class="{'active' : selectedItemId == item.__unid}">
+          <a class="list-group-item" ng-show="!group.collapsed" ng-repeat="item in group.entries | filter : filter"  ng-click="itemClick(item)" ng-class="{'active' : selectedItemId == item.__unid}">
 
 						<!--(placeholder) icon-->
 						<i ng-if="showPlaceholder(item)" class="fa fa-2x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>

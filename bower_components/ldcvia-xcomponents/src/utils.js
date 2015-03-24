@@ -11,10 +11,10 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 		},
 
-		calculateFormFields : function(form, callback) {
+		calculateFormFields : function(form, model, callback) {
 
 			//add computed fields: get the list of fields that need to be computed
-			var f = $rootScope.config['fieldsFormula'];
+			var f = model.fieldsFormula;
 
 			for (var i=0; i<f.length; i++) {
 

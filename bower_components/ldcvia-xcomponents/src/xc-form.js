@@ -2,8 +2,8 @@
 var app = angular.module('xcomponents');
 
 app.directive('xcForm',
-	['$rootScope', 'xcDataFactory',
-	function($rootScope, xcDataFactory) {
+	['$rootScope', '$controller', 'xcDataFactory',
+	function($rootScope, $controller, xcDataFactory) {
 
 	return {
 
@@ -44,6 +44,12 @@ app.directive('xcForm',
 				}
 
 			}
+
+			// instantiate base controller
+			$controller('BaseController', {
+				$scope: $scope,
+				$modal : $modal
+			} );
 
       $scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
@@ -130,39 +136,6 @@ app.directive('xcForm',
 
 			}
 
-			$scope.editDetails = function() {
-
-				var modalInstance = $scope.modalInstance = $modal.open({
-					templateUrl: 'xc-form-modal-edit.html',
-					controller: 'UpdateItemInstanceCtrl',
-					backdrop : true,
-					resolve: {
-						selectedItem : function () {
-							return $scope.selectedItem;
-						},
-						model : function() {
-							return $scope.model;
-						},
-						isNew : function() {
-							return $scope.isNew;
-						},
-						allowDelete : function() {
-							return $scope.allowDelete;
-						}
-					}
-				});
-
-				modalInstance.result.then(function (data) {
-					if (data.reason == 'save') {
-						$scope.saveItem(data.item);
-					} else if (data.reason == 'delete') {
-						$scope.deleteItem(data.item);
-					}
-			    }, function () {
-			      //console.log('modal closed');
-			    });
-			};
-
 			//determine if we need to show an image, placeholder image or just an icon
 			$scope.showImage = function() {
 				return $scope.selectedItem && $scope.thumbnailField && $scope.selectedItem[$scope.thumbnailField];
@@ -172,42 +145,6 @@ app.directive('xcForm',
 			};
 			$scope.showIcon = function() {
 				return $scope.selectedItem && $scope.iconField && $scope.selectedItem[$scope.iconField];
-			};
-
-			$scope.saveItem = function(targetItem) {
-
-				xcUtils.calculateFormFields(targetItem, function(){
-					$scope.selectedItem = targetItem;
-
-					xcDataFactory.getStore($scope.datastoreType)
-					.update( $scope.url, $scope.selectedItem)
-					.then( function(res) {
-
-						$rootScope.$emit('refreshList', '');
-						$scope.isNew = false;
-
-					})
-					.catch( function(err) {
-						alert("The item could not be saved/ updated: " + err.statusText);
-					});
-				});
-
-			};
-
-			$scope.deleteItem = function(targetItem) {
-
-				xcDataFactory.getStore($scope.datastoreType)
-				.delete( $scope.url, targetItem )
-				.then( function(res) {
-
-					$scope.$emit('deleteItemEvent', targetItem);
-					$scope.selectedItem = null;
-
-				})
-				.catch( function(err) {
-					console.error(err);
-				});
-
 			};
 
 		}

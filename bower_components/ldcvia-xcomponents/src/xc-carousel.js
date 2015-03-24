@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcCarousel', function() {
+app.directive('xcCarousel', [function() {
 
 	return {
 
@@ -21,4 +21,4 @@ app.directive('xcCarousel', function() {
 	};
 
 
-} );
+}]);

@@ -15,7 +15,13 @@ app.directive('xcSummaryItem', function() {
 
 		replace : true,
 		restrict : 'E',
-		templateUrl : 'xc-summary-item.html'
+		templateUrl : 'xc-summary-item.html',
+		controller : function($scope) {
+			$scope.openLink = function(url) {
+				window.location.href = url;
+			};
+		}
+
 
 	};
 

@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcChart', function() {
+app.directive('xcChart', [function() {
 
 	return {
 
@@ -48,7 +48,7 @@ app.directive('xcChart', function() {
 								.fadeIn('fast');
 					});
 				} else {
-				
+
 					var $data = $ev.parents('.bootcards-table');
 					$data.fadeOut( 'fast', function()  {
 						$data
@@ -66,7 +66,7 @@ app.directive('xcChart', function() {
 			$timeout( function() {
 				if ($scope.chart) { $scope.chart.redraw(); }
 			}, 150);
-			
+
 		},
 
 		link : function(scope, el, attrs) {
@@ -80,7 +80,7 @@ app.directive('xcChart', function() {
 			var ylabels = [];
 
 			angular.forEach( scope.chartData[0], function(value, key) {
-				if (!xkey) { 
+				if (!xkey) {
 					xkey = key;
 				} else {
 					ykeys.push( key);
@@ -146,7 +146,7 @@ app.directive('xcChart', function() {
 					return myDonut({
 					    element: el,
 					    data: chartData,
-					    formatter: function (y, data) { 
+					    formatter: function (y, data) {
 					    	//prefixes the values by an $ sign, adds thousands seperators
 							nStr = y + '';
 							x = nStr.split('.');
@@ -179,7 +179,7 @@ app.directive('xcChart', function() {
 				});
 
 			} else if (attrs.chartType === 'line') {
-					
+
 				scope.chart = Morris.Line({
 				    element: canvas[0],
 				    data: scope.chartData,
@@ -207,4 +207,4 @@ app.directive('xcChart', function() {
 
 	};
 
-});
+}]);

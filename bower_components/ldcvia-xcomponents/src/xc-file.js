@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcFile', function() {
+app.directive('xcFile', [function() {
 
 	return {
 
@@ -15,8 +15,9 @@ app.directive('xcFile', function() {
 			previewUrl : '@',
 			url : '@',
 			allowFavorite : '=',
-			allowEmail : '='
-			
+			allowEmail : '=',
+			allowDownload : '='
+
 		},
 
 		replace : true,
@@ -26,4 +27,4 @@ app.directive('xcFile', function() {
 
 	};
 
-});
+}]);

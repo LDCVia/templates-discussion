@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcBase', function() {
+app.directive('xcBase', [function() {
 
 	return {
 
@@ -17,4 +17,4 @@ app.directive('xcBase', function() {
 
 	};
 
-});
+}]);

@@ -8,7 +8,7 @@
 
 			<div class="list-group">
 
-				<a class="list-group-item animate-repeat" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid"  ng-click="select(item)"
+				<a class="list-group-item animate-repeat" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid"  ng-click="itemClick(item)"
 					ng-class="{'active' : selectedItemId == item.__unid}">
 
 					<!--(placeholder) icon-->
