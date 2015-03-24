@@ -35,11 +35,11 @@
     "angular": "~1.3.8"
   },
   "homepage": "https://github.com/londc/xcomponents",
-  "_release": "26c798e42a",
+  "_release": "29c9e80c45",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "26c798e42ae15b0426304941abd9f16ae5fc2ffc"
+    "commit": "29c9e80c4542a3e4a8941884843281f1a27b883d"
   },
   "_source": "git://github.com/londc/xcomponents.git",
   "_target": "master",
