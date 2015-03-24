@@ -19,7 +19,7 @@ xcomponents.menuOptions = [{
 }, {
   label: 'By Date',
   url: '#/home',
-  icon: 'fa-dashboard'
+  icon: 'fa-calendar'
 }, {
   label: 'By Category',
   url: '#/category',
@@ -29,7 +29,7 @@ xcomponents.menuOptions = [{
 xcomponents.footerOptions = [{
   label: 'By Date',
   url: '#/home',
-  icon: 'fa-dashboard'
+  icon: 'fa-calendar'
 }, {
   label: 'By Date',
   url: '#/category',
