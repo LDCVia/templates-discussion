@@ -1,27 +1,30 @@
 
 var app = angular.module('xcomponents');
 
-app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
-	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
+app.controller('UpdateItemInstanceCtrl',
+	[ '$scope', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
+
+	var fieldsEdit = model.fieldsEdit;
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
-	
+
 		if (field.type == 'date' && isNew) {
 			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
 						selectedItem[field.field] = new Date(); break;
-				}	
+				}
 			}
 		}
-	
+
 	});
 
 	//create a copy of the object we're editing (to deal with 'cancel')
 	$scope.selectedItem = angular.copy( selectedItem );
 
+	$scope.model = model;
 	$scope.fieldOptions = [];
 	$scope.editorToolbarOptions = xcUtils.getConfig('editorToolbarOptions');
 
@@ -37,11 +40,9 @@ app.controller('UpdateItemInstanceCtrl',
 			} catch (e) { }
 		}
 
-	})
+	});
 
-	//$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
-	$scope.modelName = modelName;
 	$scope.isNew = isNew;
 	$scope.allowDelete = allowDelete;
 
@@ -55,7 +56,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.saveItem = function(form) {
 
 		//validate the input
-		if (!form.$valid) { 
+		if (!form.$valid) {
 
 	  		var msgs = [];
 
@@ -64,7 +65,7 @@ app.controller('UpdateItemInstanceCtrl',
 	  		if (form.$error.required) {
 	  			msgs.push("- fill in all required fields\n");
 	  		}
-	  		
+
 	  		if (form.$error.email) {
 				msgs.push("- enter a valid email address\n");
 	  		}

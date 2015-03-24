@@ -6,8 +6,6 @@ xcomponents.appVersion = '0.1';
 xcomponents.host = 'https://' + gup('host') + '/1.0';
 xcomponents.db = gup('db');
 xcomponents.apikey = null;
-xcomponents.documentURL = xcomponents.host + '/document/' + xcomponents.db + '/MainTopic/:id';
-xcomponents.responseURL = xcomponents.host + '/responses/' + xcomponents.db + '/MainTopic/:id?expand=true';
 /*
 Define Header and Footer options
 */
@@ -24,8 +22,7 @@ xcomponents.menuOptions = [{
   label: 'By Category',
   url: '#/category',
   icon: 'fa-list'
-}
-];
+}];
 xcomponents.footerOptions = [{
   label: 'By Date',
   url: '#/home',
@@ -40,60 +37,123 @@ xcomponents.footerTitle = "LDC Via Discussion using XComponents (alpha 1)";
 /*
 Define the main Topic model
 */
-xcomponents.modelName = 'Topic';
-xcomponents.fields = [{
-  label: 'Subject',
-  field: 'Subject',
-  required: true
-}, {
-  label: 'Created By',
-  field: 'From',
-  type: 'notesname',
-  edit: false,
-  read: true
-}, {
-  label: 'Category',
-  field: 'Categories',
-  type: 'implodelist',
-  read: true,
-  edit: false
-}, {
-  label: 'Category',
-  field: 'Categories',
-  type: 'select-multiple',
-  options: { endpoint:xcomponents.host + '/list/' + xcomponents.db + '/MainTopic/Categories'},
-  read: false,
-  edit: true
-}, {
-  label: 'Date Created',
-  field: '__created',
-  type: 'date',
-  edit: false
-}, {
-  label: 'Body',
-  field: 'Body__parsed',
-  type: 'html',
-  read: true,
-  edit: false
-}, {
-  label: 'Body',
-  field: 'Body__parsed',
-  type: 'html',
-  read: false,
-  edit: true
-}, {
-  label: 'Files',
-  field: '_files',
-  type: 'files',
-  read: true,
-  edit: false
-}, {
-  label: '',
-  field: 'file',
-  type: 'files',
-  read: false,
-  edit: true
-}];
+xcomponents.models['MainTopic'] = {
+  name: 'MainTopic',
+  fields: [{
+    label: 'Subject',
+    field: 'Subject',
+    required: true
+  }, {
+    label: 'Created By',
+    field: 'From',
+    type: 'notesname',
+    edit: false,
+    read: true
+  }, {
+    label: 'Category',
+    field: 'Categories',
+    type: 'implodelist',
+    read: true,
+    edit: false
+  }, {
+    label: 'Category',
+    field: 'Categories',
+    type: 'select-multiple',
+    options: {
+      endpoint: xcomponents.host + '/list/' + xcomponents.db + '/MainTopic/Categories'
+    },
+    read: false,
+    edit: true
+  }, {
+    label: 'Date Created',
+    field: '__created',
+    type: 'date',
+    edit: false
+  }, {
+    label: 'Body',
+    field: 'Body__parsed',
+    type: 'html',
+    read: true,
+    edit: false
+  }, {
+    label: 'Body',
+    field: 'Body__parsed',
+    type: 'html',
+    read: false,
+    edit: true
+  }, {
+    label: 'Files',
+    field: '_files',
+    type: 'files',
+    read: true,
+    edit: false
+  }, {
+    label: '',
+    field: 'file',
+    type: 'files',
+    read: false,
+    edit: true
+  }]
+};
+
+xcomponents.models['Response'] = {
+  name: 'Response',
+  fields: [{
+    label: 'Subject',
+    field: 'Subject',
+    required: true
+  }, {
+    label: 'Created By',
+    field: 'From',
+    type: 'notesname',
+    edit: false,
+    read: true
+  }, {
+    label: 'Category',
+    field: 'Categories',
+    type: 'implodelist',
+    read: true,
+    edit: false
+  }, {
+    label: 'Category',
+    field: 'Categories',
+    type: 'select-multiple',
+    options: {
+      endpoint: xcomponents.host + '/list/' + xcomponents.db + '/MainTopic/Categories'
+    },
+    read: false,
+    edit: true
+  }, {
+    label: 'Date Created',
+    field: '__created',
+    type: 'date',
+    edit: false
+  }, {
+    label: 'Body',
+    field: 'Body__parsed',
+    type: 'html',
+    read: true,
+    edit: false
+  }, {
+    label: 'Body',
+    field: 'Body__parsed',
+    type: 'html',
+    read: false,
+    edit: true
+  }, {
+    label: 'Files',
+    field: '_files',
+    type: 'files',
+    read: true,
+    edit: false
+  }, {
+    label: '',
+    field: 'file',
+    type: 'files',
+    read: false,
+    edit: true
+  }]
+};
 
 /*
  Inject custom code for LDC Via handling
@@ -125,42 +185,42 @@ xcomponents.addCallback(function() {
   //Notes Name filter
   app.filter('notesname', function() {
 
-    return function(input) {
+      return function(input) {
 
-      if (!input) {
-        return "";
-      }
-      try {
-        input = JSON.parse(input);
-      } catch (e) {
-        input = [input];
-      }
-      var out = [];
-      for (var i = 0; i < input.length; i++) {
-        var name = input[i];
-        if (name.indexOf("CN=") > -1) {
-          name = name.replace("CN=", "");
-          name = name.replace("OU=", "");
-          name = name.replace("O=", "");
+        if (!input) {
+          return "";
         }
-        out.push(name);
-      }
-      return out.join(",");
-    };
-  })
-  //Implode List Filter
+        try {
+          input = JSON.parse(input);
+        } catch (e) {
+          input = [input];
+        }
+        var out = [];
+        for (var i = 0; i < input.length; i++) {
+          var name = input[i];
+          if (name.indexOf("CN=") > -1) {
+            name = name.replace("CN=", "");
+            name = name.replace("OU=", "");
+            name = name.replace("O=", "");
+          }
+          out.push(name);
+        }
+        return out.join(",");
+      };
+    })
+    //Implode List Filter
   app.filter('implodelist', function() {
-    return function(input) {
-      if (Array.isArray(input)){
-        return input.join(", ");
-      }else{
-        return input;
+      return function(input) {
+        if (Array.isArray(input)) {
+          return input.join(", ");
+        } else {
+          return input;
+        }
       }
-    }
-  })
-  //HTML Filter
-  app.filter('html', ['$sce', function($sce){
-    return function(input){
+    })
+    //HTML Filter
+  app.filter('html', ['$sce', function($sce) {
+    return function(input) {
       return $sce.trustAsHtml(input);
     }
   }]);
@@ -191,10 +251,10 @@ angular.module('ldcvia.login', ['ngRoute'])
             $rootScope.username = response.email;
             var app = angular.module('xcomponents');
             var port = "";
-            if (document.location.port != 80 && document.location.port != 443){
+            if (document.location.port != 80 && document.location.port != 443) {
               port = ":" + document.location.port;
             }
-            window.location = document.location.protocol +"//"+ document.location.hostname + port + document.location.pathname + '?host=' + gup('host') + '&db=' + gup('db');
+            window.location = document.location.protocol + "//" + document.location.hostname + port + document.location.pathname + '?host=' + gup('host') + '&db=' + gup('db');
           }
         })
         .error(function(error) {
@@ -209,13 +269,12 @@ angular.module('ldcvia.login', ['ngRoute'])
   }
 ]);
 
-function gup( name )
-{
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
+function gup(name) {
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(window.location.href);
+  if (results == null)
     return "";
   else
     return results[1];

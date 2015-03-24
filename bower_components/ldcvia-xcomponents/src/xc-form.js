@@ -8,6 +8,7 @@ app.directive('xcForm',
 	return {
 
 		scope : {
+			modelName : '@',				/*required: name of the model to use for the form instance*/
 			item : '=',
 			itemId : '@',
 			url : '@',
@@ -26,14 +27,32 @@ app.directive('xcForm',
 		templateUrl: 'xc-form.html',
 
 		controller : function($scope, $attrs, $modal, xcUtils) {
+			if (!$scope.modelName) {
+
+				console.error("cannot load form: no model name provided");
+				return;
+
+			} else {
+
+				//get the model config
+				var models = xcUtils.getConfig('models');
+				$scope.model = models[$scope.modelName];
+
+				if (!$scope.model) {
+					console.error("cannot load list: invalid model name provided ('" + $scope.modelName + "')");
+					return;
+				}
+
+			}
+
+      $scope.fieldsRead = $scope.model.fieldsRead;
+			$scope.fieldsEdit = $scope.model.fieldsEdit;
+			$scope.imageBase = $scope.model.imageBase;
 
 			//set defaults
 			$scope.allowDelete = (typeof $scope.allowDelete == 'undefined' ? true : $scope.allowDelete);
 
 			$scope.selectedItem = null;
-			$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
-			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
-			$scope.modelName = xcUtils.getConfig('modelName');
 			$scope.isNew = true;
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
@@ -53,7 +72,7 @@ app.directive('xcForm',
 					} else {
 
 						if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-							$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
+							$scope.thumbnailSrc = $scope.imageBase + item[$scope.thumbnailField];
 						}
 
 						angular.forEach($scope.fieldsEdit, function(fld) {
@@ -88,7 +107,7 @@ app.directive('xcForm',
 							$scope.selectedItem = item;
 
 							if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-								$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
+								$scope.thumbnailSrc = $scope.imageBase + item[$scope.thumbnailField];
 							}
 
 							angular.forEach($scope.fieldsEdit, function(fld) {
@@ -121,11 +140,8 @@ app.directive('xcForm',
 						selectedItem : function () {
 							return $scope.selectedItem;
 						},
-						fieldsEdit : function() {
-							return $scope.fieldsEdit;
-						},
-						modelName : function() {
-							return $scope.modelName;
+						model : function() {
+							return $scope.model;
 						},
 						isNew : function() {
 							return $scope.isNew;

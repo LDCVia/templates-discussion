@@ -1,8 +1,11 @@
 <div ng-controller="xcController">
   <xc-header title="LDC Via Discussion"></xc-header>
   <xc-list
+    model-name="MainTopic"
     title="All Documents"
     url=":host/collections/:db/MainTopic?count=20"
+    documenturl=":host/document/:db/MainTopic/:id"
+    responseurl=":host/responses/:db/MainTopic/:id?expand=true"
     list-width="5"
     allow-add="true"
     order-by="__created"
@@ -16,12 +19,14 @@
     group-by="Categories"
     infinite-scroll="false">
     <xc-form
+      model-name="MainTopic"
       default-text="Select a topic from the list"
       url=":host/document/:db/MainTopic/:id"
       >
     </xc-form>
     <xc-list
       title="Responses"
+      model-name="Response"
       url=":host/responses/:db/MainTopic/:id?expand=true"
       allow-add="false"
       allow-search="false"
