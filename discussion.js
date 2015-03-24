@@ -23,12 +23,13 @@ xcomponents.menuOptions = [{
   url: '#/category',
   icon: 'fa-list'
 }];
+
 xcomponents.footerOptions = [{
   label: 'By Date',
   url: '#/home',
   icon: 'fa-calendar'
 }, {
-  label: 'By Date',
+  label: 'By Category',
   url: '#/category',
   icon: 'fa-list'
 }];

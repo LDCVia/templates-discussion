@@ -1,48 +1,50 @@
-<div ng-controller="xcController">
-  <xc-header title="LDC Via Discussion"></xc-header>
-  <xc-list
-    model-name="MainTopic"
-    title="All Documents"
-    url=":host/collections/:db/MainTopic?count=20"
-    documenturl=":host/document/:db/MainTopic/:id"
-    responseurl=":host/responses/:db/MainTopic/:id?expand=true"
-    list-width="5"
-    allow-add="true"
-    order-by="__created"
-    order-reversed="true"
-    summary-field="Subject"
-    details-field="From"
-    details-field-type="notesname"
-    image-placeholder-icon="document"
-    autoload-first="true"
-    type="flat"
-    group-by="Categories"
-    infinite-scroll="false">
-    <xc-form
-      model-name="MainTopic"
-      default-text="Select a topic from the list"
-      url=":host/document/:db/MainTopic/:id"
-      responseurl=":host/responses/:db/MainTopic/:id?expand=true"
-      >
-    </xc-form>
-    <xc-list
-      title="Responses"
-      model-name="Response"
-      url=":host/responses/:db/MainTopic/:id?expand=true"
-      allow-add="false"
-      allow-search="false"
-      order-by="__created"
-      order-reversed="true"
-      summary-field="From"
-      summary-field-type="notesname"
-      details-field="Body__parsed"
-      details-field-type="gethtml"
-      image-placeholder-icon="document"
-      autoload-first="false"
-      type="response"
-      group-by="Categories"
-      infinite-scroll="false"
-      embedded="true">
-    </xc-list>
-  </xc-list>
-</div>
+    <xc-header title="LDC Via Discussion"></xc-header>
+    <xc-layout>
+      <xc-list
+        model-name="MainTopic"
+        title="All Documents"
+        url=":host/collections/:db/MainTopic?count=20"
+        documenturl=":host/document/:db/MainTopic/:id"
+        responseurl=":host/responses/:db/MainTopic/:id?expand=true"
+        list-width="5"
+        allow-add="true"
+        order-by="__created"
+        order-reversed="true"
+        summary-field="Subject"
+        details-field="From"
+        details-field-type="notesname"
+        image-placeholder-icon="document"
+        autoload-first="true"
+        type="flat"
+        group-by="Categories"
+        infinite-scroll="false">
+        <xc-form
+          model-name="MainTopic"
+          default-text="Select a topic from the list"
+          url=":host/document/:db/MainTopic/:id"
+          responseurl=":host/responses/:db/MainTopic/:id?expand=true"
+          >
+        </xc-form>
+
+        <xc-list
+          title="Responses"
+          model-name="Response"
+          url=":host/responses/:db/MainTopic/:id?expand=true"
+          allow-add="false"
+          allow-search="false"
+          order-by="__created"
+          order-reversed="true"
+          summary-field="From"
+          summary-field-type="notesname"
+          details-field="Body__parsed"
+          details-field-type="gethtml"
+          image-placeholder-icon="document"
+          autoload-first="false"
+          type="response"
+          group-by="Categories"
+          infinite-scroll="false"
+          embedded="true">
+        </xc-list>
+      </xc-list>
+    </xc-layout>
+    <xc-footer title="LDC Via Discussion using XComponents"></xc-footer>

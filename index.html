@@ -4,6 +4,7 @@
   <head>
     <title>LDC Via Discussion</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
     <!--set the hidden class here, so everything is immediately hidden-->
     <style type="text/css">
@@ -53,18 +54,14 @@
     <link rel="stylesheet" href="./bower_components/textAngular/src/textAngular.css">
     <link rel="stylesheet" href="./bower_components/ldcvia-xcomponents/dist/css/styles.css">
 
-
-  </head>
-  <body ng-controller="xcController" class="hidden">
-
-    <div ng-view>
-      
-    </div>
-
-    <xc-footer title="LDC Via Discussion using XComponents"></xc-footer>
-
     <!-- xcomponents app config -->
     <script src="discussion.js"></script>
+
+  </head>
+  <body class="hidden" ng-view>
+
+
+
 
   </body>
 </html>
