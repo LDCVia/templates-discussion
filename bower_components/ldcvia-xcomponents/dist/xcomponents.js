@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-24 9:46 */
+/* xcomponents 0.1.0 2015-03-24 1:35 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -63,7 +63,7 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			});
 
 		},
-		
+
 		allfilter : function(url, filter) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
@@ -494,77 +494,77 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 
 	if (typeof xcomponents != 'undefined') {
 
-		console.log('set XComponents config');
+		console.log('Load XComponents config');
 
 		var config = xcomponents;
 
-		if (config.fields) {
-
-			config.fieldsRead = [];		//list of fields in read mode
-			config.fieldsEdit = [];		//list of fields in edit mode
-			config.fieldsFormula = [];	//list of field formulas
-			config.fieldFilters = [];
+		if (config.models) {
 
 			//add labels if not specified (proper cased field name)
-			for (var i=0; i<config.fields.length; i++) {
+			for (var modelName in config.models) {
 
-				var f = config.fields[i];
+				var model = config.models[modelName];
+				model.fieldsRead = [];		//list of fields in read mode
+				model.fieldsEdit = [];		//list of fields in edit mode
+				model.fieldsFormula = [];	//list of field formulas
+				model.fieldFilters = [];
+				model.fields = model.fields || [];
 
-				if (!f.type) {
-					f.type = 'text';		//default type=text
-				}
+				for (var i=0; i<model.fields.length; i++){
+					var f = model.fields[i];
+					if (!f.type) {
+						f.type = 'text';		//default type=text
+					}
 
-				if ( !f.hasOwnProperty('label') ) {
-					f.label = f.field.substring(0,1).toUpperCase() + f.field.substring(1);
-				}
-				//set 'show in read mode' property
-				if ( !f.hasOwnProperty('read') ) {
-					f.read = true;
-				}
-				//set 'show in edit mode' property
-				if ( !f.hasOwnProperty('edit') ) {
-					f.edit = true;
-				}
+					if ( !f.hasOwnProperty('label') ) {
+						f.label = f.field.substring(0,1).toUpperCase() + f.field.substring(1);
+					}
+					//set 'show in read mode' property
+					if ( !f.hasOwnProperty('read') ) {
+						f.read = true;
+					}
+					//set 'show in edit mode' property
+					if ( !f.hasOwnProperty('edit') ) {
+						f.edit = true;
+					}
 
-				if (f.hasOwnProperty('filter')) {
-					config.fieldFilters[f.field] = f.filter;
-				}
+					if (f.hasOwnProperty('filter')) {
+						model.fieldFilters[f.field] = f.filter;
+					}
 
-				if (f.type == 'select' || f.type == 'select-multiple') {
+					if (f.type == 'select' || f.type == 'select-multiple') {
 
-					if (f.options.hasOwnProperty('endpoint')) {
+						if (f.options.hasOwnProperty('endpoint')) {
 
-						f.options = xcUtils.resolveRemoteOptionsList(f.options);
+							f.options = xcUtils.resolveRemoteOptionsList(f.options);
 
-					} else if (f.options.length>0 && typeof f.options[0] == 'string') {
+						} else if (f.options.length>0 && typeof f.options[0] == 'string') {
 
-						var o = [];
+							var o = [];
 
-						angular.forEach(f.options, function(option) {
-							o.push( {label : option, value : option});
-						});
+							angular.forEach(f.options, function(option) {
+								o.push( {label : option, value : option});
+							});
 
-						f.options = o;
+							f.options = o;
+
+						}
 
 					}
 
-				}
+					if (f.read) {
+						model.fieldsRead.push(f);
+					}
 
-				if (f.read) {
-					config.fieldsRead.push(f);
+					if (f.edit) {
+						model.fieldsEdit.push(f);
+					}
+					if ( f.hasOwnProperty('formula') && f.formula != null ) {
+						model.fieldsFormula.push(f);
+					}
 				}
-
-				if (f.edit) {
-					config.fieldsEdit.push(f);
-				}
-				if ( f.hasOwnProperty('formula') && f.formula != null ) {
-					config.fieldsFormula.push(f);
-				}
-
-
 			}
 		}
-
 		$rootScope.config = xcomponents;
 
 	}
@@ -930,7 +930,7 @@ app.directive('xcChart', function() {
 								.fadeIn('fast');
 					});
 				} else {
-				
+
 					var $data = $ev.parents('.bootcards-table');
 					$data.fadeOut( 'fast', function()  {
 						$data
@@ -948,7 +948,7 @@ app.directive('xcChart', function() {
 			$timeout( function() {
 				if ($scope.chart) { $scope.chart.redraw(); }
 			}, 150);
-			
+
 		},
 
 		link : function(scope, el, attrs) {
@@ -962,7 +962,7 @@ app.directive('xcChart', function() {
 			var ylabels = [];
 
 			angular.forEach( scope.chartData[0], function(value, key) {
-				if (!xkey) { 
+				if (!xkey) {
 					xkey = key;
 				} else {
 					ykeys.push( key);
@@ -1028,7 +1028,7 @@ app.directive('xcChart', function() {
 					return myDonut({
 					    element: el,
 					    data: chartData,
-					    formatter: function (y, data) { 
+					    formatter: function (y, data) {
 					    	//prefixes the values by an $ sign, adds thousands seperators
 							nStr = y + '';
 							x = nStr.split('.');
@@ -1061,7 +1061,7 @@ app.directive('xcChart', function() {
 				});
 
 			} else if (attrs.chartType === 'line') {
-					
+
 				scope.chart = Morris.Line({
 				    element: canvas[0],
 				    data: scope.chartData,
@@ -1109,7 +1109,7 @@ app.directive('xcFile', function() {
 			url : '@',
 			allowFavorite : '=',
 			allowEmail : '='
-			
+
 		},
 
 		replace : true,
@@ -1146,27 +1146,30 @@ app.directive('xcFooter', function() {
 
 var app = angular.module('xcomponents');
 
-app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
-	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
+app.controller('UpdateItemInstanceCtrl',
+	[ '$scope', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
+
+	var fieldsEdit = model.fieldsEdit;
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
-	
+
 		if (field.type == 'date' && isNew) {
 			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
 						selectedItem[field.field] = new Date(); break;
-				}	
+				}
 			}
 		}
-	
+
 	});
 
 	//create a copy of the object we're editing (to deal with 'cancel')
 	$scope.selectedItem = angular.copy( selectedItem );
 
+	$scope.model = model;
 	$scope.fieldOptions = [];
 	$scope.editorToolbarOptions = xcUtils.getConfig('editorToolbarOptions');
 
@@ -1182,11 +1185,9 @@ app.controller('UpdateItemInstanceCtrl',
 			} catch (e) { }
 		}
 
-	})
+	});
 
-	//$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
-	$scope.modelName = modelName;
 	$scope.isNew = isNew;
 	$scope.allowDelete = allowDelete;
 
@@ -1200,7 +1201,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.saveItem = function(form) {
 
 		//validate the input
-		if (!form.$valid) { 
+		if (!form.$valid) {
 
 	  		var msgs = [];
 
@@ -1209,7 +1210,7 @@ app.controller('UpdateItemInstanceCtrl',
 	  		if (form.$error.required) {
 	  			msgs.push("- fill in all required fields\n");
 	  		}
-	  		
+
 	  		if (form.$error.email) {
 				msgs.push("- enter a valid email address\n");
 	  		}
@@ -1233,6 +1234,7 @@ app.controller('UpdateItemInstanceCtrl',
 
 } ] );
 
+
 var app = angular.module('xcomponents');
 
 app.directive('xcForm',
@@ -1242,6 +1244,7 @@ app.directive('xcForm',
 	return {
 
 		scope : {
+			modelName : '@',				/*required: name of the model to use for the form instance*/
 			item : '=',
 			itemId : '@',
 			url : '@',
@@ -1260,14 +1263,32 @@ app.directive('xcForm',
 		templateUrl: 'xc-form.html',
 
 		controller : function($scope, $attrs, $modal, xcUtils) {
+			if (!$scope.modelName) {
+
+				console.error("cannot load form: no model name provided");
+				return;
+
+			} else {
+
+				//get the model config
+				var models = xcUtils.getConfig('models');
+				$scope.model = models[$scope.modelName];
+
+				if (!$scope.model) {
+					console.error("cannot load list: invalid model name provided ('" + $scope.modelName + "')");
+					return;
+				}
+
+			}
+
+      $scope.fieldsRead = $scope.model.fieldsRead;
+			$scope.fieldsEdit = $scope.model.fieldsEdit;
+			$scope.imageBase = $scope.model.imageBase;
 
 			//set defaults
 			$scope.allowDelete = (typeof $scope.allowDelete == 'undefined' ? true : $scope.allowDelete);
 
 			$scope.selectedItem = null;
-			$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
-			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
-			$scope.modelName = xcUtils.getConfig('modelName');
 			$scope.isNew = true;
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
@@ -1287,7 +1308,7 @@ app.directive('xcForm',
 					} else {
 
 						if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-							$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
+							$scope.thumbnailSrc = $scope.imageBase + item[$scope.thumbnailField];
 						}
 
 						angular.forEach($scope.fieldsEdit, function(fld) {
@@ -1322,7 +1343,7 @@ app.directive('xcForm',
 							$scope.selectedItem = item;
 
 							if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-								$scope.thumbnailSrc = xcUtils.getConfig('imageBase') + item[$scope.thumbnailField];
+								$scope.thumbnailSrc = $scope.imageBase + item[$scope.thumbnailField];
 							}
 
 							angular.forEach($scope.fieldsEdit, function(fld) {
@@ -1355,11 +1376,8 @@ app.directive('xcForm',
 						selectedItem : function () {
 							return $scope.selectedItem;
 						},
-						fieldsEdit : function() {
-							return $scope.fieldsEdit;
-						},
-						modelName : function() {
-							return $scope.modelName;
+						model : function() {
+							return $scope.model;
 						},
 						isNew : function() {
 							return $scope.isNew;
@@ -1599,15 +1617,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				
+
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-			
+
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-	
+
 			});
 
 		}
@@ -1655,12 +1673,7 @@ app.directive('xcList',
 
 		} else {
 			var url = scope.url;
-			if (scope.embedded){
-				url = xcUtils.getConfig('responseURL');
-				if (scope.selectedItemId != null){
-					url = url.replace(':id', scope.selectedItemId);
-				}
-			}
+			url = url.replace(':id', scope.selectedItemId);
 			if(scope.type == 'accordion-remote'){
 				if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
 					xcDataFactory.getStore(scope.datastoreType)
@@ -1747,6 +1760,7 @@ app.directive('xcList',
 
 			title : '@',			/*title of the list*/
 			type : '@',				/*list type, options: flat (default), categorised, accordion*/
+			modelName: '@',  /*required: name of the model to use for the form instance*/
 			listWidth : '=' ,		/*width of the list (nr 1..11)*/
 			summaryField : '@',		/*name of the field used as a summary field*/
 			summaryFieldType : '@',
@@ -1772,6 +1786,8 @@ app.directive('xcList',
 			infiniteScroll : '@',
 			embedded : '@',
 			categoryurl: '@',
+			documenturl: '@',
+			responseurl: '@',
 			categoryfield: '@'
 		},
 
@@ -1785,7 +1801,9 @@ app.directive('xcList',
 		},
 
 		link : function(scope, elem, attrs) {
-
+			if (!scope.model){
+				return;
+			}
 			scope.colLeft = 'col-sm-' + attrs.listWidth;
 			scope.colRight = 'col-sm-' + (12 - parseInt(attrs.listWidth, 10) );
 
@@ -1794,6 +1812,27 @@ app.directive('xcList',
 		},
 
 		controller: function($rootScope, $scope, $modal, $filter, xcUtils, $cookieStore) {
+			if (!$scope.modelName) {
+
+				console.error("cannot load list: no model name provided");
+				return;
+
+			} else {
+
+				//get the model config
+				var models = xcUtils.getConfig('models');
+				$scope.model = models[$scope.modelName];
+
+				if (!$scope.model) {
+					console.error("cannot load list: invalid model name provided ('" + $scope.modelName + "')");
+					return;
+				}
+			}
+
+      $scope.fieldsRead = $scope.model.fieldsRead;
+			$scope.fieldsEdit = $scope.model.fieldsEdit;
+			$scope.imageBase = $scope.model.imageBase;
+			$scope.fieldFilters = $scope.model.fieldFilters;
 
 			$scope.hideList = false;
 			$scope.orderReversed = $scope.$eval( $scope.orderReversed);		//for booleans
@@ -1815,14 +1854,6 @@ app.directive('xcList',
 
 			$scope.selected = null;
 			$scope.numPages = 1;
-
-			$scope.modelName = xcUtils.getConfig('modelName');
-      $scope.fieldsRead = xcUtils.getConfig('fieldsRead');
-			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
-			$scope.imageBase = xcUtils.getConfig('imageBase');
-			$scope.documentURL = xcUtils.getConfig('documentURL');
-
-			$scope.fieldFilters = xcUtils.getConfig('fieldFilters');
 
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
@@ -1857,11 +1888,8 @@ app.directive('xcList',
 						selectedItem : function () {
 							return {};
 						},
-						fieldsEdit : function() {
-							return $scope.fieldsEdit;
-						},
-						modelName : function() {
-							return $scope.modelName;
+						model : function() {
+							return $scope.model;
 						},
 						isNew : function() {
 							return true;
@@ -2084,7 +2112,7 @@ app.directive('xcList',
 					$scope.select(targetItem);
 
 					xcDataFactory.getStore($scope.datastoreType)
-					.saveNew( $scope.documentURL, targetItem )
+					.saveNew( $scope.documenturl, targetItem )
 					.then( function(res) {
 
 						if ($scope.type == 'categorised' || $scope.type=='accordion' || $scope.type=='accordion-remote' || $scope.type == 'flat'){
@@ -2604,7 +2632,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<i class=\"fa fa-check\"></i>Save\n" +
     "			</button>\n" +
     "		</div>\n" +
-    "		<h4 class=\"modal-title\">Edit {{modelName}}</h4>\n" +
+    "		<h4 class=\"modal-title\">Edit {{model.name}}</h4>\n" +
     "	</div>\n" +
     "\n" +
     "	<div class=\"modal-body form-horizontal\">\n" +
@@ -2673,7 +2701,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "	<div class=\"modal-footer\" ng-if=\"allowDelete && !isNew\">\n" +
     "		<button type=\"button\" class=\"btn btn-danger btn-block\" ng-click=\"deleteItem()\">\n" +
     "			<i class=\"fa fa-trash-o\"></i>\n" +
-    "			Delete {{modelName}}\n" +
+    "			Delete {{model.name}}\n" +
     "		</button>\n" +
     "	</div>\n" +
     "\n" +
@@ -2700,7 +2728,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "	<div ng-class=\"{'panel panel-default' : true , 'hidden' : !selectedItem}\">\n" +
     "\n" +
     "		<div class=\"panel-heading clearfix\">\n" +
-    "			<h3 class=\"panel-title pull-left\">{{modelName}}</h3>\n" +
+    "			<h3 class=\"panel-title pull-left\">{{model.name}}</h3>\n" +
     "			<a class=\"btn btn-primary pull-right\" ng-click=\"editDetails()\">\n" +
     "				<i class=\"fa fa-pencil\"></i><span>Edit</span>\n" +
     "			</a>\n" +
@@ -3345,7 +3373,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "			<div class=\"row\">\n" +
     "			    <div class=\"col-xs-9\">\n" +
     "			      <div class=\"form-group\">\n" +
-    "				      <input type=\"text\" class=\"form-control\" ng-model=\"$parent.filter\" placeholder=\"Search {{::modelName}}...\">\n" +
+    "				      <input type=\"text\" class=\"form-control\" ng-model=\"$parent.filter\" placeholder=\"Search {{::model.name}}...\">\n" +
     "				      <a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearSearch()\" ng-show=\"$parent.filter\"></a>\n" +
     "				      <i class=\"fa fa-search\"></i>\n" +
     "			      </div>\n" +
