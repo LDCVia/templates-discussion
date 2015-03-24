@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-03-24 2:20 */
+/* xcomponents 0.1.0 2015-03-24 5:14 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -2173,7 +2173,9 @@ app.directive('xcList',
 	    };
 
 	    $scope.saveNewItem = function(targetItem) {
-
+				if ($scope.selectedItemId != null && $scope.embedded){
+					targetItem.__parentid = $scope.selectedItemId;
+				}
 	    	xcUtils.calculateFormFields(targetItem, $scope.model, function(){
 					$scope.select(targetItem);
 
@@ -2185,6 +2187,9 @@ app.directive('xcList',
 
 							//do a full refresh of the list
 							$rootScope.$emit('refreshList', '');
+						} else if($scope.type == 'response'){
+							//refresh the document
+							loadData($scope);
 
 						} else {
 
@@ -3475,6 +3480,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
 angular.module("xc-list-response.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-response.html",
     "<div>\n" +
+    "  <ng-include src=\"'xc-list-heading.html'\"></ng-include>\n" +
     "\n" +
     " 	<div ng-show=\"!$root.hideList\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\">\n" +
     "\n" +
@@ -3482,20 +3488,6 @@ angular.module("xc-list-response.html", []).run(["$templateCache", function($tem
     "\n" +
     "        <div class=\"list-group-item\">\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"item[detailsField]\"></h4>\n" +
-    "				</div>\n" +
-    "\n" +
-    "				<div class=\"list-group-item\" ng-show=\"isLoading\">\n" +
-    "					<i class=\"fa fa-spinner fa-spin fa-fw\" style=\"margin-right:0; opacity: 1;\"></i>Loading...\n" +
-    "				</div>\n" +
-    "\n" +
-    "				<div class=\"list-group-item\" ng-show=\"items.length == 0\">\n" +
-    "					No items found\n" +
-    "				</div>\n" +
-    "\n" +
-    "				<div class=\"list-group-item\" ng-show=\"!isLoading && hasMore\">\n" +
-    "					<button ng-click=\"loadMore()\" id=\"btnLoadMore\" class=\"btn btn-default\">\n" +
-    "						Load more...\n" +
-    "					</button>\n" +
     "				</div>\n" +
     "\n" +
     "		</xc-base>\n" +

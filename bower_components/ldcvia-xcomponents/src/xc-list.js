@@ -436,7 +436,9 @@ app.directive('xcList',
 	    };
 
 	    $scope.saveNewItem = function(targetItem) {
-
+				if ($scope.selectedItemId != null && $scope.embedded){
+					targetItem.__parentid = $scope.selectedItemId;
+				}
 	    	xcUtils.calculateFormFields(targetItem, $scope.model, function(){
 					$scope.select(targetItem);
 
@@ -448,6 +450,9 @@ app.directive('xcList',
 
 							//do a full refresh of the list
 							$rootScope.$emit('refreshList', '');
+						} else if($scope.type == 'response'){
+							//refresh the document
+							loadData($scope);
 
 						} else {
 
