@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-24 1:35 */
+/* xcomponents 0.1.0 2015-03-24 1:39 */
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
@@ -63,7 +63,7 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			});
 
 		},
-
+		
 		allfilter : function(url, filter) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
@@ -930,7 +930,7 @@ app.directive('xcChart', function() {
 								.fadeIn('fast');
 					});
 				} else {
-
+				
 					var $data = $ev.parents('.bootcards-table');
 					$data.fadeOut( 'fast', function()  {
 						$data
@@ -948,7 +948,7 @@ app.directive('xcChart', function() {
 			$timeout( function() {
 				if ($scope.chart) { $scope.chart.redraw(); }
 			}, 150);
-
+			
 		},
 
 		link : function(scope, el, attrs) {
@@ -962,7 +962,7 @@ app.directive('xcChart', function() {
 			var ylabels = [];
 
 			angular.forEach( scope.chartData[0], function(value, key) {
-				if (!xkey) {
+				if (!xkey) { 
 					xkey = key;
 				} else {
 					ykeys.push( key);
@@ -1028,7 +1028,7 @@ app.directive('xcChart', function() {
 					return myDonut({
 					    element: el,
 					    data: chartData,
-					    formatter: function (y, data) {
+					    formatter: function (y, data) { 
 					    	//prefixes the values by an $ sign, adds thousands seperators
 							nStr = y + '';
 							x = nStr.split('.');
@@ -1061,7 +1061,7 @@ app.directive('xcChart', function() {
 				});
 
 			} else if (attrs.chartType === 'line') {
-
+					
 				scope.chart = Morris.Line({
 				    element: canvas[0],
 				    data: scope.chartData,
@@ -1109,7 +1109,7 @@ app.directive('xcFile', function() {
 			url : '@',
 			allowFavorite : '=',
 			allowEmail : '='
-
+			
 		},
 
 		replace : true,
@@ -1617,15 +1617,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-
+				
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-
+			
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-
+	
 			});
 
 		}

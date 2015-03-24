@@ -23,12 +23,7 @@ app.directive('xcList',
 
 		} else {
 			var url = scope.url;
-			if (scope.embedded){
-				url = scope.responseurl;
-				if (scope.selectedItemId != null){
-					url = url.replace(':id', scope.selectedItemId);
-				}
-			}
+			url = url.replace(':id', scope.selectedItemId);
 			if(scope.type == 'accordion-remote'){
 				if (!scope.embedded || (scope.embedded && scope.selectedItemId != null)){
 					xcDataFactory.getStore(scope.datastoreType)
