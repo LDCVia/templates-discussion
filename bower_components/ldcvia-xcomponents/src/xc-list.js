@@ -437,7 +437,7 @@ app.directive('xcList',
 
 	    $scope.saveNewItem = function(targetItem) {
 
-	    	xcUtils.calculateFormFields(targetItem, function(){
+	    	xcUtils.calculateFormFields(targetItem, $scope.model, function(){
 					$scope.select(targetItem);
 
 					xcDataFactory.getStore($scope.datastoreType)
