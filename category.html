@@ -21,24 +21,26 @@
     group-by="Categories"
     infinite-scroll="false">
     <xc-form
-    model-name="MainTopic"
+      model-name="MainTopic"
       default-text="Select a topic from the list"
       url=":host/document/:db/MainTopic/:id"
       responseurl=":host/responses/:db/MainTopic/:id?expand=true"
       >
     </xc-form>
+
     <xc-list
-    model-name="Response"
       title="Responses"
+      model-name="Response"
       url=":host/responses/:db/MainTopic/:id?expand=true"
-      responseurl=":host/responses/:db/MainTopic/:id?expand=true"
-      allow-add="false"
+      documenturl=":host/document/:db/Response/:id"
+      allow-add="true"
       allow-search="false"
       order-by="__created"
       order-reversed="true"
-      summary-field="From"
-      summary-field-type="notesname"
+      summary-field="Subject"
       details-field="Body__parsed"
+      details-field-sub-bottom="From"
+      details-field-sub-bottom-type="notesname"
       details-field-type="gethtml"
       image-placeholder-icon="document"
       autoload-first="false"

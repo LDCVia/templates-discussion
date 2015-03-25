@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-03-25 10:25 */
+/* xcomponents 0.1.0 2015-03-25 10:36 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -1954,6 +1954,10 @@ app.directive('xcList',
 			$scope.selected = null;
 			$scope.numPages = 1;
 
+			$scope.host = xcUtils.getConfig('host');
+			$scope.db = xcUtils.getConfig('db');
+			$scope.apikey = $rootScope.apikey;
+
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
 			});
@@ -3489,7 +3493,7 @@ angular.module("xc-list-response.html", []).run(["$templateCache", function($tem
     "\n" +
     " 	<div ng-show=\"!$root.hideList\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\">\n" +
     "\n" +
-    "     <xc-base footer-text=\"Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}\" title=\"{{item[summaryField] | fltr : summaryFieldType}}\">\n" +
+    "     <xc-base footer-text=\"Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}\" title=\"{{item[summaryField]}}\">\n" +
     "\n" +
     "        <div class=\"list-group-item\">\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"item[detailsField]\"></h4>\n" +

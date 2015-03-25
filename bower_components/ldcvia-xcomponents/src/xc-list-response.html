@@ -3,7 +3,7 @@
 
  	<div ng-show="!$root.hideList" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid">
 
-     <xc-base footer-text="Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}" title="{{item[summaryField] | fltr : summaryFieldType}}">
+     <xc-base footer-text="Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}" title="{{item[summaryField]}}">
 
         <div class="list-group-item">
 					<h4 class="list-group-item-heading" ng-bind-html="item[detailsField]"></h4>

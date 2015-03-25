@@ -215,6 +215,10 @@ app.directive('xcList',
 			$scope.selected = null;
 			$scope.numPages = 1;
 
+			$scope.host = xcUtils.getConfig('host');
+			$scope.db = xcUtils.getConfig('db');
+			$scope.apikey = $rootScope.apikey;
+
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
 			});
