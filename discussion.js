@@ -110,21 +110,6 @@ xcomponents.models['Response'] = {
     edit: false,
     read: true
   }, {
-    label: 'Category',
-    field: 'Categories',
-    type: 'implodelist',
-    read: true,
-    edit: false
-  }, {
-    label: 'Category',
-    field: 'Categories',
-    type: 'select-multiple',
-    options: {
-      endpoint: xcomponents.host + '/list/' + xcomponents.db + '/MainTopic/Categories'
-    },
-    read: false,
-    edit: true
-  }, {
     label: 'Date Created',
     field: '__created',
     type: 'date',

@@ -3,11 +3,20 @@
 
  	<div ng-show="!$root.hideList" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid">
 
-     <xc-base footer-text="Created: {{item.__created | date}}" title="{{item[summaryField] | fltr : summaryFieldType}}">
+     <xc-base footer-text="Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}" title="{{item[summaryField] | fltr : summaryFieldType}}">
 
         <div class="list-group-item">
 					<h4 class="list-group-item-heading" ng-bind-html="item[detailsField]"></h4>
 				</div>
+        <div ng-if="item['_files']">
+          <div class="list-group-item" ng-repeat="file in item['_files']">
+            <label>File</label>
+            <h4>
+              <a href="{{host + '/attachment/' + db + '/' + item['__form'] + '/' + item['__unid'] + '/' + file + '?apikey=' + apikey}}" target="newwin">{{file}}</a>
+            </h4>
+          </div>
+        </div>
+
 
 		</xc-base>
 

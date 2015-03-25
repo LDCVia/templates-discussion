@@ -115,7 +115,9 @@ app.directive('xcList',
 			detailsField : '@',
 			detailsFieldType : '@',		/*text or date*/
 			detailsFieldSubTop : '@',
+			detailsFieldSubTopType : '@',
 			detailsFieldSubBottom : '@',
+			detailsFieldSubBottomType : '@',
 			allowSearch : '=?',
 			autoloadFirst : '=?',
 			allowAdd : '=',
@@ -201,6 +203,8 @@ app.directive('xcList',
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
 			$scope.detailsFieldType = (typeof $scope.detailsFieldType == 'undefined' ? 'text' : $scope.detailsFieldType);
 			$scope.summaryFieldType = (typeof $scope.summaryFieldType == 'undefined' ? 'text' : $scope.summaryFieldType);
+			$scope.detailsFieldSubTopType = (typeof $scope.detailsFieldSubTopType == 'undefined' ? 'text' : $scope.detailsFieldSubTopType);
+			$scope.detailsFieldSubBottomType = (typeof $scope.detailsFieldSubBottomType == 'undefined' ? 'text' : $scope.detailsFieldSubBottomType);
 
 			$scope.isLoading = true;
       		$scope.hasMore = false;
