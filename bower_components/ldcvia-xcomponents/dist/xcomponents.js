@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-03-24 5:14 */
+/* xcomponents 0.1.0 2015-03-25 10:04 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -1452,31 +1452,33 @@ app.directive('xcForm',
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				var f = xcDataFactory.getStore($attrs.datastoreType);
-				f.getById($scope.url, item.__unid)
-				.then(function(item){
-					$scope.selectedItem = item;
-					$scope.isNew = false;
+				if (item.__unid){
+					f.getById($scope.url, item.__unid)
+					.then(function(item){
+						$scope.selectedItem = item;
+						$scope.isNew = false;
 
-					if (item == null) {
+						if (item == null) {
 
-						$scope.thumbnailSrc==null;
+							$scope.thumbnailSrc==null;
 
-					} else {
+						} else {
 
-						if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
-							$scope.thumbnailSrc = $scope.imageBase + item[$scope.thumbnailField];
-						}
-
-						angular.forEach($scope.fieldsEdit, function(fld) {
-							//convert date fields (stored as strings) to JS date objects
-							if (fld.type == 'date') {
-								if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
-									$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
-								}
+							if ( $scope.thumbnailField != null && $scope.thumbnailField.length > 0) {
+								$scope.thumbnailSrc = $scope.imageBase + item[$scope.thumbnailField];
 							}
-						});
-					}
-				})
+
+							angular.forEach($scope.fieldsEdit, function(fld) {
+								//convert date fields (stored as strings) to JS date objects
+								if (fld.type == 'date') {
+									if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
+										$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+									}
+								}
+							});
+						}
+					})
+				}
 			});
 
 			//load specified entry
@@ -1614,9 +1616,9 @@ app.directive('xcHeader', function() {
 
 			$scope.logout = function(){
         $cookieStore.remove('apikey');
-				$cookieStore.remove('user');
+				$cookieStore.remove('username');
         $rootScope.apikey = null;
-				$rootScope.user = null;
+				$rootScope.username = null;
         window.location.reload();
       };
 
@@ -2189,8 +2191,7 @@ app.directive('xcList',
 							$rootScope.$emit('refreshList', '');
 						} else if($scope.type == 'response'){
 							//refresh the document
-							loadData($scope);
-
+							$scope.$parent.$parent.select($scope.$parent.$parent.selected);
 						} else {
 
 							//add the item to the list and sort it

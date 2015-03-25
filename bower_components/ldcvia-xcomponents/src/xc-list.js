@@ -452,8 +452,7 @@ app.directive('xcList',
 							$rootScope.$emit('refreshList', '');
 						} else if($scope.type == 'response'){
 							//refresh the document
-							loadData($scope);
-
+							$scope.$parent.$parent.select($scope.$parent.$parent.selected);
 						} else {
 
 							//add the item to the list and sort it

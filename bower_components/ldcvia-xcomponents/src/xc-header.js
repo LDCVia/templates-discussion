@@ -58,9 +58,9 @@ app.directive('xcHeader', function() {
 
 			$scope.logout = function(){
         $cookieStore.remove('apikey');
-				$cookieStore.remove('user');
+				$cookieStore.remove('username');
         $rootScope.apikey = null;
-				$rootScope.user = null;
+				$rootScope.username = null;
         window.location.reload();
       };
 

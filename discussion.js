@@ -240,31 +240,58 @@ angular.module('ldcvia.login', ['ngRoute'])
 .controller('LoginCtrl', ['$scope', '$routeParams', 'RESTFactory', '$location', '$rootScope', '$cookieStore', 'xcUtils',
   function($scope, $routeParams, RESTFactory, $location, $rootScope, $cookieStore, xcUtils) {
     $scope.status = '';
+    bootcards.init( {
+	        offCanvasHideOnMainClick : true,
+	        offCanvasBackdrop : false,
+	        enableTabletPortraitMode : true,
+	        disableRubberBanding : true,
+	        disableBreakoutSelector : 'a.no-break-out'
+	      });
     $scope.login = function(data) {
-      RESTFactory.login(xcUtils.getConfig('host') + '/login', data)
-        .success(function(response) {
-          if (!response.apikey) {
-            $scope.status = response.error;
-          } else {
-            $cookieStore.put('apikey', response.apikey);
-            $cookieStore.put('username', response.email);
-            $rootScope.apikey = response.apikey;
-            $rootScope.username = response.email;
-            var app = angular.module('xcomponents');
-            var port = "";
-            if (document.location.port != 80 && document.location.port != 443) {
-              port = ":" + document.location.port;
+      var error = false;
+      if (!xcomponents.host || xcomponents.host == null || xcomponents.host == "" || gup('host') == ""){
+        $scope.status = "The page has encountered an error: You must specify a host in the address";
+        error = true;
+      }
+      if (!xcomponents.db || xcomponents.db == null || xcomponents.db == "" || gup('db') == ""){
+        $scope.status = "The page has encountered an error: You must specify a db in the address";
+        error = true;
+      }
+      if (!data || data.username == "" || data.password == ""){
+        $scope.status = "The page has encountered an error: You must specify a username and password";
+        error = true;
+      }
+      if (!error){
+        $scope.status = "Logging in...";
+        RESTFactory.login(xcomponents.host + '/login', data)
+          .success(function(response) {
+            if (!response.apikey) {
+              $scope.status = response.error;
+            } else {
+              $cookieStore.put('apikey', response.apikey);
+              $cookieStore.put('username', response.email);
+              $rootScope.apikey = response.apikey;
+              $rootScope.username = response.email;
+              var app = angular.module('xcomponents');
+              var port = "";
+              if (document.location.port != 80 && document.location.port != 443) {
+                port = ":" + document.location.port;
+              }
+              window.location = document.location.protocol + "//" + document.location.hostname + port + document.location.pathname + '?host=' + gup('host') + '&db=' + gup('db');
             }
-            window.location = document.location.protocol + "//" + document.location.hostname + port + document.location.pathname + '?host=' + gup('host') + '&db=' + gup('db');
-          }
-        })
-        .error(function(error) {
-          try {
-            $scope.status = 'Error logging in: ' + error.message;
-          } catch (e) {
-
-          }
-        });
+          })
+          .error(function(error) {
+            try {
+              if (error.error){
+                $scope.status = 'Error logging in: ' + error.error;
+              }else{
+                $scope.status = 'Error logging in: ' + error.message;
+              }
+            } catch (e) {
+              $scope.status = 'There was an error logging in';
+            }
+          });
+      }
     }
 
   }
