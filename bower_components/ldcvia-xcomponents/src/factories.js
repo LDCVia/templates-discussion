@@ -43,6 +43,12 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
       return $http.post(url, JSON.stringify(data)).success(callback);
     },
 
+		databasedetails : function(url, callback) {
+			url = url.replace(":host", xcomponents.host);
+			url = url.replace(":db", xcomponents.db);
+      return $http.get(url).success(callback);
+		},
+
 		insert : function(url, toInsert) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
@@ -62,7 +68,7 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			});
 
 		},
-		
+
 		allfilter : function(url, filter) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);

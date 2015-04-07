@@ -1,7 +1,8 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcHeader', function() {
+app.directive('xcHeader',
+		function(xcDataFactory) {
 
 	return {
 
@@ -14,7 +15,7 @@ app.directive('xcHeader', function() {
 		templateUrl : 'xc-header.html',
 		transclude : true,
 
-		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore) {
+		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore, xcDataFactory) {
 
 			$scope.showBackButton = false;
 
@@ -38,7 +39,16 @@ app.directive('xcHeader', function() {
 				angular.element($document[0].body).addClass('has-bootcards-navbar-double');
 			}
 
-
+			//Get the database title
+			var f = xcDataFactory.getStore();
+			f.databasedetails(':host/database/:db')
+			.success(function(response) {
+				console.log(response);
+				angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
+			})
+			.error(function(error) {
+				//Do nothing
+			});
 
 			$scope.appVersion = xcUtils.getConfig('appVersion');
 

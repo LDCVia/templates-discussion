@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-03-25 10:36 */
+/* xcomponents 0.1.0 2015-04-07 5:32 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -383,6 +383,12 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
       return $http.post(url, JSON.stringify(data)).success(callback);
     },
 
+		databasedetails : function(url, callback) {
+			url = url.replace(":host", xcomponents.host);
+			url = url.replace(":db", xcomponents.db);
+      return $http.get(url).success(callback);
+		},
+
 		insert : function(url, toInsert) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
@@ -402,7 +408,7 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			});
 
 		},
-		
+
 		allfilter : function(url, filter) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
@@ -1559,7 +1565,8 @@ app.directive('animateOnChange', function($animate) {
 
 var app = angular.module('xcomponents');
 
-app.directive('xcHeader', function() {
+app.directive('xcHeader',
+		function(xcDataFactory) {
 
 	return {
 
@@ -1572,7 +1579,7 @@ app.directive('xcHeader', function() {
 		templateUrl : 'xc-header.html',
 		transclude : true,
 
-		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore) {
+		controller : function($rootScope, $scope, $document, xcUtils, $timeout, $cookieStore, xcDataFactory) {
 
 			$scope.showBackButton = false;
 
@@ -1596,7 +1603,16 @@ app.directive('xcHeader', function() {
 				angular.element($document[0].body).addClass('has-bootcards-navbar-double');
 			}
 
-
+			//Get the database title
+			var f = xcDataFactory.getStore();
+			f.databasedetails(':host/database/:db')
+			.success(function(response) {
+				console.log(response);
+				angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
+			})
+			.error(function(error) {
+				//Do nothing
+			});
 
 			$scope.appVersion = xcUtils.getConfig('appVersion');
 
