@@ -2,7 +2,7 @@
 <xc-layout>
   <xc-list
     model-name="MainTopic"
-    title="By Category"
+    title="By Author"
     url=":host/search/:db/MainTopic?count=20"
     documenturl=":host/document/:db/MainTopic/:id"
     responseurl=":host/responses/:db/MainTopic/:id?expand=true"
@@ -11,16 +11,16 @@
     order-by="__created"
     order-reversed="true"
     summary-field="Subject"
-    details-field="From"
-    details-field-type="notesname"
+    details-field="__created"
+    details-field-type="date"
     image-placeholder-icon="document"
     autoload-first="true"
     allow-search="false"
     type="accordion-remote"
-    categoryurl=":host/list/:db/MainTopic/Categories"
-    categoryfield="Categories"
-    category-field-type="text"
-    group-by="Categories"
+    categoryurl=":host/list/:db/MainTopic/From"
+    categoryfield="From"
+    category-field-type="notesname"
+    group-by="__createdby"
     infinite-scroll="false">
     <xc-form
       model-name="MainTopic"

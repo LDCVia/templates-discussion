@@ -139,7 +139,8 @@ app.directive('xcList',
 			categoryurl: '@',
 			documenturl: '@',
 			responseurl: '@',
-			categoryfield: '@'
+			categoryfield: '@',
+			categoryFieldType: '@'
 		},
 
 		restrict : 'E',
@@ -205,6 +206,7 @@ app.directive('xcList',
 			$scope.summaryFieldType = (typeof $scope.summaryFieldType == 'undefined' ? 'text' : $scope.summaryFieldType);
 			$scope.detailsFieldSubTopType = (typeof $scope.detailsFieldSubTopType == 'undefined' ? 'text' : $scope.detailsFieldSubTopType);
 			$scope.detailsFieldSubBottomType = (typeof $scope.detailsFieldSubBottomType == 'undefined' ? 'text' : $scope.detailsFieldSubBottomType);
+			$scope.categoryFieldType = (typeof $scope.categoryFieldType == 'undefined' ? 'text' : $scope.categoryFieldType);
 
 			$scope.isLoading = true;
       		$scope.hasMore = false;

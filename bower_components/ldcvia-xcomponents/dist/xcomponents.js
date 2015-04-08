@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-07 5:32 */
+/* xcomponents 0.1.0 2015-04-08 12:45 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -383,10 +383,12 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
       return $http.post(url, JSON.stringify(data)).success(callback);
     },
 
-		databasedetails : function(url, callback) {
+		databasedetails : function(url) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
-      return $http.get(url).success(callback);
+			return $http.get(url).then( function(res) {
+				return res;
+			});
 		},
 
 		insert : function(url, toInsert) {
@@ -1606,12 +1608,8 @@ app.directive('xcHeader',
 			//Get the database title
 			var f = xcDataFactory.getStore();
 			f.databasedetails(':host/database/:db')
-			.success(function(response) {
-				console.log(response);
+			.then(function(response) {
 				angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
-			})
-			.error(function(error) {
-				//Do nothing
 			});
 
 			$scope.appVersion = xcUtils.getConfig('appVersion');
@@ -1894,7 +1892,8 @@ app.directive('xcList',
 			categoryurl: '@',
 			documenturl: '@',
 			responseurl: '@',
-			categoryfield: '@'
+			categoryfield: '@',
+			categoryFieldType: '@'
 		},
 
 		restrict : 'E',
@@ -1960,6 +1959,7 @@ app.directive('xcList',
 			$scope.summaryFieldType = (typeof $scope.summaryFieldType == 'undefined' ? 'text' : $scope.summaryFieldType);
 			$scope.detailsFieldSubTopType = (typeof $scope.detailsFieldSubTopType == 'undefined' ? 'text' : $scope.detailsFieldSubTopType);
 			$scope.detailsFieldSubBottomType = (typeof $scope.detailsFieldSubBottomType == 'undefined' ? 'text' : $scope.detailsFieldSubBottomType);
+			$scope.categoryFieldType = (typeof $scope.categoryFieldType == 'undefined' ? 'text' : $scope.categoryFieldType);
 
 			$scope.isLoading = true;
       		$scope.hasMore = false;
@@ -3122,7 +3122,7 @@ angular.module("xc-list-accordion-remote.html", []).run(["$templateCache", funct
     "\n" +
     "				<div ng-repeat=\"group in groups\" class=\"animate-repeat\">\n" +
     "          <a ng-class=\"{'collapsed' : group.collapsed}\" class=\"list-group-item bootcards-list-subheading\" ng-click=\"toggleCategoryRemote(group)\">\n" +
-    "						{{group.name}}\n" +
+    "						{{group.name | fltr : categoryFieldType}}\n" +
     "					</a>\n" +
     "\n" +
     "          <a class=\"list-group-item\" ng-show=\"!group.collapsed\" ng-repeat=\"item in group.entries | filter : filter\"  ng-click=\"itemClick(item)\" ng-class=\"{'active' : selectedItemId == item.__unid}\">\n" +

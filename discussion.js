@@ -22,6 +22,10 @@ xcomponents.menuOptions = [{
   label: 'By Category',
   url: '#/category',
   icon: 'fa-list'
+}, {
+  label: 'By Author',
+  url: '#/author',
+  icon: 'fa-user'
 }];
 
 xcomponents.footerOptions = [{
@@ -32,6 +36,10 @@ xcomponents.footerOptions = [{
   label: 'By Category',
   url: '#/category',
   icon: 'fa-list'
+}, {
+  label: 'By Author',
+  url: '#/author',
+  icon: 'fa-user'
 }];
 xcomponents.footerTitle = "LDC Via Discussion using XComponents (alpha 1)";
 
@@ -162,6 +170,10 @@ xcomponents.addCallback(function() {
       templateUrl: 'category.html',
       controller: 'xcController'
     });
+    $routeProvider.when('/author', {
+      templateUrl: 'author.html',
+      controller: 'xcController'
+    });
     $routeProvider.
     otherwise({
       redirectTo: '/home'
@@ -194,6 +206,13 @@ xcomponents.addCallback(function() {
         return out.join(",");
       };
     })
+    //Notes Name filter
+    app.filter('text', function() {
+
+        return function(input) {
+          return input;
+        };
+      })
     //Implode List Filter
   app.filter('implodelist', function() {
       return function(input) {

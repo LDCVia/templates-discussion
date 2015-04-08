@@ -10,7 +10,7 @@
 
 				<div ng-repeat="group in groups" class="animate-repeat">
           <a ng-class="{'collapsed' : group.collapsed}" class="list-group-item bootcards-list-subheading" ng-click="toggleCategoryRemote(group)">
-						{{group.name}}
+						{{group.name | fltr : categoryFieldType}}
 					</a>
 
           <a class="list-group-item" ng-show="!group.collapsed" ng-repeat="item in group.entries | filter : filter"  ng-click="itemClick(item)" ng-class="{'active' : selectedItemId == item.__unid}">

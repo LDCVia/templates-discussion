@@ -43,10 +43,12 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
       return $http.post(url, JSON.stringify(data)).success(callback);
     },
 
-		databasedetails : function(url, callback) {
+		databasedetails : function(url) {
 			url = url.replace(":host", xcomponents.host);
 			url = url.replace(":db", xcomponents.db);
-      return $http.get(url).success(callback);
+			return $http.get(url).then( function(res) {
+				return res;
+			});
 		},
 
 		insert : function(url, toInsert) {

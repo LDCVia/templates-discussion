@@ -42,12 +42,8 @@ app.directive('xcHeader',
 			//Get the database title
 			var f = xcDataFactory.getStore();
 			f.databasedetails(':host/database/:db')
-			.success(function(response) {
-				console.log(response);
+			.then(function(response) {
 				angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
-			})
-			.error(function(error) {
-				//Do nothing
 			});
 
 			$scope.appVersion = xcUtils.getConfig('appVersion');
