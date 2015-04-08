@@ -1,7 +1,7 @@
 <div>
   <ng-include src="'xc-list-heading.html'"></ng-include>
 
- 	<div ng-show="!$root.hideList" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid">
+ 	<div ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.__unid">
 
      <xc-base footer-text="Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}" title="{{item[summaryField]}}">
 

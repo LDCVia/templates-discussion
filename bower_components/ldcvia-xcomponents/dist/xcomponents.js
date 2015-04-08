@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-08 2:12 */
+/* xcomponents 0.1.0 2015-04-08 3:52 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -3514,7 +3514,7 @@ angular.module("xc-list-response.html", []).run(["$templateCache", function($tem
     "<div>\n" +
     "  <ng-include src=\"'xc-list-heading.html'\"></ng-include>\n" +
     "\n" +
-    " 	<div ng-show=\"!$root.hideList\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\">\n" +
+    " 	<div ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.__unid\">\n" +
     "\n" +
     "     <xc-base footer-text=\"Created on {{item.__created | date}} by {{item[detailsFieldSubBottom] | fltr : detailsFieldSubBottomType}}\" title=\"{{item[summaryField]}}\">\n" +
     "\n" +
