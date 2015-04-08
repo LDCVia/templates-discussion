@@ -48,6 +48,8 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			url = url.replace(":db", xcomponents.db);
 			return $http.get(url).then( function(res) {
 				return res;
+			}, function(data){
+				return data;
 			});
 		},
 

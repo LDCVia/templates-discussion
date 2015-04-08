@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-08 12:45 */
+/* xcomponents 0.1.0 2015-04-08 2:12 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -388,6 +388,8 @@ app.factory('RESTFactory', ['$http', '$rootScope', '$cookieStore', function($htt
 			url = url.replace(":db", xcomponents.db);
 			return $http.get(url).then( function(res) {
 				return res;
+			}, function(data){
+				return data;
 			});
 		},
 
@@ -1605,13 +1607,6 @@ app.directive('xcHeader',
 				angular.element($document[0].body).addClass('has-bootcards-navbar-double');
 			}
 
-			//Get the database title
-			var f = xcDataFactory.getStore();
-			f.databasedetails(':host/database/:db')
-			.then(function(response) {
-				angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
-			});
-
 			$scope.appVersion = xcUtils.getConfig('appVersion');
 
 			var loc = window.location.href;
@@ -1639,6 +1634,18 @@ app.directive('xcHeader',
       $scope.isLoggedIn = function() {
         return $rootScope.apikey != null;
       }
+
+			//Get the database title
+			var f = xcDataFactory.getStore();
+			f.databasedetails(':host/database/:db')
+			.then(function(response) {
+				if (response.status && response.status != 200){
+					//We need to logg the user out
+					$scope.logout();
+				}else{
+					angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
+				}
+			});
 
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){

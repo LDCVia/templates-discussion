@@ -39,13 +39,6 @@ app.directive('xcHeader',
 				angular.element($document[0].body).addClass('has-bootcards-navbar-double');
 			}
 
-			//Get the database title
-			var f = xcDataFactory.getStore();
-			f.databasedetails(':host/database/:db')
-			.then(function(response) {
-				angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
-			});
-
 			$scope.appVersion = xcUtils.getConfig('appVersion');
 
 			var loc = window.location.href;
@@ -73,6 +66,18 @@ app.directive('xcHeader',
       $scope.isLoggedIn = function() {
         return $rootScope.apikey != null;
       }
+
+			//Get the database title
+			var f = xcDataFactory.getStore();
+			f.databasedetails(':host/database/:db')
+			.then(function(response) {
+				if (response.status && response.status != 200){
+					//We need to logg the user out
+					$scope.logout();
+				}else{
+					angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
+				}
+			});
 
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){
