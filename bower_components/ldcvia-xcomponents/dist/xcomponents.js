@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-08 3:52 */
+/* xcomponents 0.1.0 2015-04-08 4:48 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -875,7 +875,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			};
 			try{
 				var fileInput = document.getElementById('file');
-				if (fileInput){
+				if (fileInput && fileInput.value != ""){
 					var file = fileInput.files[0];
 					var reader = new FileReader();
 					reader.onload = function(e) {

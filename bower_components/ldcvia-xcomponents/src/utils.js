@@ -41,7 +41,7 @@ app.factory('xcUtils', function($rootScope, $http) {
 			};
 			try{
 				var fileInput = document.getElementById('file');
-				if (fileInput){
+				if (fileInput && fileInput.value != ""){
 					var file = fileInput.files[0];
 					var reader = new FileReader();
 					reader.onload = function(e) {
