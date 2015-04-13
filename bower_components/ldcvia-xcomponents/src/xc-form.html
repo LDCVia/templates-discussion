@@ -65,7 +65,7 @@
 		    </div>
 				<div class="list-group-item" ng-if="field.type=='html'">
 					<label>{{field.label}}</label>
-					<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field]"></h4>
+					<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field] | html:selectedItem"></h4>
 				</div>
 				<div ng-if="field.type=='files'">
 			    <div class="list-group-item" ng-repeat="file in selectedItem[field.field]">

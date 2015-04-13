@@ -224,8 +224,27 @@ xcomponents.addCallback(function() {
       }
     })
     //HTML Filter
-  app.filter('html', ['$sce', function($sce) {
-    return function(input) {
+  app.filter('html', ['$sce', '$cookieStore', function($sce, $cookieStore) {
+    return function(input, selectedItem) {
+      var prefix = xcomponents.host + "/attachment/" + xcomponents.db + "/" + selectedItem.__form + "/" + selectedItem.__unid + "/";
+      var div = document.createElement('div');
+      div.innerHTML = input;
+      var imgs = div.getElementsByTagName('img');
+      for(var i=0; i<imgs.length; i++){
+        var img = imgs[i];
+        if (selectedItem._files){
+          var src = img.src.replace("cid:", "");
+          src = src.split("/");
+          src = src[src.length - 1];
+          for (var k=0; k<selectedItem._files.length; k++){
+            if (selectedItem._files[k].indexOf(src) > -1){
+              img.src = prefix + selectedItem._files[k] + "?apikey=" + $cookieStore.get('apikey');
+            }
+          }
+        }
+      }
+      input = div.innerHTML;
+
       return $sce.trustAsHtml(input);
     }
   }]);

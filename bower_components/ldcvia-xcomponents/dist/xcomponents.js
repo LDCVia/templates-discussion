@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-08 4:48 */
+/* xcomponents 0.1.0 2015-04-13 5:14 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -2890,7 +2890,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "		    </div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='html'\">\n" +
     "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field] | html:selectedItem\"></h4>\n" +
     "				</div>\n" +
     "				<div ng-if=\"field.type=='files'\">\n" +
     "			    <div class=\"list-group-item\" ng-repeat=\"file in selectedItem[field.field]\">\n" +
