@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-14 4:55 */
+/* xcomponents 0.1.0 2015-04-15 3:12 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -1460,10 +1460,10 @@ app.directive('xcForm',
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
 			$scope.apikey = $rootScope.apikey;
-			//if (xcomponents.readonly){
-			//	$scope.allowDelete = false;
-			//	$scope.allowEdit = false;
-			//}
+			if (xcomponents.readonly){
+				$scope.allowDelete = false;
+				$scope.allowEdit = false;
+			}
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				var f = xcDataFactory.getStore($attrs.datastoreType);
@@ -1649,6 +1649,7 @@ app.directive('xcHeader',
 					$scope.logout();
 				}else{
 					angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
+					xcomponents.readonly = response.data.readonly;
 				}
 			});
 
@@ -1732,15 +1733,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-
+				
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-
+			
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-
+	
 			});
 
 		}
@@ -1985,9 +1986,9 @@ app.directive('xcList',
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
 			$scope.apikey = $rootScope.apikey;
-			//if (xcomponents.readonly){
-			//	$scope.allowAdd = false;
-			//}
+			if (xcomponents.readonly){
+				$scope.allowAdd = false;
+			}
 
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);

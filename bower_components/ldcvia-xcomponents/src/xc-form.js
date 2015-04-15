@@ -19,7 +19,7 @@ app.directive('xcForm',
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			allowDelete : '=?',
 			datastoreType : '@',
-			allowEdit : true
+			allowEdit : '@'
 
 		},
 

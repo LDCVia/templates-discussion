@@ -2,7 +2,7 @@
 Basic configuration of the application
 */
 
-xcomponents.appVersion = '0.1';
+xcomponents.appVersion = '201504151500';
 xcomponents.host = 'https://' + gup('host') + '/1.0';
 xcomponents.db = gup('db');
 xcomponents.apikey = null;

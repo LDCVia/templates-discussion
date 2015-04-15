@@ -76,7 +76,7 @@ app.directive('xcHeader',
 					$scope.logout();
 				}else{
 					angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
-					xcomponents.readonly = response.readonly;
+					xcomponents.readonly = response.data.readonly;
 				}
 			});
 
