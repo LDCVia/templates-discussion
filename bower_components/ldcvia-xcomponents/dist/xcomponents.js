@@ -1732,15 +1732,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				
+
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-			
+
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-	
+
 			});
 
 		}
