@@ -61,13 +61,13 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	var body = angular.element( $document[0].body);
 
 	if ($scope.iOS) {
-		css += 'bootcards-ios-lite.min.css';
+		css += 'bootcards-ios.min.css';
 		body.addClass('bootcards-ios');
 	} else if ($scope.Android) {
-		css += 'bootcards-android-lite.min.css';
+		css += 'bootcards-android.min.css';
 		body.addClass('bootcards-android');
 	} else {
-		css += 'bootcards-desktop-lite.min.css';
+		css += 'bootcards-desktop.min.css';
 		body.addClass('bootcards-desktop');
 	}
 
@@ -191,7 +191,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 	};
 });
 
-/* xcomponents 0.1.0 2015-04-13 5:14 */
+/* xcomponents 0.1.0 2015-04-14 4:55 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -1414,7 +1414,8 @@ app.directive('xcForm',
 			iconField : '@',				/*icon*/
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			allowDelete : '=?',
-			datastoreType : '@'
+			datastoreType : '@',
+			allowEdit : '@'
 
 		},
 
@@ -1459,6 +1460,10 @@ app.directive('xcForm',
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
 			$scope.apikey = $rootScope.apikey;
+			//if (xcomponents.readonly){
+			//	$scope.allowDelete = false;
+			//	$scope.allowEdit = false;
+			//}
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				var f = xcDataFactory.getStore($attrs.datastoreType);
@@ -1640,7 +1645,7 @@ app.directive('xcHeader',
 			f.databasedetails(':host/database/:db')
 			.then(function(response) {
 				if (response.status && response.status != 200){
-					//We need to logg the user out
+					//We need to log the user out
 					$scope.logout();
 				}else{
 					angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
@@ -1727,15 +1732,15 @@ app.directive('xcImage', function() {
 			$scope.imageSrc = null;
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
-				
+
 				$scope.imageSrc = null;
 
 				if ( item[$scope.sourceField] != null && item[$scope.sourceField].length > 0) {
-			
+
 					$scope.imageSrc = xcUtils.getConfig('imageBase') + item[$scope.sourceField];
 
 				}
-	
+
 			});
 
 		}
@@ -1969,7 +1974,7 @@ app.directive('xcList',
 			$scope.categoryFieldType = (typeof $scope.categoryFieldType == 'undefined' ? 'text' : $scope.categoryFieldType);
 
 			$scope.isLoading = true;
-      		$scope.hasMore = false;
+      $scope.hasMore = false;
 
 			$scope.itemsPerPage = 20;
 			$scope.itemsShown = $scope.itemsPerPage;
@@ -1980,6 +1985,9 @@ app.directive('xcList',
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
 			$scope.apikey = $rootScope.apikey;
+			//if (xcomponents.readonly){
+			//	$scope.allowAdd = false;
+			//}
 
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
@@ -2840,7 +2848,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "\n" +
     "		<div class=\"panel-heading clearfix\">\n" +
     "			<h3 class=\"panel-title pull-left\">{{model.name}}</h3>\n" +
-    "			<a class=\"btn btn-primary pull-right\" ng-click=\"editDetails(selectedItem)\">\n" +
+    "			<a class=\"btn btn-primary pull-right\" ng-click=\"editDetails(selectedItem)\" ng-if=\"allowEdit\">\n" +
     "				<i class=\"fa fa-pencil\"></i><span>Edit</span>\n" +
     "			</a>\n" +
     "\n" +

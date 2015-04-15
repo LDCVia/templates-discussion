@@ -72,10 +72,11 @@ app.directive('xcHeader',
 			f.databasedetails(':host/database/:db')
 			.then(function(response) {
 				if (response.status && response.status != 200){
-					//We need to logg the user out
+					//We need to log the user out
 					$scope.logout();
 				}else{
 					angular.element(document.getElementsByClassName("navbar-brand")).text(response.title);
+					xcomponents.readonly = response.readonly;
 				}
 			});
 

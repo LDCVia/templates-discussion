@@ -1,3 +1,5 @@
+@import "bootcards.scss";
+
 html, 
 body {
 	height: 100%;
@@ -31,12 +33,13 @@ small {
 	display: block;
 }
 
-.navbar-nav {
-	display: none;
+.navbar-collapse,
+.navbar-collapse.collapse {
+	display: none !important;
 }
 
 .navbar-toggle {
-	display: none;
+	display: none !important;
 }
 
 

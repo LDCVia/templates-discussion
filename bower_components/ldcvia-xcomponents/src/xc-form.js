@@ -18,7 +18,8 @@ app.directive('xcForm',
 			iconField : '@',				/*icon*/
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			allowDelete : '=?',
-			datastoreType : '@'
+			datastoreType : '@',
+			allowEdit : true
 
 		},
 
@@ -63,6 +64,10 @@ app.directive('xcForm',
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
 			$scope.apikey = $rootScope.apikey;
+			if (xcomponents.readonly){
+				$scope.allowDelete = false;
+				$scope.allowEdit = false;
+			}
 
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 				var f = xcDataFactory.getStore($attrs.datastoreType);

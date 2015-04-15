@@ -209,7 +209,7 @@ app.directive('xcList',
 			$scope.categoryFieldType = (typeof $scope.categoryFieldType == 'undefined' ? 'text' : $scope.categoryFieldType);
 
 			$scope.isLoading = true;
-      		$scope.hasMore = false;
+      $scope.hasMore = false;
 
 			$scope.itemsPerPage = 20;
 			$scope.itemsShown = $scope.itemsPerPage;
@@ -220,6 +220,9 @@ app.directive('xcList',
 			$scope.host = xcUtils.getConfig('host');
 			$scope.db = xcUtils.getConfig('db');
 			$scope.apikey = $rootScope.apikey;
+			if (xcomponents.readonly){
+				$scope.allowAdd = false;
+			}
 
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
