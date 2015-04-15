@@ -55,19 +55,18 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	$rootScope.iOS = $scope.iOS;
 	$rootScope.Android = $scope.Android;
 
-	var baseFolder = 'bower_components';
-	var css = baseFolder + '/bootcards/dist/css/';
+	var css = xcomponents.libsPath + '/bootcards/dist/css/';
 
 	var body = angular.element( $document[0].body);
 
 	if ($scope.iOS) {
-		css += 'bootcards-ios.min.css';
+		css += 'bootcards-ios.css';
 		body.addClass('bootcards-ios');
 	} else if ($scope.Android) {
-		css += 'bootcards-android.min.css';
+		css += 'bootcards-android.css';
 		body.addClass('bootcards-android');
 	} else {
-		css += 'bootcards-desktop.min.css';
+		css += 'bootcards-desktop.css';
 		body.addClass('bootcards-desktop');
 	}
 
