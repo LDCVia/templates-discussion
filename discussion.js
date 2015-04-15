@@ -2,7 +2,7 @@
 Basic configuration of the application
 */
 
-xcomponents.appVersion = '201504151500';
+xcomponents.appVersion = '201504151600';
 xcomponents.host = 'https://' + gup('host') + '/1.0';
 xcomponents.db = gup('db');
 xcomponents.apikey = null;
@@ -42,7 +42,7 @@ xcomponents.footerOptions = [{
   url: '#/author',
   icon: 'fa-user'
 }];
-xcomponents.footerTitle = "LDC Via Discussion using XComponents (alpha 1)";
+xcomponents.footerTitle = "LDC Via Discussion using XComponents (" + xcomponents.appVersion + ")";
 
 /*
 Define the main Topic model
